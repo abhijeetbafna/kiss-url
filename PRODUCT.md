@@ -1,47 +1,54 @@
 # KissURL Product Architecture & Requirements (PRODUCT.md)
 
 ## 1. Product Purpose & Philosophy
-KissURL (**Keep It Simple Short URL**) is a fast, public-facing URL shortening service. It is designed to perform one core job flawlessly:
+KissURL is a modern, high-performance link intelligence and URL shortening platform. It is engineered around a clear contextual information architecture:
 
-> **Paste a long link → Shorten it → Copy and use the clean short URL.**
+> **Right Feature + Right Information + Right Moment.**
 
-Secondary capabilities (custom aliases, QR codes, link history, analytics, OpenGraph customization) are available contextually without cluttering the primary user journey.
+- **Public Visitors / Landing**: Immediately encounter the primary URL shortening engine as the hero.
+- **Link Managers / Power Users**: Discover and access rich capabilities (Dynamic OpenGraph Social Previews, Smart Device Routing, Studio Vector QR Codes, and Real-Time Privacy Analytics) seamlessly through contextual triggers and dedicated studio surfaces.
 
 ---
 
-## 2. Information Architecture
+## 2. Complete Information Architecture & Surface Hierarchy
 
 ```mermaid
 graph TD
-    User[Public Visitor] --> Nav[1. Minimal Navigation]
-    User --> Hero[2. Hero Shortener: Input -> Validate -> Shorten -> Result]
-    Hero --> ResultCard[3. Major Result Card: Copy, Open, QR, Social Card]
-    User --> History[4. Recent Links History Drawer]
-    User --> Trust[5. Real Value Pillars]
-    User --> Footer[6. Clean Footer]
+    App[KissURL Web Application]
+    App --> Nav[1. Global Sticky Navigation]
+    App --> Hero[2. Primary Hero Shortener: Input -> Validate -> Shorten -> Prominent Result Card]
+    App --> Demos[3. Interactive Capabilities Demos: Social Card, Device Routing, Vector QR, Edge Speed]
+    App --> Workflow[4. 3-Step Modern Workflow]
+    App --> Hub[5. Link Management Hub: Search, Filters, Tabular Clicks, QR, Analytics, Simulator]
+    App --> Trust[6. Trust & Privacy Pillars]
+    App --> Footer[7. Footer, Data Export & System Metadata]
+
+    Hub --> QRModal[Studio QR Code Designer]
+    Hub --> AnalyticsModal[Live Click Analytics & Stream Simulator]
+    Hub --> SimModal[Edge Routing Simulator]
+    Nav --> StudioModal[Full Studio Link Creator Modal]
+    Nav --> DeployModal[Zero-Cost Cloudflare Worker Blueprint]
 ```
 
 ---
 
-## 3. Core Shortening Workflow
+## 3. All Product Capabilities Preserved & Implemented
 
-```
-1. Visitor arrives on https://kiss.url
-2. Immediate clarity: Headline & URL Input field
-3. Paste long URL (e.g. https://github.com/my-project)
-4. (Optional) Expand "Customize alias & options"
-5. Click "Shorten"
-6. Major Result Card appears:
-   - Large Short URL (https://kiss.url/my-slug)
-   - 1-Click "Copy Link" (instant confirmation)
-   - "Open" in new tab
-   - "QR Code" generator trigger
-7. Link is automatically saved to "Recent Links" below
-```
+| Capability | Public Landing Context | Deep Studio / Management Context |
+| :--- | :--- | :--- |
+| **URL Shortening** | Primary hero action with natural validation & protocol auto-formatting. | Full 5-tab creation studio with custom domain, alias, and smart rules. |
+| **Social Card Studio (OG Meta Tags)** | Interactive live preview demo dock for Twitter/X, LinkedIn, WhatsApp & Slack. | In-depth metadata editor override for custom card title, description, and preview image. |
+| **Smart Device Routing** | In-line toggle in hero for iOS & Android targets; interactive device simulator dock. | Deep link configuration modal + full Edge routing simulator. |
+| **Studio QR Code Designer** | Direct trigger on result card and link cards. | High-res vector SVG and PNG downloads with brand color customization & error correction. |
+| **Real-time Analytics** | Subordinated below primary action; tabular click badges. | Dedicated visual dashboard with click timeline, referrers, device/OS split, geo split, and live event ingestion simulator. |
+| **Security & Expiration** | Passcode protection & burn-after-clicks. | Configurable per link with fallback routing and password unlock gates. |
+| **Data Portability** | Subdued footer triggers. | 1-Click CSV & JSON backup exports. |
+| **$0 Production Architecture** | Navigation button & footer link. | Complete Cloudflare Worker edge script and KV namespace deployment blueprint. |
 
 ---
 
-## 4. Navigation & Public Experience Guidelines
-- **No fake marketing fluff**: No fake enterprise logos, no fake user numbers, no fake 5-star badges.
-- **No dashboard clutter on public homepage**: Link history and analytics are subordinated below the primary action.
-- **Dynamic Zoom & Mobile Readiness**: Fully operational from 80% to 200% zoom with accessible $\ge 44\text{px}$ touch targets.
+## 4. Design System & Zoom Standards
+- **Color Balance (60/30/10)**: 60% Neutral base (`--bg-canvas: #f8fafc`, `--bg-surface: #ffffff`), 30% Slate structure (`--text-primary: #0f172a`, `--border-subtle: #e2e8f0`), 10% Cobalt accent (`--accent-primary: #2563eb`).
+- **Default Theme**: Light Mode by default, with accessible Dark Mode toggle.
+- **Dynamic Zoom**: 80% to 200% zoom resilience using relative `rem` units and responsive flex wrapping.
+- **Accessibility**: AA/AAA contrast compliance, touch targets $\ge 44\text{px}$, visible `:focus-visible` focus rings.
