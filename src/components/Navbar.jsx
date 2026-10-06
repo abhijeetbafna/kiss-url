@@ -13,13 +13,12 @@ import {
   Webhook, 
   BarChart3, 
   BookOpen, 
-  Sparkles,
-  Zap,
-  Shuffle,
-  Tag,
-  QrCode,
+  Zap, 
+  Compass,
+  ArrowRight,
   Shield,
-  Compass
+  Sliders,
+  CheckCircle2
 } from 'lucide-react';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
 
@@ -103,20 +102,20 @@ export default function Navbar({
             }}
           >
             <div style={{
-              width: '28px',
-              height: '28px',
-              borderRadius: '7px',
+              width: '26px',
+              height: '26px',
+              borderRadius: '6px',
               backgroundColor: 'var(--primary-bg)',
               color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.12)'
+              boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
             }}>
-              <Zap size={15} style={{ fill: '#ffffff' }} />
+              <Zap size={14} style={{ fill: '#ffffff' }} />
             </div>
             <span style={{ 
-              fontSize: '1.05rem', 
+              fontSize: '1rem', 
               fontWeight: '800', 
               letterSpacing: '-0.03em', 
               color: 'var(--text-primary)' 
@@ -142,7 +141,7 @@ export default function Navbar({
             style={{ fontSize: '0.825rem', padding: '0.35rem 0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
           >
             <span>Links</span>
-            <span className="badge" style={{ fontSize: '0.7rem', padding: '0px 5px', fontWeight: '700' }}>
+            <span className="badge" style={{ fontSize: '0.675rem', padding: '0px 5px', fontWeight: '700' }}>
               {totalLinks}
             </span>
           </button>
@@ -157,7 +156,7 @@ export default function Navbar({
             <span>Analytics</span>
           </button>
 
-          {/* Features Mega Dropdown */}
+          {/* Features 2-Column Compact Mega Menu */}
           <div style={{ position: 'relative' }} ref={dropdownRef}>
             <button 
               onClick={() => setIsFeaturesOpen(!isFeaturesOpen)} 
@@ -166,7 +165,7 @@ export default function Navbar({
             >
               <Compass size={13} style={{ color: 'var(--text-muted)' }} />
               <span>Features</span>
-              <ChevronDown size={12} style={{ transform: isFeaturesOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease', color: 'var(--text-muted)' }} />
+              <ChevronDown size={11} style={{ transform: isFeaturesOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease', color: 'var(--text-muted)' }} />
             </button>
 
             {isFeaturesOpen && (
@@ -176,7 +175,7 @@ export default function Navbar({
                   top: 'calc(100% + 8px)', 
                   left: '50%',
                   transform: 'translateX(-50%)',
-                  width: '320px', 
+                  width: '460px', 
                   backgroundColor: 'var(--bg-surface)', 
                   border: '1px solid var(--border-default)', 
                   borderRadius: 'var(--radius-lg)', 
@@ -185,122 +184,146 @@ export default function Navbar({
                   zIndex: 100,
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '0.35rem'
+                  gap: '0.4rem'
                 }}
               >
-                {/* Growth & Ads Group */}
-                <div style={{ fontSize: '0.675rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', padding: '0.2rem 0.5rem 0.1rem' }}>
-                  Traffic & Ad Retargeting
+                {/* 2-Column Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.35rem' }}>
+                  {/* Item 1: Retargeting Pixels */}
+                  <button
+                    onClick={() => {
+                      setIsFeaturesOpen(false);
+                      onOpenPixelModal();
+                    }}
+                    className="btn-ghost"
+                    style={{ justifyContent: 'flex-start', padding: '0.5rem 0.6rem', borderRadius: 'var(--radius-md)', gap: '0.55rem', textAlign: 'left' }}
+                  >
+                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6', flexShrink: 0 }}>
+                      <Target size={14} />
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem', lineHeight: 1.2 }}>Retargeting Pixels</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>Meta, GA4 & TikTok tags</div>
+                    </div>
+                  </button>
+
+                  {/* Item 2: Webhooks */}
+                  <button
+                    onClick={() => {
+                      setIsFeaturesOpen(false);
+                      onOpenWebhookModal();
+                    }}
+                    className="btn-ghost"
+                    style={{ justifyContent: 'flex-start', padding: '0.5rem 0.6rem', borderRadius: 'var(--radius-md)', gap: '0.55rem', textAlign: 'left' }}
+                  >
+                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a855f7', flexShrink: 0 }}>
+                      <Webhook size={14} />
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem', lineHeight: 1.2 }}>Webhooks Hub</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>Slack & Discord alerts</div>
+                    </div>
+                  </button>
+
+                  {/* Item 3: Bio Page Studio */}
+                  <button
+                    onClick={() => {
+                      setIsFeaturesOpen(false);
+                      onOpenBioStudio();
+                    }}
+                    className="btn-ghost"
+                    style={{ justifyContent: 'flex-start', padding: '0.5rem 0.6rem', borderRadius: 'var(--radius-md)', gap: '0.55rem', textAlign: 'left' }}
+                  >
+                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', flexShrink: 0 }}>
+                      <User size={14} />
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem', lineHeight: 1.2 }}>Bio Link Studio</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>Creator pages & leads</div>
+                    </div>
+                  </button>
+
+                  {/* Item 4: Custom Domains */}
+                  <button
+                    onClick={() => {
+                      setIsFeaturesOpen(false);
+                      onOpenDomainModal();
+                    }}
+                    className="btn-ghost"
+                    style={{ justifyContent: 'flex-start', padding: '0.5rem 0.6rem', borderRadius: 'var(--radius-md)', gap: '0.55rem', textAlign: 'left' }}
+                  >
+                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f59e0b', flexShrink: 0 }}>
+                      <Globe size={14} />
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem', lineHeight: 1.2 }}>Custom Domains</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>Branded CNAME setups</div>
+                    </div>
+                  </button>
+
+                  {/* Item 5: Bulk Shortener */}
+                  <button
+                    onClick={() => {
+                      setIsFeaturesOpen(false);
+                      onOpenBulkModal();
+                    }}
+                    className="btn-ghost"
+                    style={{ justifyContent: 'flex-start', padding: '0.5rem 0.6rem', borderRadius: 'var(--radius-md)', gap: '0.55rem', textAlign: 'left' }}
+                  >
+                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#06b6d4', flexShrink: 0 }}>
+                      <Layers size={14} />
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem', lineHeight: 1.2 }}>Bulk CSV Engine</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>Batch shortlink processor</div>
+                    </div>
+                  </button>
+
+                  {/* Item 6: Safety Auditor */}
+                  <button
+                    onClick={() => {
+                      setIsFeaturesOpen(false);
+                      onOpenSafetyModal();
+                    }}
+                    className="btn-ghost"
+                    style={{ justifyContent: 'flex-start', padding: '0.5rem 0.6rem', borderRadius: 'var(--radius-md)', gap: '0.55rem', textAlign: 'left' }}
+                  >
+                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ec4899', flexShrink: 0 }}>
+                      <ShieldCheck size={14} />
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem', lineHeight: 1.2 }}>Safety Auditor</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>Malware & phishing scan</div>
+                    </div>
+                  </button>
                 </div>
 
-                <button
-                  onClick={() => {
-                    setIsFeaturesOpen(false);
-                    onOpenPixelModal();
-                  }}
-                  className="btn-ghost"
-                  style={{ width: '100%', justifyContent: 'flex-start', padding: '0.45rem 0.6rem', fontSize: '0.8rem', borderRadius: 'var(--radius-sm)', gap: '0.65rem' }}
-                >
-                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', backgroundColor: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <Target size={13} />
-                  </div>
-                  <div style={{ textAlign: 'left' }}>
-                    <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem' }}>Retargeting Pixels</div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Meta, GA4, TikTok & LinkedIn Tags</div>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setIsFeaturesOpen(false);
-                    onOpenWebhookModal();
-                  }}
-                  className="btn-ghost"
-                  style={{ width: '100%', justifyContent: 'flex-start', padding: '0.45rem 0.6rem', fontSize: '0.8rem', borderRadius: 'var(--radius-sm)', gap: '0.65rem' }}
-                >
-                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', backgroundColor: 'rgba(168, 85, 247, 0.1)', color: '#a855f7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <Webhook size={13} />
-                  </div>
-                  <div style={{ textAlign: 'left' }}>
-                    <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem' }}>Webhooks & Automation</div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Stream clicks to Slack, Discord & Zapier</div>
-                  </div>
-                </button>
-
-                <div style={{ height: '1px', backgroundColor: 'var(--border-subtle)', margin: '0.2rem 0' }} />
-
-                {/* Creator & Branding Group */}
-                <div style={{ fontSize: '0.675rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', padding: '0.2rem 0.5rem 0.1rem' }}>
-                  Creator & Brand Suite
+                {/* Bottom Strip: User Manual Link */}
+                <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '0.45rem', marginTop: '0.15rem' }}>
+                  <button
+                    onClick={() => {
+                      setIsFeaturesOpen(false);
+                      if (onOpenUserManual) onOpenUserManual();
+                    }}
+                    className="btn-ghost"
+                    style={{
+                      width: '100%',
+                      justifyContent: 'space-between',
+                      padding: '0.45rem 0.65rem',
+                      borderRadius: 'var(--radius-sm)',
+                      backgroundColor: 'var(--bg-subtle)',
+                      fontSize: '0.775rem',
+                      fontWeight: '600',
+                      color: 'var(--primary-bg)'
+                    }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <BookOpen size={13} />
+                      <span>Interactive User Manual & Working Examples</span>
+                    </span>
+                    <ArrowRight size={12} />
+                  </button>
                 </div>
-
-                <button
-                  onClick={() => {
-                    setIsFeaturesOpen(false);
-                    onOpenBioStudio();
-                  }}
-                  className="btn-ghost"
-                  style={{ width: '100%', justifyContent: 'flex-start', padding: '0.45rem 0.6rem', fontSize: '0.8rem', borderRadius: 'var(--radius-sm)', gap: '0.65rem' }}
-                >
-                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <User size={13} />
-                  </div>
-                  <div style={{ textAlign: 'left' }}>
-                    <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem' }}>Bio Link Tree Studio</div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Mobile landing pages & lead capture</div>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setIsFeaturesOpen(false);
-                    onOpenDomainModal();
-                  }}
-                  className="btn-ghost"
-                  style={{ width: '100%', justifyContent: 'flex-start', padding: '0.45rem 0.6rem', fontSize: '0.8rem', borderRadius: 'var(--radius-sm)', gap: '0.65rem' }}
-                >
-                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', backgroundColor: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <Globe size={13} />
-                  </div>
-                  <div style={{ textAlign: 'left' }}>
-                    <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem' }}>Custom CNAME Domains</div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Connect your own brand domain</div>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setIsFeaturesOpen(false);
-                    onOpenBulkModal();
-                  }}
-                  className="btn-ghost"
-                  style={{ width: '100%', justifyContent: 'flex-start', padding: '0.45rem 0.6rem', fontSize: '0.8rem', borderRadius: 'var(--radius-sm)', gap: '0.65rem' }}
-                >
-                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', backgroundColor: 'rgba(6, 182, 212, 0.1)', color: '#06b6d4', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <Layers size={13} />
-                  </div>
-                  <div style={{ textAlign: 'left' }}>
-                    <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem' }}>Bulk CSV Shortener</div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Shorten hundreds of links in batch</div>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setIsFeaturesOpen(false);
-                    onOpenSafetyModal();
-                  }}
-                  className="btn-ghost"
-                  style={{ width: '100%', justifyContent: 'flex-start', padding: '0.45rem 0.6rem', fontSize: '0.8rem', borderRadius: 'var(--radius-sm)', gap: '0.65rem' }}
-                >
-                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', backgroundColor: 'rgba(236, 72, 153, 0.1)', color: '#ec4899', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <ShieldCheck size={13} />
-                  </div>
-                  <div style={{ textAlign: 'left' }}>
-                    <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem' }}>URL Safety Auditor</div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Malware & phishing heuristic scanner</div>
-                  </div>
-                </button>
               </div>
             )}
           </div>
