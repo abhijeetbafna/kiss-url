@@ -26,14 +26,19 @@ export default function RedirectHandler({ slug }) {
 
     setLink(matched);
 
-    // Check expiration
-    if (matched.protection?.expiresAt && new Date(matched.protection.expiresAt) < new Date()) {
-      setStatus('expired');
-      return;
-    }
+    // Check expiration and max clicks
+    const isTimeExpired = matched.protection?.expiresAt && new Date(matched.protection.expiresAt) < new Date();
+    const isClicksExceeded = matched.protection?.maxClicks > 0 && (matched.clicks || 0) >= matched.protection.maxClicks;
 
-    // Check max clicks
-    if (matched.protection?.maxClicks > 0 && (matched.clicks || 0) >= matched.protection.maxClicks) {
+    if (isTimeExpired || isClicksExceeded) {
+      if (matched.protection?.fallbackUrl) {
+        let fallback = matched.protection.fallbackUrl;
+        if (!fallback.startsWith('http://') && !fallback.startsWith('https://')) {
+          fallback = 'https://' + fallback;
+        }
+        window.location.replace(fallback);
+        return;
+      }
       setStatus('expired');
       return;
     }

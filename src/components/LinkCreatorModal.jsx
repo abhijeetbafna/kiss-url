@@ -32,6 +32,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
   const [password, setPassword] = useState(initialData?.protection?.password || '');
   const [expiresAt, setExpiresAt] = useState(initialData?.protection?.expiresAt || '');
   const [maxClicks, setMaxClicks] = useState(initialData?.protection?.maxClicks || 0);
+  const [fallbackUrl, setFallbackUrl] = useState(initialData?.protection?.fallbackUrl || '');
 
   // UTM parameters
   const [utmSource, setUtmSource] = useState('');
@@ -100,6 +101,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
         password: password.trim(),
         expiresAt,
         maxClicks: Number(maxClicks) || 0,
+        fallbackUrl: fallbackUrl.trim(),
       }
     };
 
@@ -457,6 +459,22 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                     onChange={(e) => setMaxClicks(e.target.value)}
                     className="input tabular-nums"
                   />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                    Custom Expired / Inactive Fallback URL (Optional)
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://yourbrand.com/expired-campaign"
+                    value={fallbackUrl}
+                    onChange={(e) => setFallbackUrl(e.target.value)}
+                    className="input"
+                  />
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                    Visitors will be automatically routed here instead of seeing the default expired error page.
+                  </p>
                 </div>
               </div>
             )}

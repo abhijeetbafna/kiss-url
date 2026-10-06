@@ -1,6 +1,8 @@
-// Local Storage Service for Client-Side Database & Real Link Resolution
+// Local Storage Service for Client-Side Database, Bio Pages, Domains & Link Analytics
 
 const STORAGE_KEY = 'kissurl_links_v1';
+const BIO_STORAGE_KEY = 'kissurl_bio_pages_v1';
+const DOMAIN_STORAGE_KEY = 'kissurl_custom_domains_v1';
 
 const INITIAL_SAMPLE_LINKS = [
   {
@@ -32,6 +34,7 @@ const INITIAL_SAMPLE_LINKS = [
       password: '',
       expiresAt: '',
       maxClicks: 5000,
+      fallbackUrl: '',
     },
     
     analytics: {
@@ -91,6 +94,7 @@ const INITIAL_SAMPLE_LINKS = [
       password: 'demo',
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
       maxClicks: 150,
+      fallbackUrl: 'https://kissurl.dev',
     },
     analytics: {
       referrers: { 'email': 54, 'direct': 25, 'slack': 5 },
@@ -103,6 +107,82 @@ const INITIAL_SAMPLE_LINKS = [
     }
   }
 ];
+
+const INITIAL_SAMPLE_BIO_PAGES = [
+  {
+    id: 'bio_creator_1',
+    handle: 'alexdev',
+    name: 'Alex Rivera',
+    tagline: 'Staff Product Engineer & Design Architect',
+    bio: 'Building developer tools, open-source software, and minimal design systems.',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    theme: 'minimal', // minimal | dark | cobalt | gradient | emerald
+    views: 890,
+    socials: {
+      twitter: 'alexrivera_dev',
+      github: 'alexrivera',
+      linkedin: 'alexrivera',
+      youtube: '',
+      instagram: '',
+      website: 'https://alexrivera.dev',
+      email: 'alex@example.com'
+    },
+    links: [
+      {
+        id: 'bl_1',
+        title: '⭐ GitHub Open Source Projects',
+        subtitle: 'Star my latest tools & libraries',
+        url: 'https://github.com',
+        clicks: 340,
+        highlight: true,
+        icon: 'github'
+      },
+      {
+        id: 'bl_2',
+        title: '🎙️ Weekly Design Engineering Newsletter',
+        subtitle: 'Read by 12,000+ front-end developers',
+        url: 'https://substack.com',
+        clicks: 215,
+        highlight: false,
+        icon: 'mail'
+      },
+      {
+        id: 'bl_3',
+        title: '📦 Latest Web Component System',
+        subtitle: 'Free UI primitives & layout recipes',
+        url: 'https://github.com/topics/design-system',
+        clicks: 180,
+        highlight: false,
+        icon: 'code'
+      },
+      {
+        id: 'bl_4',
+        title: '☕ Schedule a 1:1 Architecture Consultation',
+        subtitle: 'Book 30 mins for tech reviews',
+        url: 'https://cal.com',
+        clicks: 95,
+        highlight: false,
+        icon: 'calendar'
+      }
+    ],
+    updatedAt: new Date().toISOString()
+  }
+];
+
+const INITIAL_SAMPLE_DOMAINS = [
+  {
+    id: 'dom_1',
+    domain: 'link.yourbrand.com',
+    targetHost: 'cname.kissurl.dev',
+    status: 'active', // active | pending | error
+    createdAt: new Date().toISOString(),
+    lastChecked: new Date().toISOString()
+  }
+];
+
+// ==========================================
+// 1. LINK SHORTENER STORAGE & ANALYTICS
+// ==========================================
 
 export const getStoredLinks = () => {
   try {
@@ -136,7 +216,6 @@ export const buildShortUrl = (slug, domain = null) => {
   const cleanSlug = slug.toLowerCase().trim();
   if (typeof window !== 'undefined' && window.location) {
     const currentOrigin = window.location.origin;
-    // If running on localhost or a real host, route to /r/:slug so it resolves immediately in any tab
     return `${currentOrigin}/r/${cleanSlug}`;
   }
   return `https://${domain || 'kiss.url'}/r/${cleanSlug}`;
@@ -183,7 +262,6 @@ export const recordRealClick = (linkId, meta = {}) => {
 
   const today = new Date().toISOString().split('T')[0];
   
-  // Detect device
   let device = 'Desktop';
   const ua = meta.userAgent || (typeof navigator !== 'undefined' ? navigator.userAgent : '');
   if (/iPhone|iPad|iPod/i.test(ua)) device = 'iOS';
@@ -192,7 +270,6 @@ export const recordRealClick = (linkId, meta = {}) => {
   else if (/Windows/i.test(ua)) device = 'Windows';
   else if (/Linux/i.test(ua)) device = 'Linux';
 
-  // Detect referrer
   let referrer = meta.referrer || (typeof document !== 'undefined' ? document.referrer : '') || 'direct';
   if (referrer && referrer !== 'direct') {
     try {
@@ -229,9 +306,160 @@ export const recordRealClick = (linkId, meta = {}) => {
   return link;
 };
 
+// ==========================================
+// 2. LINK IN BIO PAGES STORAGE
+// ==========================================
+
+export const getStoredBioPages = () => {
+  try {
+    const raw = localStorage.getItem(BIO_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(BIO_STORAGE_KEY, JSON.stringify(INITIAL_SAMPLE_BIO_PAGES));
+      return INITIAL_SAMPLE_BIO_PAGES;
+    }
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error('Error reading bio pages:', e);
+    return INITIAL_SAMPLE_BIO_PAGES;
+  }
+};
+
+export const saveBioPages = (pages) => {
+  try {
+    localStorage.setItem(BIO_STORAGE_KEY, JSON.stringify(pages));
+  } catch (e) {
+    console.error('Error saving bio pages:', e);
+  }
+};
+
+export const getBioPageByHandle = (handle) => {
+  const pages = getStoredBioPages();
+  const clean = handle.toLowerCase().replace(/^@/, '').trim();
+  return pages.find(p => p.handle.toLowerCase() === clean);
+};
+
+export const buildBioUrl = (handle) => {
+  const clean = handle.toLowerCase().replace(/^@/, '').trim();
+  if (typeof window !== 'undefined' && window.location) {
+    return `${window.location.origin}/bio/${clean}`;
+  }
+  return `https://kiss.url/bio/${clean}`;
+};
+
+export const saveBioPage = (bioData) => {
+  const pages = getStoredBioPages();
+  const cleanHandle = bioData.handle.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+  const existingIndex = pages.findIndex(p => p.handle.toLowerCase() === cleanHandle);
+
+  const pageRecord = {
+    ...bioData,
+    handle: cleanHandle,
+    updatedAt: new Date().toISOString()
+  };
+
+  let updated;
+  if (existingIndex >= 0) {
+    updated = [...pages];
+    updated[existingIndex] = { ...pages[existingIndex], ...pageRecord };
+  } else {
+    pageRecord.id = 'bio_' + Math.random().toString(36).substring(2, 9);
+    pageRecord.views = pageRecord.views || 0;
+    updated = [pageRecord, ...pages];
+  }
+
+  saveBioPages(updated);
+  return pageRecord;
+};
+
+export const recordBioClick = (handle, linkId) => {
+  const pages = getStoredBioPages();
+  const page = pages.find(p => p.handle.toLowerCase() === handle.toLowerCase());
+  if (!page) return;
+
+  if (linkId) {
+    const targetLink = page.links?.find(l => l.id === linkId);
+    if (targetLink) {
+      targetLink.clicks = (targetLink.clicks || 0) + 1;
+    }
+  } else {
+    page.views = (page.views || 0) + 1;
+  }
+
+  saveBioPages(pages);
+};
+
+// ==========================================
+// 3. CUSTOM DOMAINS (CNAME) STORAGE
+// ==========================================
+
+export const getStoredDomains = () => {
+  try {
+    const raw = localStorage.getItem(DOMAIN_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(DOMAIN_STORAGE_KEY, JSON.stringify(INITIAL_SAMPLE_DOMAINS));
+      return INITIAL_SAMPLE_DOMAINS;
+    }
+    return JSON.parse(raw);
+  } catch (e) {
+    return INITIAL_SAMPLE_DOMAINS;
+  }
+};
+
+export const saveDomains = (domains) => {
+  try {
+    localStorage.setItem(DOMAIN_STORAGE_KEY, JSON.stringify(domains));
+  } catch (e) {
+    console.error('Error saving domains:', e);
+  }
+};
+
+export const addDomain = (domainName) => {
+  const domains = getStoredDomains();
+  const clean = domainName.toLowerCase().trim().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+  
+  if (domains.some(d => d.domain === clean)) {
+    return domains.find(d => d.domain === clean);
+  }
+
+  const newDomain = {
+    id: 'dom_' + Math.random().toString(36).substring(2, 9),
+    domain: clean,
+    targetHost: 'cname.kissurl.dev',
+    status: 'active',
+    createdAt: new Date().toISOString(),
+    lastChecked: new Date().toISOString()
+  };
+
+  const updated = [newDomain, ...domains];
+  saveDomains(updated);
+  return newDomain;
+};
+
+export const deleteDomain = (id) => {
+  const domains = getStoredDomains();
+  const filtered = domains.filter(d => d.id !== id);
+  saveDomains(filtered);
+  return filtered;
+};
+
+// ==========================================
+// 4. EXPORT UTILITIES
+// ==========================================
+
 export const exportLinksAsJSON = () => {
   const links = getStoredLinks();
-  const blob = new Blob([JSON.stringify(links, null, 2)], { type: 'application/json' });
+  const bioPages = getStoredBioPages();
+  const domains = getStoredDomains();
+  
+  const payload = {
+    version: '1.0',
+    exportedAt: new Date().toISOString(),
+    links,
+    bioPages,
+    domains
+  };
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

@@ -1,7 +1,14 @@
 import React from 'react';
-import { Plus, Sun, Moon } from 'lucide-react';
+import { Plus, Sun, Moon, Globe, User } from 'lucide-react';
 
-export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, totalLinks }) {
+export default function Navbar({ 
+  theme, 
+  onToggleTheme, 
+  onOpenCreateModal, 
+  onOpenBioStudio, 
+  onOpenDomainModal, 
+  totalLinks 
+}) {
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) {
@@ -69,18 +76,27 @@ export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, totalL
             Shorten
           </button>
           <button 
-            onClick={() => scrollToSection('demos-section')} 
-            className="btn btn-ghost" 
-            style={{ fontSize: '0.825rem', padding: '0.35rem 0.65rem' }}
-          >
-            Features
-          </button>
-          <button 
             onClick={() => scrollToSection('hub-section')} 
             className="btn btn-ghost" 
             style={{ fontSize: '0.825rem', padding: '0.35rem 0.65rem' }}
           >
             Links <span className="tabular-nums" style={{ color: 'var(--text-muted)', marginLeft: '2px' }}>({totalLinks})</span>
+          </button>
+          <button 
+            onClick={onOpenBioStudio} 
+            className="btn btn-ghost" 
+            style={{ fontSize: '0.825rem', padding: '0.35rem 0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+            title="Create & Edit Link in Bio Pages"
+          >
+            <User size={13} /> Bio Pages
+          </button>
+          <button 
+            onClick={onOpenDomainModal} 
+            className="btn btn-ghost" 
+            style={{ fontSize: '0.825rem', padding: '0.35rem 0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+            title="Custom Domain & CNAME Manager"
+          >
+            <Globe size={13} /> Domains
           </button>
         </nav>
 

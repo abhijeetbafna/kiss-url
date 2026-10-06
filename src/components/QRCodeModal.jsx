@@ -1,17 +1,27 @@
 import React, { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
-import { X, Download, Copy, Check, Pipette } from 'lucide-react';
+import { X, Download, Copy, Check, Pipette, Image as ImageIcon, Zap, Globe } from 'lucide-react';
 import { buildShortUrl } from '../services/storageService';
 
 const PRESET_COLORS = ['#09090b', '#ffffff', '#0070f3', '#15803d', '#b45309', '#7c3aed', '#db2777'];
 const PRESET_BGS = ['#ffffff', '#f4f4f5', '#eff6ff', '#09090b'];
 
+const CENTER_ICONS = [
+  { id: 'none', label: 'None' },
+  { id: 'zap', label: '⚡ Zap' },
+  { id: 'github', label: 'GitHub' },
+  { id: 'twitter', label: 'Twitter / X' },
+  { id: 'globe', label: '🌐 Web' }
+];
+
 export default function QRCodeModal({ link, onClose }) {
   const colorInputRef = useRef(null);
+  const canvasRef = useRef(null);
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [fgColor, setFgColor] = useState('#09090b');
   const [bgColor, setBgColor] = useState('#ffffff');
   const [errorCorrection, setErrorCorrection] = useState('H');
+  const [centerIcon, setCenterIcon] = useState('none');
   const [copied, setCopied] = useState(false);
 
   const fullUrl = buildShortUrl(link.slug, link.domain);
@@ -43,27 +53,68 @@ export default function QRCodeModal({ link, onClose }) {
     }
   };
 
+  // Generate QR code on hidden canvas with center icon overlay if selected
   useEffect(() => {
-    QRCode.toDataURL(
+    const canvas = canvasRef.current || document.createElement('canvas');
+    QRCode.toCanvas(
+      canvas,
       fullUrl,
       {
-        width: 400,
+        width: 440,
         margin: 2,
         color: {
           dark: fgColor,
           light: bgColor,
         },
-        errorCorrectionLevel: errorCorrection,
+        errorCorrectionLevel: 'H', // Always High when embedding logo
       },
-      (err, url) => {
+      (err) => {
         if (err) {
-          console.error('QR Code error:', err);
+          console.error('QR error:', err);
           return;
         }
-        setQrDataUrl(url);
+
+        if (centerIcon === 'none') {
+          setQrDataUrl(canvas.toDataURL('image/png'));
+          return;
+        }
+
+        // Draw center logo badge on canvas
+        const ctx = canvas.getContext('2d');
+        const size = canvas.width;
+        const centerSize = size * 0.22;
+        const centerPos = (size - centerSize) / 2;
+
+        // Draw clean white background badge for center icon
+        ctx.fillStyle = bgColor === '#09090b' ? '#09090b' : '#ffffff';
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2, centerSize / 2 + 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = fgColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw center icon
+        ctx.fillStyle = fgColor;
+        ctx.font = `bold ${centerSize * 0.55}px -apple-system, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        if (centerIcon === 'zap') {
+          ctx.fillText('⚡', size / 2, size / 2);
+        } else if (centerIcon === 'github') {
+          ctx.fillText('🐙', size / 2, size / 2);
+        } else if (centerIcon === 'twitter') {
+          ctx.fillText('𝕏', size / 2, size / 2);
+        } else if (centerIcon === 'globe') {
+          ctx.fillText('🌐', size / 2, size / 2);
+        }
+
+        setQrDataUrl(canvas.toDataURL('image/png'));
       }
     );
-  }, [fullUrl, fgColor, bgColor, errorCorrection]);
+  }, [fullUrl, fgColor, bgColor, errorCorrection, centerIcon]);
 
   const handleDownloadPNG = () => {
     if (!qrDataUrl) return;
@@ -102,9 +153,12 @@ export default function QRCodeModal({ link, onClose }) {
     <div className="modal-backdrop" onClick={onClose}>
       <div 
         className="modal-panel" 
-        style={{ maxWidth: '580px', width: '100%', position: 'relative' }}
+        style={{ maxWidth: '600px', width: '100%', position: 'relative' }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Hidden canvas for compositing */}
+        <canvas ref={canvasRef} style={{ display: 'none' }} />
+
         {/* Header */}
         <div style={{ 
           padding: '1.25rem 1.5rem', 
@@ -115,7 +169,7 @@ export default function QRCodeModal({ link, onClose }) {
         }}>
           <div>
             <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
-              QR Code Generator
+              QR Code Studio
             </h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginTop: '0.25rem' }}>
               <code style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>
@@ -177,11 +231,11 @@ export default function QRCodeModal({ link, onClose }) {
             </div>
 
             {/* Customization Controls */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', minWidth: 0 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem', minWidth: 0 }}>
               
               {/* QR Color Swatches */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
                   QR Color
                 </label>
                 <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -245,7 +299,7 @@ export default function QRCodeModal({ link, onClose }) {
 
               {/* Background Color Swatches */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
                   Background
                 </label>
                 <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
@@ -276,9 +330,29 @@ export default function QRCodeModal({ link, onClose }) {
                 </div>
               </div>
 
+              {/* Center Logo / Icon Badge */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
+                  Center Icon Badge
+                </label>
+                <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
+                  {CENTER_ICONS.map(icon => (
+                    <button
+                      key={icon.id}
+                      type="button"
+                      onClick={() => setCenterIcon(icon.id)}
+                      className={`btn ${centerIcon === icon.id ? 'btn-primary' : 'btn-secondary'}`}
+                      style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem', borderRadius: 'var(--radius-sm)' }}
+                    >
+                      {icon.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Error Correction Level */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
                   Error Correction Level
                 </label>
                 <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
@@ -293,7 +367,7 @@ export default function QRCodeModal({ link, onClose }) {
                       type="button"
                       onClick={() => setErrorCorrection(lvl.id)}
                       className={`btn ${errorCorrection === lvl.id ? 'btn-primary' : 'btn-secondary'}`}
-                      style={{ padding: '0.25rem 0.45rem', fontSize: '0.75rem', borderRadius: 'var(--radius-sm)' }}
+                      style={{ padding: '0.2rem 0.45rem', fontSize: '0.75rem', borderRadius: 'var(--radius-sm)' }}
                     >
                       {lvl.label}
                     </button>

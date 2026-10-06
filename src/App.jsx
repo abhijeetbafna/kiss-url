@@ -12,6 +12,9 @@ import LinkCreatorModal from './components/LinkCreatorModal';
 import QRCodeModal from './components/QRCodeModal';
 import AnalyticsModal from './components/AnalyticsModal';
 import SimulatorModal from './components/SimulatorModal';
+import BioPageRenderer from './components/BioPageRenderer';
+import BioPageStudioModal from './components/BioPageStudioModal';
+import CustomDomainModal from './components/CustomDomainModal';
 
 import { getStoredLinks, createLink, deleteLink } from './services/storageService';
 
@@ -25,24 +28,37 @@ export default function App() {
 
   // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isBioStudioOpen, setIsBioStudioOpen] = useState(false);
+  const [isDomainModalOpen, setIsDomainModalOpen] = useState(false);
   const [createInitialData, setCreateInitialData] = useState(null);
   const [activeQRLink, setActiveQRLink] = useState(null);
   const [activeAnalyticsLink, setActiveAnalyticsLink] = useState(null);
   const [activeSimulatorLink, setActiveSimulatorLink] = useState(null);
 
-  // Check if current URL path is a short redirect route (e.g. /r/:slug or /:slug)
+  // Check if current URL path is a bio page route (e.g. /bio/:handle or ?bio=:handle)
   const pathname = window.location.pathname;
   const searchParams = new URLSearchParams(window.location.search);
+  const queryBio = searchParams.get('bio');
   const querySlug = searchParams.get('r');
 
+  let bioHandle = null;
+  if (queryBio) {
+    bioHandle = queryBio;
+  } else if (pathname.startsWith('/bio/')) {
+    bioHandle = pathname.replace(/^\/bio\//, '').split('/')[0];
+  }
+
+  // Check if current URL path is a short redirect route (e.g. /r/:slug or /:slug)
   let redirectSlug = null;
-  if (querySlug) {
-    redirectSlug = querySlug;
-  } else if (pathname.startsWith('/r/')) {
-    redirectSlug = pathname.replace(/^\/r\//, '').split('/')[0];
-  } else if (pathname.length > 1 && !pathname.includes('.') && pathname !== '/') {
-    // Check if path matches a known slug or is a direct shortcode
-    redirectSlug = pathname.substring(1).split('/')[0];
+  if (!bioHandle) {
+    if (querySlug) {
+      redirectSlug = querySlug;
+    } else if (pathname.startsWith('/r/')) {
+      redirectSlug = pathname.replace(/^\/r\//, '').split('/')[0];
+    } else if (pathname.length > 1 && !pathname.includes('.') && pathname !== '/' && !pathname.startsWith('/bio')) {
+      // Check if path matches a known slug or is a direct shortcode
+      redirectSlug = pathname.substring(1).split('/')[0];
+    }
   }
 
   useEffect(() => {
@@ -78,6 +94,11 @@ export default function App() {
     }
   };
 
+  // If visiting a Link-in-Bio profile route, render the BioPageRenderer
+  if (bioHandle) {
+    return <BioPageRenderer handle={bioHandle} />;
+  }
+
   // If visiting a short redirect URL, render the RedirectHandler
   if (redirectSlug) {
     return <RedirectHandler slug={redirectSlug} />;
@@ -93,6 +114,8 @@ export default function App() {
           setCreateInitialData(null);
           setIsCreateModalOpen(true);
         }}
+        onOpenBioStudio={() => setIsBioStudioOpen(true)}
+        onOpenDomainModal={() => setIsDomainModalOpen(true)}
         totalLinks={links.length}
       />
 
@@ -189,6 +212,16 @@ export default function App() {
           onClose={() => setActiveSimulatorLink(null)}
         />
       )}
+
+      <BioPageStudioModal
+        isOpen={isBioStudioOpen}
+        onClose={() => setIsBioStudioOpen(false)}
+      />
+
+      <CustomDomainModal
+        isOpen={isDomainModalOpen}
+        onClose={() => setIsDomainModalOpen(false)}
+      />
     </div>
   );
 }
