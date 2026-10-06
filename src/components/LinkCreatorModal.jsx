@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Sparkles, Smartphone, Shield, Link as LinkIcon, Wand2, BarChart2 } from 'lucide-react';
+import { X, Sparkles, Smartphone, Shield, Link as LinkIcon, Wand2, BarChart2, ShieldCheck, AlertTriangle, ShieldAlert } from 'lucide-react';
 import SocialCardPreview from './SocialCardPreview';
 import confetti from 'canvas-confetti';
+import { auditUrlSafety } from '../services/storageService';
 
 const SAMPLE_SLUGS = ['launch', 'special', 'early-access', 'promo', 'newsletter', 'event'];
 
@@ -202,9 +203,28 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
             {activeTab === 'general' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
-                    Destination URL *
-                  </label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+                    <label style={{ fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)' }}>
+                      Destination URL *
+                    </label>
+                    {targetUrl && (
+                      <span 
+                        style={{ 
+                          fontSize: '0.725rem', 
+                          fontWeight: '600', 
+                          display: 'inline-flex', 
+                          alignItems: 'center', 
+                          gap: '0.25rem',
+                          color: auditUrlSafety(targetUrl).color 
+                        }}
+                      >
+                        {auditUrlSafety(targetUrl).status === 'safe' && <ShieldCheck size={13} />}
+                        {auditUrlSafety(targetUrl).status === 'warning' && <AlertTriangle size={13} />}
+                        {auditUrlSafety(targetUrl).status === 'critical' && <ShieldAlert size={13} />}
+                        {auditUrlSafety(targetUrl).label} ({auditUrlSafety(targetUrl).score}/100)
+                      </span>
+                    )}
+                  </div>
                   <input
                     type="text"
                     required

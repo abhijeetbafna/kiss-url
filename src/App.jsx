@@ -15,11 +15,14 @@ import SimulatorModal from './components/SimulatorModal';
 import BioPageRenderer from './components/BioPageRenderer';
 import BioPageStudioModal from './components/BioPageStudioModal';
 import CustomDomainModal from './components/CustomDomainModal';
+import SafetyAuditModal from './components/SafetyAuditModal';
+import ErrorBrandingModal from './components/ErrorBrandingModal';
 
-import { getStoredLinks, createLink, deleteLink } from './services/storageService';
+import { getStoredLinks, createLink, deleteLink, getActiveWorkspaceId } from './services/storageService';
 
 export default function App() {
   const [links, setLinks] = useState([]);
+  const [activeWsId, setActiveWsId] = useState(getActiveWorkspaceId());
   
   // Theme state: default 'light'
   const [theme, setTheme] = useState(() => {
@@ -30,6 +33,8 @@ export default function App() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isBioStudioOpen, setIsBioStudioOpen] = useState(false);
   const [isDomainModalOpen, setIsDomainModalOpen] = useState(false);
+  const [isSafetyModalOpen, setIsSafetyModalOpen] = useState(false);
+  const [isErrorBrandingModalOpen, setIsErrorBrandingModalOpen] = useState(false);
   const [createInitialData, setCreateInitialData] = useState(null);
   const [activeQRLink, setActiveQRLink] = useState(null);
   const [activeAnalyticsLink, setActiveAnalyticsLink] = useState(null);
@@ -116,6 +121,12 @@ export default function App() {
         }}
         onOpenBioStudio={() => setIsBioStudioOpen(true)}
         onOpenDomainModal={() => setIsDomainModalOpen(true)}
+        onOpenSafetyModal={() => setIsSafetyModalOpen(true)}
+        onOpenErrorBrandingModal={() => setIsErrorBrandingModalOpen(true)}
+        onWorkspaceChanged={(wsId) => {
+          setActiveWsId(wsId);
+          loadData();
+        }}
         totalLinks={links.length}
       />
 
@@ -221,6 +232,16 @@ export default function App() {
       <CustomDomainModal
         isOpen={isDomainModalOpen}
         onClose={() => setIsDomainModalOpen(false)}
+      />
+
+      <SafetyAuditModal
+        isOpen={isSafetyModalOpen}
+        onClose={() => setIsSafetyModalOpen(false)}
+      />
+
+      <ErrorBrandingModal
+        isOpen={isErrorBrandingModalOpen}
+        onClose={() => setIsErrorBrandingModalOpen(false)}
       />
     </div>
   );

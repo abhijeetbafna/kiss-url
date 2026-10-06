@@ -223,8 +223,10 @@ export const buildShortUrl = (slug, domain = null) => {
 
 export const createLink = (linkData) => {
   const links = getStoredLinks();
+  const activeWsId = getActiveWorkspaceId();
   const newLink = {
     id: 'lp_' + Math.random().toString(36).substring(2, 9),
+    workspaceId: linkData.workspaceId || activeWsId || 'ws_personal',
     createdAt: new Date().toISOString(),
     clicks: 0,
     analytics: {
@@ -490,3 +492,240 @@ export const exportLinksAsCSV = () => {
   a.click();
   URL.revokeObjectURL(url);
 };
+
+// ==========================================
+// 5. WORKSPACES & TEAM ISOLATION
+// ==========================================
+
+const WORKSPACE_STORAGE_KEY = 'kissurl_workspaces_v1';
+const ACTIVE_WORKSPACE_KEY = 'kissurl_active_workspace_id_v1';
+const ERROR_BRANDING_KEY = 'kissurl_error_branding_v1';
+
+const INITIAL_WORKSPACES = [
+  {
+    id: 'ws_personal',
+    name: 'Personal Space',
+    slug: 'personal',
+    icon: '👤',
+    color: '#6366f1',
+    description: 'Default workspace for personal projects and links',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'ws_marketing',
+    name: 'Growth & Marketing',
+    slug: 'marketing',
+    icon: '🚀',
+    color: '#10b981',
+    description: 'Campaign, social media, and ad tracking links',
+    createdAt: new Date().toISOString(),
+  },
+];
+
+export const getStoredWorkspaces = () => {
+  try {
+    const raw = localStorage.getItem(WORKSPACE_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(WORKSPACE_STORAGE_KEY, JSON.stringify(INITIAL_WORKSPACES));
+      return INITIAL_WORKSPACES;
+    }
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error('Failed to parse workspaces', e);
+    return INITIAL_WORKSPACES;
+  }
+};
+
+export const saveWorkspaces = (workspaces) => {
+  localStorage.setItem(WORKSPACE_STORAGE_KEY, JSON.stringify(workspaces));
+};
+
+export const getActiveWorkspaceId = () => {
+  const saved = localStorage.getItem(ACTIVE_WORKSPACE_KEY);
+  if (saved) return saved;
+  return 'ws_personal';
+};
+
+export const setActiveWorkspaceId = (id) => {
+  localStorage.setItem(ACTIVE_WORKSPACE_KEY, id);
+};
+
+export const getActiveWorkspace = () => {
+  const workspaces = getStoredWorkspaces();
+  const activeId = getActiveWorkspaceId();
+  return workspaces.find(w => w.id === activeId) || workspaces[0] || INITIAL_WORKSPACES[0];
+};
+
+export const createWorkspace = ({ name, icon = '📁', color = '#3b82f6', description = '' }) => {
+  const workspaces = getStoredWorkspaces();
+  const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  const newWorkspace = {
+    id: `ws_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    name: name.trim(),
+    slug,
+    icon,
+    color,
+    description: description.trim(),
+    createdAt: new Date().toISOString(),
+  };
+
+  const updated = [...workspaces, newWorkspace];
+  saveWorkspaces(updated);
+  setActiveWorkspaceId(newWorkspace.id);
+  return newWorkspace;
+};
+
+export const updateWorkspace = (id, data) => {
+  const workspaces = getStoredWorkspaces();
+  const updated = workspaces.map(w => w.id === id ? { ...w, ...data } : w);
+  saveWorkspaces(updated);
+  return updated;
+};
+
+export const deleteWorkspace = (id) => {
+  if (id === 'ws_personal') return false; // Prevent deleting default
+  const workspaces = getStoredWorkspaces();
+  const updated = workspaces.filter(w => w.id !== id);
+  saveWorkspaces(updated);
+  if (getActiveWorkspaceId() === id) {
+    setActiveWorkspaceId('ws_personal');
+  }
+  return true;
+};
+
+// ==========================================
+// 6. CUSTOM 404 & BRANDED ERROR PAGES
+// ==========================================
+
+const DEFAULT_ERROR_BRANDING = {
+  customTitle: 'Link Not Found or Inactive',
+  customMessage: 'The link you are looking for has been moved, deleted, or is temporarily offline.',
+  brandName: 'KissURL',
+  logoEmoji: '⚡',
+  supportUrl: 'https://github.com/abhijeetbafna/kiss-url',
+  showHomeButton: true,
+  themeColor: '#000000',
+};
+
+export const getErrorBrandingSettings = () => {
+  try {
+    const raw = localStorage.getItem(ERROR_BRANDING_KEY);
+    if (!raw) return DEFAULT_ERROR_BRANDING;
+    return { ...DEFAULT_ERROR_BRANDING, ...JSON.parse(raw) };
+  } catch (e) {
+    return DEFAULT_ERROR_BRANDING;
+  }
+};
+
+export const saveErrorBrandingSettings = (settings) => {
+  localStorage.setItem(ERROR_BRANDING_KEY, JSON.stringify(settings));
+};
+
+// ==========================================
+// 7. URL SAFETY & MALWARE/PHISHING SCANNER
+// ==========================================
+
+export const auditUrlSafety = (url) => {
+  if (!url || typeof url !== 'string') {
+    return {
+      score: 100,
+      status: 'safe',
+      label: 'Safe URL',
+      color: '#10b981',
+      checks: []
+    };
+  }
+
+  const cleanUrl = url.trim();
+  let parsed = null;
+  try {
+    parsed = new URL(cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`);
+  } catch (e) {
+    return {
+      score: 50,
+      status: 'warning',
+      label: 'Malformed URL',
+      color: '#f59e0b',
+      checks: [{ label: 'URL format is invalid', passed: false, type: 'format' }]
+    };
+  }
+
+  const checks = [];
+  let score = 100;
+
+  // Check 1: HTTPS Encryption
+  const isHttps = parsed.protocol === 'https:';
+  if (isHttps) {
+    checks.push({ label: 'HTTPS SSL Encrypted Connection', passed: true, detail: 'Destination uses secure transport' });
+  } else {
+    score -= 25;
+    checks.push({ label: 'Unencrypted HTTP Connection', passed: false, detail: 'Data sent to this destination is not encrypted' });
+  }
+
+  // Check 2: Raw IP Address detection
+  const isIp = /^(\d{1,3}\.){3}\d{1,3}$/.test(parsed.hostname);
+  if (isIp) {
+    score -= 40;
+    checks.push({ label: 'Raw IP Address Target', passed: false, detail: 'Destination points directly to an IP address instead of a domain' });
+  } else {
+    checks.push({ label: 'Verified DNS Hostname', passed: true, detail: 'Valid fully qualified domain name' });
+  }
+
+  // Check 3: Suspicious TLD check
+  const riskyTLDs = ['.xyz', '.top', '.zip', '.click', '.fit', '.gq', '.tk', '.ml', '.cf', '.work', '.casa'];
+  const hasRiskyTld = riskyTLDs.some(tld => parsed.hostname.toLowerCase().endsWith(tld));
+  if (hasRiskyTld) {
+    score -= 15;
+    checks.push({ label: 'High-Risk Top-Level Domain', passed: false, detail: `Domain uses a frequently abused TLD (${parsed.hostname.split('.').pop()})` });
+  } else {
+    checks.push({ label: 'Standard Domain Extension', passed: true, detail: 'Standard trusted domain namespace' });
+  }
+
+  // Check 4: Phishing & Deceptive Keywords
+  const suspiciousKeywords = [
+    'login-verification', 'verify-account', 'security-update', 'paypal-secure', 
+    'wallet-connect', 'airdrop-claim', 'free-crypto', 'urgent-alert', 'bank-login',
+    'support-portal', 'auth-check'
+  ];
+  const urlLower = cleanUrl.toLowerCase();
+  const matchedKeyword = suspiciousKeywords.find(k => urlLower.includes(k));
+  if (matchedKeyword) {
+    score -= 35;
+    checks.push({ label: `Potential Credential / Phishing Pattern ("${matchedKeyword}")`, passed: false, detail: 'Contains keywords commonly used in social engineering traps' });
+  } else {
+    checks.push({ label: 'No Phishing Keywords Detected', passed: true, detail: 'Clean destination path structure' });
+  }
+
+  // Check 5: Excessive Subdomains / Dot Flood
+  const dotCount = (parsed.hostname.match(/\./g) || []).length;
+  if (dotCount > 3) {
+    score -= 15;
+    checks.push({ label: 'Excessive Subdomain Stacking', passed: false, detail: 'Unusual number of subdomain levels' });
+  }
+
+  // Determine final status
+  let status = 'safe';
+  let label = 'Clean & Safe';
+  let color = '#10b981';
+
+  if (score < 50) {
+    status = 'critical';
+    label = 'High Risk / Suspicious';
+    color = '#ef4444';
+  } else if (score < 85) {
+    status = 'warning';
+    label = 'Caution Advised';
+    color = '#f59e0b';
+  }
+
+  return {
+    score: Math.max(0, Math.min(100, score)),
+    status,
+    label,
+    color,
+    checks,
+    protocol: parsed.protocol,
+    hostname: parsed.hostname
+  };
+};
+

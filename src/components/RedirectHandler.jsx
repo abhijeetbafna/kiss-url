@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getStoredLinks, recordRealClick } from '../services/storageService';
-import { Shield, AlertCircle, ArrowLeft, ExternalLink } from 'lucide-react';
+import { getStoredLinks, recordRealClick, getErrorBrandingSettings } from '../services/storageService';
+import { Shield, AlertCircle, ArrowLeft, ExternalLink, HelpCircle } from 'lucide-react';
 
 export default function RedirectHandler({ slug }) {
   const [status, setStatus] = useState('resolving'); // resolving | redirecting | password_required | expired | not_found
@@ -8,6 +8,7 @@ export default function RedirectHandler({ slug }) {
   const [resolvedUrl, setResolvedUrl] = useState('');
   const [enteredPassword, setEnteredPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [errorBranding, setErrorBranding] = useState(() => getErrorBrandingSettings());
 
   useEffect(() => {
     if (!slug) {
@@ -217,29 +218,46 @@ export default function RedirectHandler({ slug }) {
         </div>
       )}
 
-      {/* 4. NOT FOUND STATE */}
+      {/* 4. NOT FOUND STATE (CUSTOM BRANDED 404) */}
       {status === 'not_found' && (
         <div style={{ 
-          maxWidth: '420px', 
+          maxWidth: '440px', 
           width: '100%', 
           backgroundColor: 'var(--bg-surface)', 
           border: '1px solid var(--border-default)', 
           borderRadius: 'var(--radius-lg)', 
-          padding: '2.5rem 1.5rem',
+          padding: '2.5rem 1.75rem',
           boxShadow: 'var(--shadow-subtle)'
         }}>
-          <div style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--text-dim)', marginBottom: '0.25rem', fontFamily: 'var(--font-mono)' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '0.4rem' }}>
+            {errorBranding.logoEmoji || '⚡'}
+          </div>
+          <div style={{ fontSize: '1.75rem', fontWeight: '800', color: 'var(--text-dim)', marginBottom: '0.25rem', fontFamily: 'var(--font-mono)' }}>
             404
           </div>
           <h1 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.4rem', letterSpacing: '-0.02em' }}>
-            Short link not found
+            {errorBranding.customTitle || 'Short link not found'}
           </h1>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
-            The requested short URL <code style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>/{slug}</code> does not exist or may have been deleted.
+            {errorBranding.customMessage || `The requested short URL /${slug} does not exist or may have been deleted.`}
           </p>
-          <a href="/" className="btn btn-primary" style={{ display: 'inline-flex' }}>
-            <ArrowLeft size={14} /> Create a New Short Link
-          </a>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <a href="/" className="btn btn-primary" style={{ display: 'inline-flex', justifyContent: 'center' }}>
+              <ArrowLeft size={14} /> Go to {errorBranding.brandName || 'KissURL'}
+            </a>
+            {errorBranding.supportUrl && (
+              <a 
+                href={errorBranding.supportUrl} 
+                target="_blank" 
+                rel="noreferrer" 
+                className="btn btn-secondary" 
+                style={{ display: 'inline-flex', justifyContent: 'center', fontSize: '0.825rem' }}
+              >
+                <HelpCircle size={14} /> Contact Support
+              </a>
+            )}
+          </div>
         </div>
       )}
 

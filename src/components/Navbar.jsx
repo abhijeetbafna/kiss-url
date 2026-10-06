@@ -1,5 +1,6 @@
 import React from 'react';
-import { Plus, Sun, Moon, Globe, User } from 'lucide-react';
+import { Plus, Sun, Moon, Globe, User, ShieldCheck } from 'lucide-react';
+import WorkspaceSwitcher from './WorkspaceSwitcher';
 
 export default function Navbar({ 
   theme, 
@@ -7,6 +8,9 @@ export default function Navbar({
   onOpenCreateModal, 
   onOpenBioStudio, 
   onOpenDomainModal, 
+  onOpenSafetyModal,
+  onOpenErrorBrandingModal,
+  onWorkspaceChanged,
   totalLinks 
 }) {
   const scrollToSection = (id) => {
@@ -34,37 +38,46 @@ export default function Navbar({
         padding: '0.85rem 1.25rem',
         display: 'flex', 
         justifyContent: 'space-between', 
-        alignItems: 'center' 
+        alignItems: 'center',
+        gap: '0.75rem',
+        flexWrap: 'wrap'
       }}>
-        {/* Brand */}
-        <a 
-          href="/" 
-          style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.5rem', 
-            textDecoration: 'none',
-            color: 'var(--text-primary)'
-          }}
-          onClick={(e) => {
-            e.preventDefault();
-            scrollToSection('hero-section');
-          }}
-        >
-          <span style={{ 
-            fontSize: '1.05rem', 
-            fontWeight: '700', 
-            letterSpacing: '-0.03em', 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.35rem' 
-          }}>
-            KissURL
-          </span>
-          <span className="badge" style={{ fontSize: '0.65rem', padding: '0.15rem 0.4rem' }}>
-            <span className="status-dot" /> Free
-          </span>
-        </a>
+        {/* Brand & Workspace Switcher */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <a 
+            href="/" 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.5rem', 
+              textDecoration: 'none',
+              color: 'var(--text-primary)'
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToSection('hero-section');
+            }}
+          >
+            <span style={{ 
+              fontSize: '1.05rem', 
+              fontWeight: '700', 
+              letterSpacing: '-0.03em', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.35rem' 
+            }}>
+              KissURL
+            </span>
+          </a>
+
+          <div style={{ height: '16px', width: '1px', backgroundColor: 'var(--border-default)' }} />
+
+          {/* Workspace Switcher */}
+          <WorkspaceSwitcher 
+            onWorkspaceChanged={onWorkspaceChanged} 
+            onOpenSettings={onOpenErrorBrandingModal}
+          />
+        </div>
 
         {/* Navigation links */}
         <nav style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
@@ -88,7 +101,7 @@ export default function Navbar({
             style={{ fontSize: '0.825rem', padding: '0.35rem 0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
             title="Create & Edit Link in Bio Pages"
           >
-            <User size={13} /> Bio Pages
+            <User size={13} /> Bio
           </button>
           <button 
             onClick={onOpenDomainModal} 
@@ -97,6 +110,14 @@ export default function Navbar({
             title="Custom Domain & CNAME Manager"
           >
             <Globe size={13} /> Domains
+          </button>
+          <button 
+            onClick={onOpenSafetyModal} 
+            className="btn btn-ghost" 
+            style={{ fontSize: '0.825rem', padding: '0.35rem 0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+            title="Scan URL Safety & Malware Threats"
+          >
+            <ShieldCheck size={13} /> Safety
           </button>
         </nav>
 
