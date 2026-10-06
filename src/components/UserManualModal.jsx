@@ -40,7 +40,7 @@ const MANUAL_SECTIONS = [
       'Set a memorable alias (e.g., /launch-2026) or click the dice icon for an auto-generated high-CTR slug.',
       'Add organizational tags (e.g., promo, q3, campaign) for instant dashboard filtering.'
     ],
-    proTip: 'Use our AI Slug & Tag Generator by clicking "AI Generate Slugs & Tags" to automatically analyze your destination page and generate relevant slugs and tags!',
+    proTip: 'Use our Smart Slug & Tag Generator by clicking "Smart Auto-Suggest" to automatically analyze your destination page and generate relevant slugs and tags!',
     example: {
       title: 'Working Example: Product Launch',
       inputUrl: 'https://acme-analytics.io/enterprise/product-suite-v2?ref=press_release',

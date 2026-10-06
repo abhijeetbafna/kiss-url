@@ -116,7 +116,7 @@ class PersistentDB {
     return this.db.workspace_members.some(m => m.userId === userId && m.workspaceId === workspaceId);
   }
 
-  createWorkspace({ name, ownerId, icon = '👤', color = '#6366f1', description = '' }) {
+  createWorkspace({ name, ownerId, icon = 'user', color = '#6366f1', description = '' }) {
     const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'workspace';
     const newWs = {
       id: 'ws_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
@@ -450,7 +450,7 @@ class PersistentDB {
       customTitle: 'Link Not Found or Inactive',
       customMessage: 'The link you are looking for has been moved, deleted, or is temporarily offline.',
       brandName: 'KissURL',
-      logoEmoji: '⚡',
+      logoIcon: 'zap',
       supportUrl: 'https://kiss.url/support'
     };
   }

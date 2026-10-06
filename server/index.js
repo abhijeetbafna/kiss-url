@@ -27,7 +27,7 @@ const seedInitialDataIfNeeded = () => {
     const wsPersonal = db.createWorkspace({
       name: 'Personal Space',
       ownerId: demoUser.id,
-      icon: '👤',
+      icon: 'user',
       color: '#6366f1',
       description: 'Default personal projects and short links'
     });
@@ -35,7 +35,7 @@ const seedInitialDataIfNeeded = () => {
     const wsMarketing = db.createWorkspace({
       name: 'Growth & Marketing',
       ownerId: demoUser.id,
-      icon: '🚀',
+      icon: 'rocket',
       color: '#10b981',
       description: 'Campaign, social media, and ad tracking links'
     });
@@ -44,11 +44,11 @@ const seedInitialDataIfNeeded = () => {
     db.createLink({
       workspaceId: wsPersonal.id,
       creatorId: demoUser.id,
-      slug: 'launch',
+      slug: 'docs',
       domain: 'kiss.url',
-      targetUrl: 'https://github.com/topics/modern-web',
-      title: 'Modern Web Dev Topics',
-      tags: ['Launch', 'Dev']
+      targetUrl: 'https://developer.mozilla.org',
+      title: 'Developer Documentation',
+      tags: ['Docs', 'Resources']
     });
 
     db.createLink({
@@ -67,19 +67,18 @@ const seedInitialDataIfNeeded = () => {
       handle: 'alexdev',
       name: 'Alex Rivera',
       tagline: 'Staff Product Engineer & Design Architect',
-      bio: 'Building developer tools, open-source software, and minimal design systems.',
+      bio: 'Building high-performance web applications and minimal design systems.',
       avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
       theme: 'minimal',
       socials: {
         twitter: 'alexrivera_dev',
-        github: 'alexrivera',
         linkedin: 'alexrivera',
         website: 'https://alexrivera.dev',
         email: 'alex@example.com'
       },
       links: [
-        { id: 'bl_1', type: 'link', title: '⭐ GitHub Open Source Projects', subtitle: 'Star my latest tools & libraries', url: 'https://github.com', highlight: true },
-        { id: 'bl_2', type: 'newsletter', title: '🎙️ Weekly Design Engineering Newsletter', subtitle: 'Read by 12,000+ front-end developers', url: '' }
+        { id: 'bl_1', type: 'link', title: 'Developer Tools & Libraries', subtitle: 'Explore high-performance web utilities', url: 'https://developer.mozilla.org', highlight: true },
+        { id: 'bl_2', type: 'newsletter', title: 'Design Engineering Digest', subtitle: 'Read by 12,000+ front-end developers', url: '' }
       ]
     });
   } else {
@@ -90,6 +89,11 @@ const seedInitialDataIfNeeded = () => {
 };
 
 seedInitialDataIfNeeded();
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', time: new Date().toISOString(), version: '2.0.0' });
+});
 
 // ==========================================
 // 1. AUTHENTICATION ROUTES
@@ -116,7 +120,7 @@ app.post('/api/auth/register', (req, res) => {
   const defaultWs = db.createWorkspace({
     name: 'Personal Space',
     ownerId: newUser.id,
-    icon: '👤',
+    icon: 'user',
     color: '#6366f1',
     description: 'Personal projects and short links'
   });
@@ -154,7 +158,7 @@ app.post('/api/auth/login', (req, res) => {
     const defaultWs = db.createWorkspace({
       name: 'Personal Space',
       ownerId: user.id,
-      icon: '👤',
+      icon: 'user',
       color: '#6366f1'
     });
     workspaces = [defaultWs];
@@ -177,7 +181,7 @@ app.get('/api/auth/me', requireAuth, (req, res) => {
     const defaultWs = db.createWorkspace({
       name: 'Personal Space',
       ownerId: req.user.id,
-      icon: '👤',
+      icon: 'user',
       color: '#6366f1'
     });
     workspaces = [defaultWs];

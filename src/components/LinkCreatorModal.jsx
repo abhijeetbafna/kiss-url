@@ -175,10 +175,10 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
 
   if (!isOpen) return null;
 
-  // AI Smart Suggestion Generator
-  const handleAIGenerateSuggestions = () => {
+  // Smart Suggestion Generator
+  const handleSmartAutoSuggest = () => {
     if (!targetUrl) {
-      alert('Please enter a Target URL first so the AI can analyze it.');
+      alert('Please enter a Target URL first to auto-generate slugs and tags.');
       return;
     }
 
@@ -418,10 +418,10 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   <label className="text-xs font-semibold text-foreground">Destination Target URL</label>
                   <button
                     type="button"
-                    onClick={handleAIGenerateSuggestions}
+                    onClick={handleSmartAutoSuggest}
                     className="flex items-center gap-1 text-xs text-primary font-medium hover:underline"
                   >
-                    <Wand2 size={12} /> AI Generate Slugs & Tags
+                    <Wand2 size={12} /> Smart Auto-Suggest
                   </button>
                 </div>
                 <input
