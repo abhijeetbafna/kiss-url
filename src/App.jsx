@@ -21,6 +21,7 @@ import BulkShortenerModal from './components/BulkShortenerModal';
 import AuthModal from './components/AuthModal';
 import PixelManagerModal from './components/PixelManagerModal';
 import WebhookManagerModal from './components/WebhookManagerModal';
+import UserManualModal from './components/UserManualModal';
 
 import { 
   getStoredLinks, 
@@ -49,6 +50,7 @@ export default function App() {
   const [isPixelModalOpen, setIsPixelModalOpen] = useState(false);
   const [isWebhookModalOpen, setIsWebhookModalOpen] = useState(false);
   const [isWorkspaceAnalyticsOpen, setIsWorkspaceAnalyticsOpen] = useState(false);
+  const [isUserManualOpen, setIsUserManualOpen] = useState(false);
   const [isBioStudioOpen, setIsBioStudioOpen] = useState(false);
   const [isDomainModalOpen, setIsDomainModalOpen] = useState(false);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
@@ -267,6 +269,13 @@ export default function App() {
       <Footer
         totalLinks={links.length}
         totalClicks={totalClicks}
+        onOpenUserManual={() => setIsUserManualOpen(true)}
+        onOpenBioStudio={() => setIsBioStudioOpen(true)}
+        onOpenDomainModal={() => setIsDomainModalOpen(true)}
+        onOpenSafetyModal={() => setIsSafetyModalOpen(true)}
+        onOpenPixelModal={() => setIsPixelModalOpen(true)}
+        onOpenWebhookModal={() => setIsWebhookModalOpen(true)}
+        onOpenWorkspaceAnalytics={() => setIsWorkspaceAnalyticsOpen(true)}
       />
 
       {/* 8. Specialized Modals */}
@@ -282,6 +291,19 @@ export default function App() {
         onClose={() => setIsCreateModalOpen(false)}
         onLinkCreated={handleLinkCreated}
         initialData={createInitialData}
+      />
+
+      <UserManualModal
+        isOpen={isUserManualOpen}
+        onClose={() => setIsUserManualOpen(false)}
+        onOpenCreateModal={() => {
+          setCreateInitialData(null);
+          setIsCreateModalOpen(true);
+        }}
+        onOpenBioStudio={() => setIsBioStudioOpen(true)}
+        onOpenPixelModal={() => setIsPixelModalOpen(true)}
+        onOpenWebhookModal={() => setIsWebhookModalOpen(true)}
+        onOpenWorkspaceAnalytics={() => setIsWorkspaceAnalyticsOpen(true)}
       />
 
       {activeQRLink && (
