@@ -3,6 +3,7 @@ import {
   Copy, Check, QrCode, BarChart3, Play, Trash2, 
   Search, Shield, Clock, Smartphone, Sparkles, Inbox
 } from 'lucide-react';
+import { buildShortUrl } from '../services/storageService';
 
 export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, onOpenSimulator }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -10,7 +11,7 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
   const [copiedId, setCopiedId] = useState(null);
 
   const handleCopy = (link) => {
-    const fullUrl = `https://${link.domain}/${link.slug}`;
+    const fullUrl = buildShortUrl(link.slug, link.domain);
     navigator.clipboard.writeText(fullUrl);
     setCopiedId(link.id);
     setTimeout(() => setCopiedId(null), 2000);
@@ -117,7 +118,7 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
             const hasExpiry = Boolean(link.protection?.expiresAt);
             const isSmartRouted = link.routing?.enabled;
             const hasSocialOg = link.socialOg?.enabled;
-            const fullShortUrl = `https://${link.domain}/${link.slug}`;
+            const fullShortUrl = buildShortUrl(link.slug, link.domain);
 
             return (
               <div 

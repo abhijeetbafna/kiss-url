@@ -1,36 +1,32 @@
-// Local Storage Service for 100% Free / Zero-Cost Client-Side Database & Cloudflare Sync
+// Local Storage Service for Client-Side Database & Real Link Resolution
 
 const STORAGE_KEY = 'kissurl_links_v1';
-const SETTINGS_KEY = 'kissurl_settings_v1';
 
 const INITIAL_SAMPLE_LINKS = [
   {
     id: 'lp_sample_1',
-    slug: 'launch-app',
+    slug: 'launch',
     domain: 'kiss.url',
     targetUrl: 'https://github.com/topics/modern-web',
-    title: 'Mobile App Launch Campaign',
+    title: 'Modern Web Dev Topics',
     createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     clicks: 1420,
-    tags: ['Launch', 'Mobile', 'Q3'],
+    tags: ['Launch', 'Dev'],
     
-    // Feature 1: Social OpenGraph Override
     socialOg: {
       enabled: true,
-      title: 'Get 50% Off Lifetime Pro Access | KissURL',
-      description: 'The ultra-fast, modern link management platform built for creators & developers.',
+      title: 'Modern Web Development Tools & Libraries',
+      description: 'Explore curated repositories and frameworks for high-performance web applications.',
       imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80',
     },
     
-    // Feature 2: Smart Device Routing
     routing: {
       enabled: true,
-      iosUrl: 'https://apps.apple.com/app/example-app',
-      androidUrl: 'https://play.google.com/store/apps/details?id=com.example.app',
+      iosUrl: 'https://apps.apple.com',
+      androidUrl: 'https://play.google.com',
       desktopUrl: 'https://github.com/topics/modern-web',
     },
     
-    // Feature 3: Security & Lifespan
     protection: {
       isPasswordProtected: false,
       password: '',
@@ -38,7 +34,6 @@ const INITIAL_SAMPLE_LINKS = [
       maxClicks: 5000,
     },
     
-    // Feature 4: Analytics data
     analytics: {
       referrers: {
         'twitter.com': 640,
@@ -72,12 +67,12 @@ const INITIAL_SAMPLE_LINKS = [
   {
     id: 'lp_sample_2',
     slug: 'secret-deck',
-    domain: 'go.bio',
+    domain: 'kiss.url',
     targetUrl: 'https://pitch.com',
-    title: 'Investor Pitch Deck (Protected)',
+    title: 'Confidential Pitch Deck (Passcode: demo)',
     createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     clicks: 84,
-    tags: ['Fundraising', 'Confidential'],
+    tags: ['Confidential'],
     
     socialOg: {
       enabled: false,
@@ -106,43 +101,6 @@ const INITIAL_SAMPLE_LINKS = [
         { date: '2026-10-05', clicks: 46 },
       ]
     }
-  },
-  {
-    id: 'lp_sample_3',
-    slug: 'dev-summit-qr',
-    domain: 'kiss.url',
-    targetUrl: 'https://youtube.com',
-    title: 'Conference Keynote QR Pass',
-    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    clicks: 395,
-    tags: ['Event', 'QR', 'Keynote'],
-    
-    socialOg: {
-      enabled: true,
-      title: 'Dev Summit 2026 Live Stream & Slides',
-      description: 'Access the exclusive slides and live keynote recording.',
-      imageUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&auto=format&fit=crop&q=80',
-    },
-    routing: {
-      enabled: false,
-      iosUrl: '',
-      androidUrl: '',
-      desktopUrl: '',
-    },
-    protection: {
-      isPasswordProtected: false,
-      password: '',
-      expiresAt: '',
-      maxClicks: 0,
-    },
-    analytics: {
-      referrers: { 'qr_scan': 340, 'direct': 55 },
-      devices: { 'iOS': 240, 'Android': 155 },
-      countries: { 'US': 210, 'DE': 80, 'FR': 65, 'JP': 40 },
-      clickHistory: [
-        { date: '2026-10-05', clicks: 395 },
-      ]
-    }
   }
 ];
 
@@ -166,6 +124,22 @@ export const saveLinks = (links) => {
   } catch (e) {
     console.error('Error saving links to localStorage:', e);
   }
+};
+
+export const getLinkBySlug = (slug) => {
+  const links = getStoredLinks();
+  const clean = slug.toLowerCase().trim();
+  return links.find(l => l.slug.toLowerCase() === clean);
+};
+
+export const buildShortUrl = (slug, domain = null) => {
+  const cleanSlug = slug.toLowerCase().trim();
+  if (typeof window !== 'undefined' && window.location) {
+    const currentOrigin = window.location.origin;
+    // If running on localhost or a real host, route to /r/:slug so it resolves immediately in any tab
+    return `${currentOrigin}/r/${cleanSlug}`;
+  }
+  return `https://${domain || 'kiss.url'}/r/${cleanSlug}`;
 };
 
 export const createLink = (linkData) => {
@@ -202,14 +176,34 @@ export const deleteLink = (id) => {
   return filtered;
 };
 
-export const recordSimulatedClick = (linkId, meta = {}) => {
+export const recordRealClick = (linkId, meta = {}) => {
   const links = getStoredLinks();
   const link = links.find(l => l.id === linkId);
   if (!link) return;
 
   const today = new Date().toISOString().split('T')[0];
-  const device = meta.device || 'Desktop';
-  const referrer = meta.referrer || 'direct';
+  
+  // Detect device
+  let device = 'Desktop';
+  const ua = meta.userAgent || (typeof navigator !== 'undefined' ? navigator.userAgent : '');
+  if (/iPhone|iPad|iPod/i.test(ua)) device = 'iOS';
+  else if (/Android/i.test(ua)) device = 'Android';
+  else if (/Macintosh|Mac OS X/i.test(ua)) device = 'macOS';
+  else if (/Windows/i.test(ua)) device = 'Windows';
+  else if (/Linux/i.test(ua)) device = 'Linux';
+
+  // Detect referrer
+  let referrer = meta.referrer || (typeof document !== 'undefined' ? document.referrer : '') || 'direct';
+  if (referrer && referrer !== 'direct') {
+    try {
+      referrer = new URL(referrer).hostname.replace(/^www\./, '');
+    } catch {
+      referrer = 'direct';
+    }
+  } else {
+    referrer = 'direct';
+  }
+
   const country = meta.country || 'US';
 
   link.clicks = (link.clicks || 0) + 1;
@@ -218,14 +212,10 @@ export const recordSimulatedClick = (linkId, meta = {}) => {
     link.analytics = { referrers: {}, devices: {}, countries: {}, clickHistory: [] };
   }
 
-  // Update referrers
   link.analytics.referrers[referrer] = (link.analytics.referrers[referrer] || 0) + 1;
-  // Update devices
   link.analytics.devices[device] = (link.analytics.devices[device] || 0) + 1;
-  // Update countries
   link.analytics.countries[country] = (link.analytics.countries[country] || 0) + 1;
 
-  // Update history
   const hist = link.analytics.clickHistory || [];
   const existingDay = hist.find(h => h.date === today);
   if (existingDay) {
@@ -256,7 +246,7 @@ export const exportLinksAsCSV = () => {
   const rows = links.map(l => [
     `"${l.slug}"`,
     `"${l.domain}"`,
-    `"https://${l.domain}/${l.slug}"`,
+    `"${buildShortUrl(l.slug, l.domain)}"`,
     `"${l.targetUrl}"`,
     `"${(l.title || '').replace(/"/g, '""')}"`,
     l.clicks || 0,

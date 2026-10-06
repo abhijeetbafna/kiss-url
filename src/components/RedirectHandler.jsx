@@ -1,0 +1,248 @@
+import React, { useState, useEffect } from 'react';
+import { getStoredLinks, recordRealClick } from '../services/storageService';
+import { Shield, AlertCircle, ArrowLeft, ExternalLink } from 'lucide-react';
+
+export default function RedirectHandler({ slug }) {
+  const [status, setStatus] = useState('resolving'); // resolving | redirecting | password_required | expired | not_found
+  const [link, setLink] = useState(null);
+  const [resolvedUrl, setResolvedUrl] = useState('');
+  const [enteredPassword, setEnteredPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  useEffect(() => {
+    if (!slug) {
+      setStatus('not_found');
+      return;
+    }
+
+    const links = getStoredLinks();
+    const cleanSlug = slug.toLowerCase().trim();
+    const matched = links.find(l => l.slug.toLowerCase() === cleanSlug);
+
+    if (!matched) {
+      setStatus('not_found');
+      return;
+    }
+
+    setLink(matched);
+
+    // Check expiration
+    if (matched.protection?.expiresAt && new Date(matched.protection.expiresAt) < new Date()) {
+      setStatus('expired');
+      return;
+    }
+
+    // Check max clicks
+    if (matched.protection?.maxClicks > 0 && (matched.clicks || 0) >= matched.protection.maxClicks) {
+      setStatus('expired');
+      return;
+    }
+
+    // Check password protection
+    if (matched.protection?.isPasswordProtected && matched.protection.password) {
+      setStatus('password_required');
+      return;
+    }
+
+    // Proceed to redirect
+    executeRedirect(matched);
+  }, [slug]);
+
+  const executeRedirect = (targetLink) => {
+    // Determine destination by device
+    let destination = targetLink.targetUrl;
+    const ua = navigator.userAgent || '';
+
+    if (targetLink.routing?.enabled) {
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+      const isAndroid = /Android/i.test(ua);
+
+      if (isIOS && targetLink.routing.iosUrl) {
+        destination = targetLink.routing.iosUrl;
+      } else if (isAndroid && targetLink.routing.androidUrl) {
+        destination = targetLink.routing.androidUrl;
+      } else if (targetLink.routing.desktopUrl) {
+        destination = targetLink.routing.desktopUrl;
+      }
+    }
+
+    // Record real analytics click
+    recordRealClick(targetLink.id, {
+      referrer: document.referrer || 'direct',
+      userAgent: ua,
+    });
+
+    setResolvedUrl(destination);
+    setStatus('redirecting');
+
+    // Immediate browser redirect
+    try {
+      window.location.replace(destination);
+    } catch {
+      window.location.href = destination;
+    }
+  };
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (enteredPassword === link.protection.password) {
+      setPasswordError('');
+      executeRedirect(link);
+    } else {
+      setPasswordError('Incorrect passcode. Please try again.');
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem 1.25rem',
+      backgroundColor: 'var(--bg-page)',
+      color: 'var(--text-primary)',
+      fontFamily: 'var(--font-sans)',
+      textAlign: 'center'
+    }}>
+      {/* 1. REDIRECTING / RESOLVING STATE */}
+      {(status === 'resolving' || status === 'redirecting') && (
+        <div style={{ maxWidth: '420px', width: '100%' }}>
+          <div style={{ 
+            width: '36px', 
+            height: '36px', 
+            borderRadius: '50%', 
+            border: '3px solid var(--border-default)', 
+            borderTopColor: 'var(--primary-bg)', 
+            animation: 'spin 0.8s linear infinite',
+            margin: '0 auto 1.25rem' 
+          }} />
+          <h1 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.4rem', letterSpacing: '-0.02em' }}>
+            Redirecting you now...
+          </h1>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+            Taking you to destination: <span style={{ color: 'var(--text-primary)', wordBreak: 'break-all' }}>{resolvedUrl || 'destination'}</span>
+          </p>
+          {resolvedUrl && (
+            <a 
+              href={resolvedUrl} 
+              className="btn btn-secondary" 
+              style={{ fontSize: '0.85rem', display: 'inline-flex' }}
+            >
+              <ExternalLink size={14} /> Click here if not redirected automatically
+            </a>
+          )}
+        </div>
+      )}
+
+      {/* 2. PASSWORD REQUIRED STATE */}
+      {status === 'password_required' && (
+        <div style={{ 
+          maxWidth: '380px', 
+          width: '100%', 
+          backgroundColor: 'var(--bg-surface)', 
+          border: '1px solid var(--border-default)', 
+          borderRadius: 'var(--radius-lg)', 
+          padding: '2rem 1.5rem',
+          boxShadow: 'var(--shadow-subtle)'
+        }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--bg-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', color: 'var(--text-primary)' }}>
+            <Shield size={20} />
+          </div>
+          <h1 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.35rem', letterSpacing: '-0.02em' }}>
+            Protected Link
+          </h1>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+            This short link is passcode protected. Enter the passcode to continue.
+          </p>
+
+          <form onSubmit={handlePasswordSubmit}>
+            <input
+              type="password"
+              placeholder="Enter passcode..."
+              value={enteredPassword}
+              onChange={(e) => {
+                setEnteredPassword(e.target.value);
+                if (passwordError) setPasswordError('');
+              }}
+              className="input input-mono"
+              style={{ textAlign: 'center', marginBottom: '0.65rem' }}
+              autoFocus
+            />
+
+            {passwordError && (
+              <div style={{ fontSize: '0.8rem', color: 'var(--error-text)', marginBottom: '0.65rem' }}>
+                {passwordError}
+              </div>
+            )}
+
+            <button type="submit" className="btn btn-primary" style={{ width: '100%', marginBottom: '0.75rem' }}>
+              Unlock & Open Link
+            </button>
+
+            <a href="/" className="btn btn-ghost" style={{ width: '100%', fontSize: '0.8rem' }}>
+              <ArrowLeft size={13} /> Back to KissURL
+            </a>
+          </form>
+        </div>
+      )}
+
+      {/* 3. EXPIRED STATE */}
+      {status === 'expired' && (
+        <div style={{ 
+          maxWidth: '400px', 
+          width: '100%', 
+          backgroundColor: 'var(--bg-surface)', 
+          border: '1px solid var(--border-default)', 
+          borderRadius: 'var(--radius-lg)', 
+          padding: '2rem 1.5rem',
+          boxShadow: 'var(--shadow-subtle)'
+        }}>
+          <AlertCircle size={36} color="var(--error-text)" style={{ margin: '0 auto 0.75rem' }} />
+          <h1 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.35rem', letterSpacing: '-0.02em' }}>
+            Link Expired
+          </h1>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+            This short link has expired or reached its maximum allowed click limit.
+          </p>
+          <a href="/" className="btn btn-primary" style={{ display: 'inline-flex' }}>
+            <ArrowLeft size={14} /> Go to KissURL Homepage
+          </a>
+        </div>
+      )}
+
+      {/* 4. NOT FOUND STATE */}
+      {status === 'not_found' && (
+        <div style={{ 
+          maxWidth: '420px', 
+          width: '100%', 
+          backgroundColor: 'var(--bg-surface)', 
+          border: '1px solid var(--border-default)', 
+          borderRadius: 'var(--radius-lg)', 
+          padding: '2.5rem 1.5rem',
+          boxShadow: 'var(--shadow-subtle)'
+        }}>
+          <div style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--text-dim)', marginBottom: '0.25rem', fontFamily: 'var(--font-mono)' }}>
+            404
+          </div>
+          <h1 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.4rem', letterSpacing: '-0.02em' }}>
+            Short link not found
+          </h1>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+            The requested short URL <code style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>/{slug}</code> does not exist or may have been deleted.
+          </p>
+          <a href="/" className="btn btn-primary" style={{ display: 'inline-flex' }}>
+            <ArrowLeft size={14} /> Create a New Short Link
+          </a>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  );
+}

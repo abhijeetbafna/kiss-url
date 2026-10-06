@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Smartphone, Monitor, Shield, AlertTriangle, CheckCircle, ExternalLink, RefreshCw } from 'lucide-react';
+import { buildShortUrl } from '../services/storageService';
 
 export default function SimulatorModal({ link, onClose }) {
   const [deviceMode, setDeviceMode] = useState('desktop'); // desktop | ios | android
@@ -14,7 +15,7 @@ export default function SimulatorModal({ link, onClose }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  const fullShortUrl = `https://${link.domain}/${link.slug}`;
+  const fullShortUrl = buildShortUrl(link.slug, link.domain);
 
   // Expiration and click cap
   const isExpired = link.protection?.expiresAt && new Date(link.protection.expiresAt) < new Date();

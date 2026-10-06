@@ -1,15 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
-import { X, Download, Copy, Check } from 'lucide-react';
+import { X, Download, Copy, Check, Pipette } from 'lucide-react';
+import { buildShortUrl } from '../services/storageService';
+
+const PRESET_COLORS = ['#09090b', '#ffffff', '#0070f3', '#15803d', '#b45309', '#7c3aed', '#db2777'];
+const PRESET_BGS = ['#ffffff', '#f4f4f5', '#eff6ff', '#09090b'];
 
 export default function QRCodeModal({ link, onClose }) {
-  const canvasRef = useRef(null);
+  const colorInputRef = useRef(null);
+  const [qrDataUrl, setQrDataUrl] = useState('');
   const [fgColor, setFgColor] = useState('#09090b');
   const [bgColor, setBgColor] = useState('#ffffff');
   const [errorCorrection, setErrorCorrection] = useState('H');
   const [copied, setCopied] = useState(false);
 
-  const fullUrl = `https://${link.domain}/${link.slug}`;
+  const fullUrl = buildShortUrl(link.slug, link.domain);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -19,14 +24,30 @@ export default function QRCodeModal({ link, onClose }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  useEffect(() => {
-    if (!canvasRef.current) return;
+  // Smart contrast auto-switching
+  const handleBgChange = (newBg) => {
+    setBgColor(newBg);
+    if (newBg === '#09090b' && fgColor === '#09090b') {
+      setFgColor('#ffffff');
+    } else if (newBg !== '#09090b' && fgColor === '#ffffff') {
+      setFgColor('#09090b');
+    }
+  };
 
-    QRCode.toCanvas(
-      canvasRef.current,
+  const handleFgChange = (newFg) => {
+    setFgColor(newFg);
+    if (newFg === '#09090b' && bgColor === '#09090b') {
+      setBgColor('#ffffff');
+    } else if (newFg === '#ffffff' && bgColor === '#ffffff') {
+      setBgColor('#09090b');
+    }
+  };
+
+  useEffect(() => {
+    QRCode.toDataURL(
       fullUrl,
       {
-        width: 280,
+        width: 400,
         margin: 2,
         color: {
           dark: fgColor,
@@ -34,17 +55,20 @@ export default function QRCodeModal({ link, onClose }) {
         },
         errorCorrectionLevel: errorCorrection,
       },
-      (error) => {
-        if (error) console.error('QR Code render error:', error);
+      (err, url) => {
+        if (err) {
+          console.error('QR Code error:', err);
+          return;
+        }
+        setQrDataUrl(url);
       }
     );
   }, [fullUrl, fgColor, bgColor, errorCorrection]);
 
   const handleDownloadPNG = () => {
-    if (!canvasRef.current) return;
-    const url = canvasRef.current.toDataURL('image/png');
+    if (!qrDataUrl) return;
     const a = document.createElement('a');
-    a.href = url;
+    a.href = qrDataUrl;
     a.download = `qr_${link.slug}.png`;
     a.click();
   };
@@ -78,7 +102,7 @@ export default function QRCodeModal({ link, onClose }) {
     <div className="modal-backdrop" onClick={onClose}>
       <div 
         className="modal-panel" 
-        style={{ maxWidth: '540px', position: 'relative' }}
+        style={{ maxWidth: '580px', width: '100%', position: 'relative' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -90,15 +114,20 @@ export default function QRCodeModal({ link, onClose }) {
           alignItems: 'center'
         }}>
           <div>
-            <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)' }}>
+            <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
               QR Code Generator
             </h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.2rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginTop: '0.25rem' }}>
               <code style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>
                 {fullUrl}
               </code>
-              <button onClick={handleCopyLink} className="btn-ghost" style={{ padding: '0 4px', fontSize: '0.75rem' }}>
-                {copied ? <Check size={12} color="#15803d" /> : <Copy size={12} />}
+              <button 
+                onClick={handleCopyLink} 
+                className="btn-ghost" 
+                style={{ padding: '2px 6px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                title="Copy short URL"
+              >
+                {copied ? <><Check size={12} color="#15803d" /> Copied</> : <><Copy size={12} /></>}
               </button>
             </div>
           </div>
@@ -107,98 +136,171 @@ export default function QRCodeModal({ link, onClose }) {
           </button>
         </div>
 
-        {/* Content */}
+        {/* Content Body */}
         <div style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.2fr)', gap: '1.5rem', alignItems: 'center' }}>
-            {/* Canvas Preview */}
-            <div style={{ 
-              backgroundColor: bgColor, 
-              padding: '1rem', 
-              borderRadius: 'var(--radius-md)', 
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '190px minmax(0, 1fr)', 
+            gap: '1.75rem', 
+            alignItems: 'center' 
+          }}>
+            
+            {/* 1:1 Aspect Ratio Bounded Frame */}
+            <div style={{
+              width: '190px',
+              height: '190px',
+              backgroundColor: bgColor,
+              borderRadius: 'var(--radius-md)',
               border: '1px solid var(--border-default)',
+              boxShadow: 'var(--shadow-subtle)',
+              padding: '0.65rem',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: 'var(--shadow-subtle)'
+              overflow: 'hidden',
+              flexShrink: 0
             }}>
-              <canvas ref={canvasRef} style={{ width: '100%', maxWidth: '180px', height: 'auto', display: 'block' }} />
+              {qrDataUrl ? (
+                <img 
+                  src={qrDataUrl} 
+                  alt="QR Code" 
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'contain',
+                    display: 'block' 
+                  }} 
+                />
+              ) : (
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Generating...</div>
+              )}
             </div>
 
-            {/* Customization Options */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {/* Customization Controls */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', minWidth: 0 }}>
+              
+              {/* QR Color Swatches */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
                   QR Color
                 </label>
-                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-                  {['#09090b', '#0070f3', '#15803d', '#b45309', '#7c3aed'].map(color => (
+                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                  {PRESET_COLORS.map(color => (
                     <button
                       key={color}
                       type="button"
-                      onClick={() => setFgColor(color)}
+                      onClick={() => handleFgChange(color)}
                       style={{
-                        width: '22px',
-                        height: '22px',
+                        width: '24px',
+                        height: '24px',
                         borderRadius: '50%',
                         backgroundColor: color,
                         border: fgColor === color ? '2px solid var(--text-primary)' : '1px solid var(--border-default)',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 0,
+                        transform: fgColor === color ? 'scale(1.1)' : 'scale(1)',
+                        transition: 'transform var(--duration-fast) var(--ease-out)'
                       }}
                       aria-label={`Color ${color}`}
-                    />
+                    >
+                      {fgColor === color && (
+                        <Check size={11} color={color === '#09090b' ? '#ffffff' : color === '#ffffff' ? '#09090b' : '#ffffff'} />
+                      )}
+                    </button>
                   ))}
-                  <input
-                    type="color"
-                    value={fgColor}
-                    onChange={(e) => setFgColor(e.target.value)}
-                    style={{ width: '22px', height: '22px', border: 'none', background: 'transparent', cursor: 'pointer' }}
-                    aria-label="Custom color picker"
-                  />
+
+                  {/* Custom color picker button */}
+                  <div style={{ position: 'relative', display: 'inline-flex' }}>
+                    <button
+                      type="button"
+                      onClick={() => colorInputRef.current?.click()}
+                      className="btn-icon"
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        border: '1px solid var(--border-default)',
+                        backgroundColor: 'var(--bg-muted)',
+                        padding: 0
+                      }}
+                      title="Custom color"
+                      aria-label="Custom color picker"
+                    >
+                      <Pipette size={11} />
+                    </button>
+                    <input
+                      ref={colorInputRef}
+                      type="color"
+                      value={fgColor}
+                      onChange={(e) => handleFgChange(e.target.value)}
+                      style={{ position: 'absolute', opacity: 0, width: 0, height: 0, pointerEvents: 'none' }}
+                      aria-label="Custom color input"
+                    />
+                  </div>
                 </div>
               </div>
 
+              {/* Background Color Swatches */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
                   Background
                 </label>
-                <div style={{ display: 'flex', gap: '0.4rem' }}>
-                  {['#ffffff', '#f4f4f5', '#f0f7ff', '#09090b'].map(color => (
+                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                  {PRESET_BGS.map(color => (
                     <button
                       key={color}
                       type="button"
-                      onClick={() => setBgColor(color)}
+                      onClick={() => handleBgChange(color)}
                       style={{
-                        width: '22px',
-                        height: '22px',
+                        width: '24px',
+                        height: '24px',
                         borderRadius: 'var(--radius-xs)',
                         backgroundColor: color,
                         border: bgColor === color ? '2px solid var(--text-primary)' : '1px solid var(--border-default)',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 0
                       }}
                       aria-label={`Background ${color}`}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
-                  Error Correction Level
-                </label>
-                <div style={{ display: 'flex', gap: '0.25rem' }}>
-                  {['L', 'M', 'Q', 'H'].map(lvl => (
-                    <button
-                      key={lvl}
-                      type="button"
-                      onClick={() => setErrorCorrection(lvl)}
-                      className={`btn ${errorCorrection === lvl ? 'btn-primary' : 'btn-secondary'}`}
-                      style={{ padding: '0.2rem 0.45rem', fontSize: '0.75rem' }}
                     >
-                      {lvl === 'H' ? 'High' : lvl === 'Q' ? 'Quarter' : lvl === 'M' ? 'Medium' : 'Low'}
+                      {bgColor === color && (
+                        <Check size={11} color={color === '#09090b' ? '#ffffff' : '#09090b'} />
+                      )}
                     </button>
                   ))}
                 </div>
               </div>
+
+              {/* Error Correction Level */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
+                  Error Correction Level
+                </label>
+                <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
+                  {[
+                    { id: 'L', label: 'Low (7%)' },
+                    { id: 'M', label: 'Medium (15%)' },
+                    { id: 'Q', label: 'Quartile (25%)' },
+                    { id: 'H', label: 'High (30%)' }
+                  ].map(lvl => (
+                    <button
+                      key={lvl.id}
+                      type="button"
+                      onClick={() => setErrorCorrection(lvl.id)}
+                      className={`btn ${errorCorrection === lvl.id ? 'btn-primary' : 'btn-secondary'}`}
+                      style={{ padding: '0.25rem 0.45rem', fontSize: '0.75rem', borderRadius: 'var(--radius-sm)' }}
+                    >
+                      {lvl.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -210,12 +312,13 @@ export default function QRCodeModal({ link, onClose }) {
           backgroundColor: 'var(--bg-subtle)',
           display: 'flex',
           gap: '0.5rem',
-          justifyContent: 'flex-end'
+          justifyContent: 'flex-end',
+          flexWrap: 'wrap'
         }}>
-          <button onClick={handleDownloadPNG} className="btn btn-secondary">
+          <button onClick={handleDownloadPNG} className="btn btn-secondary" style={{ fontSize: '0.85rem' }}>
             <Download size={14} /> Download PNG
           </button>
-          <button onClick={handleDownloadSVG} className="btn btn-primary">
+          <button onClick={handleDownloadSVG} className="btn btn-primary" style={{ fontSize: '0.85rem' }}>
             <Download size={14} /> Download Vector SVG
           </button>
         </div>

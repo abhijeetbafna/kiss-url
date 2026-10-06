@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { X, BarChart3, Globe, Smartphone, Compass } from 'lucide-react';
+import { buildShortUrl } from '../services/storageService';
 
 export default function AnalyticsModal({ link, onClose, onRefreshData }) {
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function AnalyticsModal({ link, onClose, onRefreshData }) {
             </h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.2rem' }}>
               <code style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>
-                https://{link.domain}/{link.slug}
+                {buildShortUrl(link.slug, link.domain)}
               </code>
               <span style={{ color: 'var(--text-dim)' }}>➔</span>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', maxWidth: '320px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

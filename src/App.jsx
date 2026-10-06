@@ -6,6 +6,7 @@ import WorkflowSection from './components/WorkflowSection';
 import LinkList from './components/LinkList';
 import TrustFeatures from './components/TrustFeatures';
 import Footer from './components/Footer';
+import RedirectHandler from './components/RedirectHandler';
 
 import LinkCreatorModal from './components/LinkCreatorModal';
 import QRCodeModal from './components/QRCodeModal';
@@ -28,6 +29,21 @@ export default function App() {
   const [activeQRLink, setActiveQRLink] = useState(null);
   const [activeAnalyticsLink, setActiveAnalyticsLink] = useState(null);
   const [activeSimulatorLink, setActiveSimulatorLink] = useState(null);
+
+  // Check if current URL path is a short redirect route (e.g. /r/:slug or /:slug)
+  const pathname = window.location.pathname;
+  const searchParams = new URLSearchParams(window.location.search);
+  const querySlug = searchParams.get('r');
+
+  let redirectSlug = null;
+  if (querySlug) {
+    redirectSlug = querySlug;
+  } else if (pathname.startsWith('/r/')) {
+    redirectSlug = pathname.replace(/^\/r\//, '').split('/')[0];
+  } else if (pathname.length > 1 && !pathname.includes('.') && pathname !== '/') {
+    // Check if path matches a known slug or is a direct shortcode
+    redirectSlug = pathname.substring(1).split('/')[0];
+  }
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -61,6 +77,11 @@ export default function App() {
       loadData();
     }
   };
+
+  // If visiting a short redirect URL, render the RedirectHandler
+  if (redirectSlug) {
+    return <RedirectHandler slug={redirectSlug} />;
+  }
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', color: 'var(--text-primary)' }}>

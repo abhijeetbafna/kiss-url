@@ -4,6 +4,7 @@ import {
   Sparkles, Shield, Smartphone, AlertCircle, ChevronDown, ChevronUp, Sliders
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { buildShortUrl } from '../services/storageService';
 
 const SAMPLE_SLUGS = ['launch', 'promo', 'drop', 'access', 'newsletter', 'vip'];
 
@@ -102,7 +103,7 @@ export default function LandingHero({ onLinkCreated, onOpenQR, onOpenSimulator, 
 
   const handleCopy = () => {
     if (!lastCreatedLink) return;
-    const fullUrl = `https://${lastCreatedLink.domain}/${lastCreatedLink.slug}`;
+    const fullUrl = buildShortUrl(lastCreatedLink.slug, lastCreatedLink.domain);
     navigator.clipboard.writeText(fullUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -340,7 +341,7 @@ export default function LandingHero({ onLinkCreated, onOpenQR, onOpenSimulator, 
               <div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '2px' }}>Short Link</div>
                 <div style={{ fontSize: '1.2rem', fontWeight: '600', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
-                  https://{lastCreatedLink.domain}/{lastCreatedLink.slug}
+                  {buildShortUrl(lastCreatedLink.slug, lastCreatedLink.domain)}
                 </div>
               </div>
 
