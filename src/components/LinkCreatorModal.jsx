@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Sparkles, Globe, Smartphone, Shield, Tag, Link as LinkIcon, RefreshCw, Wand2, BarChart2 } from 'lucide-react';
+import { X, Sparkles, Smartphone, Shield, Link as LinkIcon, Wand2, BarChart2 } from 'lucide-react';
 import SocialCardPreview from './SocialCardPreview';
 import confetti from 'canvas-confetti';
 
@@ -110,7 +110,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div 
-        className="glass-panel modal-content" 
+        className="modal-content" 
         style={{ width: '100%', maxWidth: '780px', padding: '1.75rem', position: 'relative' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -118,75 +118,76 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
           onClick={onClose}
           className="btn-icon"
           style={{ position: 'absolute', top: '1.25rem', right: '1.25rem' }}
+          aria-label="Close modal"
         >
           <X size={18} />
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.25rem' }}>
-          <span className="badge badge-emerald">
+          <span className="badge badge-indigo">
             <Sparkles size={12} /> Studio Link Creator
           </span>
         </div>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: '800', marginBottom: '1rem' }}>
+        <h2 style={{ fontSize: '1.45rem', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '1rem' }}>
           Create Next-Gen Smart Link
         </h2>
 
         {/* Tab Navigation */}
-        <div style={{ display: 'flex', gap: '0.4rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem', marginBottom: '1.25rem', overflowX: 'auto' }}>
+        <div style={{ display: 'flex', gap: '0.35rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.65rem', marginBottom: '1.25rem', overflowX: 'auto' }}>
           <button
             type="button"
             onClick={() => setActiveTab('general')}
             className={`btn-ghost ${activeTab === 'general' ? 'badge-indigo' : ''}`}
-            style={{ borderRadius: '6px', fontSize: '0.875rem' }}
+            style={{ borderRadius: 'var(--radius-sm)', fontSize: '0.85rem' }}
           >
-            <LinkIcon size={15} /> General Link
+            <LinkIcon size={14} /> General Link
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('social')}
             className={`btn-ghost ${activeTab === 'social' ? 'badge-purple' : ''}`}
-            style={{ borderRadius: '6px', fontSize: '0.875rem' }}
+            style={{ borderRadius: 'var(--radius-sm)', fontSize: '0.85rem' }}
           >
-            <Sparkles size={15} /> Social Card Studio {ogEnabled && '●'}
+            <Sparkles size={14} /> Social Card Studio {ogEnabled && '●'}
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('routing')}
-            className={`btn-ghost ${activeTab === 'routing' ? 'badge-cyan' : ''}`}
-            style={{ borderRadius: '6px', fontSize: '0.875rem' }}
+            className={`btn-ghost ${activeTab === 'routing' ? 'badge-emerald' : ''}`}
+            style={{ borderRadius: 'var(--radius-sm)', fontSize: '0.85rem' }}
           >
-            <Smartphone size={15} /> Device Routing {routingEnabled && '●'}
+            <Smartphone size={14} /> Device Routing {routingEnabled && '●'}
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('protection')}
             className={`btn-ghost ${activeTab === 'protection' ? 'badge-amber' : ''}`}
-            style={{ borderRadius: '6px', fontSize: '0.875rem' }}
+            style={{ borderRadius: 'var(--radius-sm)', fontSize: '0.85rem' }}
           >
-            <Shield size={15} /> Security & Expiry {(isPasswordProtected || expiresAt || maxClicks > 0) && '●'}
+            <Shield size={14} /> Security & Expiry {(isPasswordProtected || expiresAt || maxClicks > 0) && '●'}
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('utm')}
-            className={`btn-ghost ${activeTab === 'utm' ? 'badge-emerald' : ''}`}
-            style={{ borderRadius: '6px', fontSize: '0.875rem' }}
+            className={`btn-ghost ${activeTab === 'utm' ? 'badge-indigo' : ''}`}
+            style={{ borderRadius: 'var(--radius-sm)', fontSize: '0.85rem' }}
           >
-            <BarChart2 size={15} /> UTM Builder
+            <BarChart2 size={14} /> UTM Builder
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
           {/* TAB 1: GENERAL */}
           {activeTab === 'general' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.15rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem', color: 'var(--text-muted)' }}>
-                  Destination URL <span style={{ color: 'var(--accent-rose)' }}>*</span>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.35rem', color: 'var(--text-secondary)' }}>
+                  Destination URL <span style={{ color: 'var(--badge-rose-text)' }}>*</span>
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="https://example.com/your-long-url-campaign"
+                  placeholder="https://example.com/your-campaign"
                   value={targetUrl}
                   onChange={(e) => setTargetUrl(e.target.value)}
                   className="input-field"
@@ -196,7 +197,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
 
               <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.5fr)', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem', color: 'var(--text-muted)' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.35rem', color: 'var(--text-secondary)' }}>
                     Branded Domain
                   </label>
                   <select
@@ -213,20 +214,20 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                 </div>
 
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                    <label style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                    <label style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-secondary)' }}>
                       Custom Alias (Slug)
                     </label>
                     <button
                       type="button"
                       onClick={generateRandomSlug}
                       className="btn-ghost"
-                      style={{ padding: '0 4px', fontSize: '0.75rem', color: 'var(--accent-cyan)' }}
+                      style={{ padding: '0 4px', fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: '600' }}
                     >
                       <Wand2 size={12} /> Auto-generate
                     </button>
                   </div>
-                  <div style={{ position: 'relative' }}>
+                  <div>
                     <input
                       type="text"
                       placeholder="e.g. secret-beta"
@@ -241,7 +242,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem', color: 'var(--text-muted)' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.35rem', color: 'var(--text-secondary)' }}>
                     Internal Title (Optional)
                   </label>
                   <input
@@ -253,7 +254,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem', color: 'var(--text-muted)' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.35rem', color: 'var(--text-secondary)' }}>
                     Tags (Comma separated)
                   </label>
                   <input
@@ -271,16 +272,25 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
           {/* TAB 2: SOCIAL CARD STUDIO */}
           {activeTab === 'social' && (
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', background: 'rgba(168, 85, 247, 0.08)', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid rgba(168, 85, 247, 0.2)' }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between', 
+                marginBottom: '1rem', 
+                backgroundColor: 'var(--badge-purple-bg)', 
+                padding: '0.75rem 1rem', 
+                borderRadius: 'var(--radius-md)', 
+                border: '1px solid var(--badge-purple-border)' 
+              }}>
                 <div>
-                  <div style={{ fontWeight: '600', fontSize: '0.9rem', color: '#c084fc' }}>Enable Custom Social Preview (OG Tags)</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Control exactly how Twitter, LinkedIn, WhatsApp & Slack display this link.</div>
+                  <div style={{ fontWeight: '700', fontSize: '0.875rem', color: 'var(--badge-purple-text)' }}>Enable Custom Social Preview (OG Tags)</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Control how Twitter, LinkedIn, WhatsApp & Slack display this link.</div>
                 </div>
                 <input
                   type="checkbox"
                   checked={ogEnabled}
                   onChange={(e) => setOgEnabled(e.target.checked)}
-                  style={{ width: '18px', height: '18px', accentColor: '#a855f7', cursor: 'pointer' }}
+                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
                 />
               </div>
 
@@ -288,7 +298,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
-                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', marginBottom: '0.3rem', color: 'var(--text-muted)' }}>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
                         Social Card Title
                       </label>
                       <input
@@ -300,7 +310,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                       />
                     </div>
                     <div>
-                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', marginBottom: '0.3rem', color: 'var(--text-muted)' }}>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
                         Social Image URL (1200x630 recommended)
                       </label>
                       <input
@@ -314,7 +324,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', marginBottom: '0.3rem', color: 'var(--text-muted)' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
                       Social Description
                     </label>
                     <textarea
@@ -344,23 +354,32 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
           {/* TAB 3: SMART ROUTING */}
           {activeTab === 'routing' && (
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', background: 'rgba(6, 182, 212, 0.08)', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid rgba(6, 182, 212, 0.2)' }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between', 
+                marginBottom: '1.25rem', 
+                backgroundColor: 'var(--badge-emerald-bg)', 
+                padding: '0.75rem 1rem', 
+                borderRadius: 'var(--radius-md)', 
+                border: '1px solid var(--badge-emerald-border)' 
+              }}>
                 <div>
-                  <div style={{ fontWeight: '600', fontSize: '0.9rem', color: '#22d3ee' }}>Smart Device Deep-Linking</div>
+                  <div style={{ fontWeight: '700', fontSize: '0.875rem', color: 'var(--badge-emerald-text)' }}>Smart Device Deep-Linking</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Route mobile visitors straight to their native App Store or deep link.</div>
                 </div>
                 <input
                   type="checkbox"
                   checked={routingEnabled}
                   onChange={(e) => setRoutingEnabled(e.target.checked)}
-                  style={{ width: '18px', height: '18px', accentColor: '#06b6d4', cursor: 'pointer' }}
+                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
                 />
               </div>
 
               {routingEnabled && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', marginBottom: '0.3rem', color: 'var(--text-muted)' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
                       🍎 iOS Destination (Apple App Store / TestFlight URL)
                     </label>
                     <input
@@ -373,7 +392,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', marginBottom: '0.3rem', color: 'var(--text-muted)' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
                       🤖 Android Destination (Google Play Store URL)
                     </label>
                     <input
@@ -386,7 +405,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', marginBottom: '0.3rem', color: 'var(--text-muted)' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
                       💻 Desktop & Fallback URL
                     </label>
                     <input
@@ -406,17 +425,17 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
           {activeTab === 'protection' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               {/* Password Protection */}
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ backgroundColor: 'var(--bg-surface-muted)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
                   <div>
-                    <div style={{ fontWeight: '600', fontSize: '0.9rem' }}>🔒 Password Protection Gate</div>
+                    <div style={{ fontWeight: '700', fontSize: '0.875rem', color: 'var(--text-primary)' }}>🔒 Password Protection Gate</div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Visitors must enter a passcode to access the destination.</div>
                   </div>
                   <input
                     type="checkbox"
                     checked={isPasswordProtected}
                     onChange={(e) => setIsPasswordProtected(e.target.checked)}
-                    style={{ width: '18px', height: '18px', accentColor: '#f59e0b', cursor: 'pointer' }}
+                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
                   />
                 </div>
                 {isPasswordProtected && (
@@ -433,8 +452,8 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
 
               {/* Expiration Controls */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.3rem' }}>
+                <div style={{ backgroundColor: 'var(--bg-surface-muted)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+                  <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-primary)' }}>
                     ⏳ Expire by Date & Time
                   </label>
                   <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Link self-destructs after deadline.</p>
@@ -443,15 +462,14 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                     value={expiresAt}
                     onChange={(e) => setExpiresAt(e.target.value)}
                     className="input-field"
-                    style={{ colorScheme: 'dark' }}
                   />
                 </div>
 
-                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.3rem' }}>
+                <div style={{ backgroundColor: 'var(--bg-surface-muted)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+                  <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-primary)' }}>
                     🔥 Burn-After-Clicks Limit
                   </label>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Expire after N total visits (0 = unlimited).</p>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Expire after N visits (0 = unlimited).</p>
                   <input
                     type="number"
                     min="0"
@@ -469,13 +487,13 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
           {activeTab === 'utm' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                Attach industry standard UTM tags to track conversion campaigns in Google Analytics, Mixpanel, and PostHog.
+                Attach standard UTM tags to track marketing campaigns in Google Analytics, Mixpanel, and PostHog.
               </p>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', marginBottom: '0.3rem', color: 'var(--text-muted)' }}>
-                    UTM Source (e.g. twitter, newsletter, youtube)
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
+                    UTM Source (e.g. twitter, newsletter)
                   </label>
                   <input
                     type="text"
@@ -486,8 +504,8 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', marginBottom: '0.3rem', color: 'var(--text-muted)' }}>
-                    UTM Medium (e.g. social, cpc, email, qr)
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
+                    UTM Medium (e.g. social, email, cpc)
                   </label>
                   <input
                     type="text"
@@ -500,8 +518,8 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', marginBottom: '0.3rem', color: 'var(--text-muted)' }}>
-                  UTM Campaign Name (e.g. black_friday_2026, product_launch)
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
+                  UTM Campaign Name (e.g. launch_promo)
                 </label>
                 <input
                   type="text"
@@ -516,7 +534,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                 type="button"
                 onClick={handleApplyUTM}
                 className="btn-secondary"
-                style={{ alignSelf: 'flex-start', marginTop: '0.5rem' }}
+                style={{ alignSelf: 'flex-start', marginTop: '0.4rem' }}
               >
                 Apply UTM Parameters to Target URL
               </button>
@@ -529,7 +547,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
               Cancel
             </button>
             <button type="submit" className="btn-primary">
-              <Sparkles size={16} /> Create Smart Link
+              <Sparkles size={15} /> Create Smart Link
             </button>
           </div>
         </form>

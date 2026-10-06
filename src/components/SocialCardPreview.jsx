@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageSquare, Hash, Image as ImageIcon } from 'lucide-react';
+import { MessageSquare, Hash } from 'lucide-react';
 
 const TwitterIcon = ({ size = 15 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -16,20 +16,20 @@ const LinkedInIcon = ({ size = 15 }) => (
 export default function SocialCardPreview({ title, description, imageUrl, destinationUrl, slug, domain }) {
   const [activePlatform, setActivePlatform] = useState('twitter');
 
-  const displayTitle = title || 'Your Dynamic Page Title Here';
-  const displayDesc = description || 'A short, engaging description for high click-through rates across social platforms.';
+  const displayTitle = title || 'Your Engaging Page Title Here';
+  const displayDesc = description || 'A short, persuasive summary that maximizes social media click-through rates.';
   const displayImage = imageUrl || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80';
   const displayUrl = `${domain || 'pulse.link'}/${slug || 'custom-alias'}`;
 
   return (
     <div style={{ marginTop: '1rem' }}>
       {/* Platform Switcher */}
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem', overflowX: 'auto' }}>
+      <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.875rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.65rem', overflowX: 'auto' }}>
         <button
           type="button"
           onClick={() => setActivePlatform('twitter')}
           className={`btn-ghost ${activePlatform === 'twitter' ? 'badge-indigo' : ''}`}
-          style={{ padding: '0.4rem 0.8rem', borderRadius: '6px' }}
+          style={{ padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-sm)' }}
         >
           <TwitterIcon size={14} /> Twitter / X
         </button>
@@ -37,7 +37,7 @@ export default function SocialCardPreview({ title, description, imageUrl, destin
           type="button"
           onClick={() => setActivePlatform('linkedin')}
           className={`btn-ghost ${activePlatform === 'linkedin' ? 'badge-indigo' : ''}`}
-          style={{ padding: '0.4rem 0.8rem', borderRadius: '6px' }}
+          style={{ padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-sm)' }}
         >
           <LinkedInIcon size={14} /> LinkedIn
         </button>
@@ -45,7 +45,7 @@ export default function SocialCardPreview({ title, description, imageUrl, destin
           type="button"
           onClick={() => setActivePlatform('whatsapp')}
           className={`btn-ghost ${activePlatform === 'whatsapp' ? 'badge-indigo' : ''}`}
-          style={{ padding: '0.4rem 0.8rem', borderRadius: '6px' }}
+          style={{ padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-sm)' }}
         >
           <MessageSquare size={14} /> WhatsApp
         </button>
@@ -53,7 +53,7 @@ export default function SocialCardPreview({ title, description, imageUrl, destin
           type="button"
           onClick={() => setActivePlatform('slack')}
           className={`btn-ghost ${activePlatform === 'slack' ? 'badge-indigo' : ''}`}
-          style={{ padding: '0.4rem 0.8rem', borderRadius: '6px' }}
+          style={{ padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-sm)' }}
         >
           <Hash size={14} /> Slack
         </button>
@@ -61,22 +61,23 @@ export default function SocialCardPreview({ title, description, imageUrl, destin
 
       {/* Platform Previews */}
       <div style={{
-        background: activePlatform === 'whatsapp' ? '#0b141a' : activePlatform === 'slack' ? '#1a1d21' : '#000000',
-        borderRadius: '12px',
-        padding: '1rem',
-        border: '1px solid rgba(255,255,255,0.1)',
+        backgroundColor: 'var(--bg-surface-muted)',
+        borderRadius: 'var(--radius-md)',
+        padding: '1.25rem',
+        border: '1px solid var(--border-subtle)',
         maxWidth: '520px',
         margin: '0 auto',
       }}>
         {activePlatform === 'twitter' && (
           <div style={{
-            border: '1px solid #2f3336',
+            border: '1px solid #cfd9de',
             borderRadius: '16px',
             overflow: 'hidden',
-            background: '#000',
-            fontFamily: 'system-ui, sans-serif'
+            backgroundColor: '#ffffff',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+            fontFamily: 'system-ui, -apple-system, sans-serif'
           }}>
-            <div style={{ height: '200px', width: '100%', position: 'relative', overflow: 'hidden', background: '#16181c' }}>
+            <div style={{ height: '200px', width: '100%', position: 'relative', overflow: 'hidden', backgroundColor: '#f7f9f9' }}>
               <img
                 src={displayImage}
                 alt="OG Preview"
@@ -87,19 +88,21 @@ export default function SocialCardPreview({ title, description, imageUrl, destin
                 position: 'absolute',
                 bottom: '8px',
                 left: '8px',
-                background: 'rgba(0,0,0,0.7)',
+                backgroundColor: 'rgba(15, 23, 42, 0.75)',
+                backdropFilter: 'blur(4px)',
                 padding: '2px 8px',
                 borderRadius: '4px',
-                fontSize: '12px',
-                color: '#fff'
+                fontSize: '11px',
+                color: '#ffffff',
+                fontWeight: '600'
               }}>
                 {domain || 'pulse.link'}
               </div>
             </div>
             <div style={{ padding: '12px' }}>
-              <div style={{ fontSize: '13px', color: '#71767b', marginBottom: '2px' }}>{domain || 'pulse.link'}</div>
-              <div style={{ fontSize: '15px', fontWeight: '700', color: '#e7e9ea', lineHeight: '1.3' }}>{displayTitle}</div>
-              <div style={{ fontSize: '14px', color: '#71767b', marginTop: '4px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              <div style={{ fontSize: '13px', color: '#536471', marginBottom: '2px' }}>{domain || 'pulse.link'}</div>
+              <div style={{ fontSize: '15px', fontWeight: '700', color: '#0f1419', lineHeight: '1.3' }}>{displayTitle}</div>
+              <div style={{ fontSize: '13px', color: '#536471', marginTop: '4px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {displayDesc}
               </div>
             </div>
@@ -108,13 +111,14 @@ export default function SocialCardPreview({ title, description, imageUrl, destin
 
         {activePlatform === 'linkedin' && (
           <div style={{
-            border: '1px solid #282e38',
+            border: '1px solid #e0e2e6',
             borderRadius: '8px',
             overflow: 'hidden',
-            background: '#1b1f23',
-            fontFamily: 'system-ui, sans-serif'
+            backgroundColor: '#ffffff',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+            fontFamily: 'system-ui, -apple-system, sans-serif'
           }}>
-            <div style={{ height: '190px', width: '100%', overflow: 'hidden', background: '#282e38' }}>
+            <div style={{ height: '190px', width: '100%', overflow: 'hidden', backgroundColor: '#eef3f8' }}>
               <img
                 src={displayImage}
                 alt="LinkedIn Preview"
@@ -122,19 +126,21 @@ export default function SocialCardPreview({ title, description, imageUrl, destin
                 onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80'; }}
               />
             </div>
-            <div style={{ padding: '10px 14px', background: '#1d2226' }}>
-              <div style={{ fontSize: '14px', fontWeight: '600', color: '#ffffff', lineHeight: '1.3' }}>{displayTitle}</div>
-              <div style={{ fontSize: '12px', color: '#939ba6', marginTop: '4px' }}>{displayUrl}</div>
+            <div style={{ padding: '10px 14px', backgroundColor: '#f3f6f8' }}>
+              <div style={{ fontSize: '14px', fontWeight: '600', color: '#191919', lineHeight: '1.3' }}>{displayTitle}</div>
+              <div style={{ fontSize: '12px', color: '#56687a', marginTop: '4px' }}>{displayUrl}</div>
             </div>
           </div>
         )}
 
         {activePlatform === 'whatsapp' && (
           <div style={{
-            background: '#202c33',
+            backgroundColor: '#ffffff',
             borderRadius: '8px',
             padding: '8px',
             maxWidth: '380px',
+            border: '1px solid #d1d7db',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
             fontFamily: 'system-ui, sans-serif'
           }}>
             <div style={{ borderRadius: '6px', overflow: 'hidden', marginBottom: '6px' }}>
@@ -145,22 +151,27 @@ export default function SocialCardPreview({ title, description, imageUrl, destin
                 onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80'; }}
               />
             </div>
-            <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#e9edef' }}>{displayTitle}</div>
-            <div style={{ fontSize: '12px', color: '#8696a0', marginTop: '2px' }}>{displayDesc}</div>
-            <div style={{ fontSize: '11px', color: '#53bdeb', marginTop: '6px' }}>{displayUrl}</div>
+            <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#111b21' }}>{displayTitle}</div>
+            <div style={{ fontSize: '12px', color: '#667781', marginTop: '2px' }}>{displayDesc}</div>
+            <div style={{ fontSize: '11px', color: '#00a884', marginTop: '6px', fontWeight: '600' }}>{displayUrl}</div>
           </div>
         )}
 
         {activePlatform === 'slack' && (
           <div style={{
-            borderLeft: '4px solid #6366f1',
+            borderLeft: '4px solid #2563eb',
             paddingLeft: '12px',
-            fontFamily: 'system-ui, sans-serif',
-            color: '#d1d2d3'
+            backgroundColor: '#ffffff',
+            padding: '10px 12px',
+            borderRadius: '0 8px 8px 0',
+            border: '1px solid #e2e8f0',
+            borderLeftWidth: '4px',
+            borderLeftColor: '#2563eb',
+            fontFamily: 'system-ui, sans-serif'
           }}>
-            <div style={{ fontSize: '12px', color: '#abacad', fontWeight: 'bold' }}>LinkPulse • {domain || 'pulse.link'}</div>
-            <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#1d9bd1', marginTop: '2px' }}>{displayTitle}</div>
-            <div style={{ fontSize: '13px', color: '#d1d2d3', marginTop: '4px' }}>{displayDesc}</div>
+            <div style={{ fontSize: '12px', color: '#616061', fontWeight: 'bold' }}>LinkPulse • {domain || 'pulse.link'}</div>
+            <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#1264a3', marginTop: '2px' }}>{displayTitle}</div>
+            <div style={{ fontSize: '13px', color: '#1d1c1d', marginTop: '4px' }}>{displayDesc}</div>
             <div style={{ marginTop: '8px', borderRadius: '4px', overflow: 'hidden', maxWidth: '320px' }}>
               <img
                 src={displayImage}
@@ -172,8 +183,8 @@ export default function SocialCardPreview({ title, description, imageUrl, destin
           </div>
         )}
       </div>
-      <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', textAlign: 'center', marginTop: '0.75rem' }}>
-        ✨ Overrides default metadata when crawlers (TwitterBot, SlackBot, DiscordBot) fetch your short link.
+      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '0.75rem' }}>
+        ✨ Dynamically overrides open graph metadata when crawlers (TwitterBot, SlackBot, DiscordBot) fetch your short URL.
       </p>
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
-  Copy, Check, QrCode, BarChart3, ExternalLink, Play, Trash2, 
-  Smartphone, Sparkles, Shield, Clock, Tag, Search, Filter, AlertCircle 
+  Copy, Check, QrCode, BarChart3, Play, Trash2, 
+  Smartphone, Sparkles, Shield, Clock, Search, AlertCircle 
 } from 'lucide-react';
 
 export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, onOpenSimulator }) {
@@ -33,11 +33,22 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
 
   return (
     <div>
-      {/* Search & Filter Bar */}
-      <div className="glass-panel" style={{ padding: '1rem 1.25rem', marginBottom: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+      {/* Search & Filter Toolbar */}
+      <div 
+        className="card-surface" 
+        style={{ 
+          padding: '0.875rem 1.25rem', 
+          marginBottom: '1rem', 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          flexWrap: 'wrap', 
+          gap: '0.75rem' 
+        }}
+      >
         {/* Search Input */}
         <div style={{ position: 'relative', flex: '1 1 280px', maxWidth: '420px' }}>
-          <Search size={16} color="var(--text-dim)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+          <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
             placeholder="Search links by alias, title, url, or tag..."
@@ -48,50 +59,50 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
           />
         </div>
 
-        {/* Filter Badges */}
-        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+        {/* Filter Badges with Real Counts */}
+        <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
           <button
             onClick={() => setActiveFilter('all')}
             className={`btn-ghost ${activeFilter === 'all' ? 'badge-indigo' : ''}`}
-            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: '6px' }}
+            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-sm)' }}
           >
-            All ({links.length})
+            All <span className="tabular-nums" style={{ fontWeight: '700', marginLeft: '2px' }}>({links.length})</span>
           </button>
           <button
             onClick={() => setActiveFilter('social')}
             className={`btn-ghost ${activeFilter === 'social' ? 'badge-purple' : ''}`}
-            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: '6px' }}
+            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-sm)' }}
           >
-            <Sparkles size={12} /> Social Cards ({links.filter(l => l.socialOg?.enabled).length})
+            <Sparkles size={12} /> Social Cards <span className="tabular-nums" style={{ fontWeight: '700', marginLeft: '2px' }}>({links.filter(l => l.socialOg?.enabled).length})</span>
           </button>
           <button
             onClick={() => setActiveFilter('routing')}
-            className={`btn-ghost ${activeFilter === 'routing' ? 'badge-cyan' : ''}`}
-            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: '6px' }}
+            className={`btn-ghost ${activeFilter === 'routing' ? 'badge-emerald' : ''}`}
+            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-sm)' }}
           >
-            <Smartphone size={12} /> Smart Routed ({links.filter(l => l.routing?.enabled).length})
+            <Smartphone size={12} /> Smart Routed <span className="tabular-nums" style={{ fontWeight: '700', marginLeft: '2px' }}>({links.filter(l => l.routing?.enabled).length})</span>
           </button>
           <button
             onClick={() => setActiveFilter('protected')}
             className={`btn-ghost ${activeFilter === 'protected' ? 'badge-amber' : ''}`}
-            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: '6px' }}
+            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-sm)' }}
           >
-            <Shield size={12} /> Protected ({links.filter(l => l.protection?.isPasswordProtected || l.protection?.expiresAt || l.protection?.maxClicks > 0).length})
+            <Shield size={12} /> Protected <span className="tabular-nums" style={{ fontWeight: '700', marginLeft: '2px' }}>({links.filter(l => l.protection?.isPasswordProtected || l.protection?.expiresAt || l.protection?.maxClicks > 0).length})</span>
           </button>
         </div>
       </div>
 
       {/* Links List */}
       {filteredLinks.length === 0 ? (
-        <div className="glass-panel" style={{ padding: '3rem 1.5rem', textAlign: 'center' }}>
-          <AlertCircle size={36} color="var(--text-dim)" style={{ margin: '0 auto 0.75rem' }} />
-          <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-muted)' }}>No matching links found</h3>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-dim)', marginTop: '0.25rem' }}>
-            Try adjusting your search query or create a new smart link.
+        <div className="card-surface" style={{ padding: '3.5rem 1.5rem', textAlign: 'center' }}>
+          <AlertCircle size={36} color="var(--text-muted)" style={{ margin: '0 auto 0.75rem' }} />
+          <h3 style={{ fontSize: '1.05rem', fontWeight: '700', color: 'var(--text-primary)' }}>No links match your criteria</h3>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+            Adjust your search filter or create a new smart link.
           </p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {filteredLinks.map((link) => {
             const isProtected = link.protection?.isPasswordProtected;
             const hasExpiry = Boolean(link.protection?.expiresAt);
@@ -102,24 +113,31 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
             return (
               <div 
                 key={link.id} 
-                className="glass-panel-interactive"
-                style={{ padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}
+                className="card-interactive"
+                style={{ 
+                  padding: '1.15rem 1.35rem', 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  flexWrap: 'wrap', 
+                  gap: '1rem' 
+                }}
               >
-                {/* Left Info */}
+                {/* Left Meta & URL Details */}
                 <div style={{ flex: '1 1 360px', minWidth: '0' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '0.35rem' }}>
-                    <h3 style={{ fontSize: '1.05rem', fontWeight: '700', color: '#ffffff' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.3rem' }}>
+                    <h3 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-primary)' }}>
                       {link.title || link.slug}
                     </h3>
 
-                    {/* Feature Badges */}
+                    {/* Semantic Badges */}
                     {hasSocialOg && (
                       <span className="badge badge-purple" title="Custom OpenGraph Social Preview">
                         <Sparkles size={10} /> Social Card
                       </span>
                     )}
                     {isSmartRouted && (
-                      <span className="badge badge-cyan" title="iOS & Android Smart Device Routing">
+                      <span className="badge badge-emerald" title="iOS & Android Smart Device Routing">
                         <Smartphone size={10} /> Smart Routed
                       </span>
                     )}
@@ -135,22 +153,23 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
                     )}
                   </div>
 
-                  {/* Short Link & Target URL */}
+                  {/* Short Link & Target */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', fontSize: '0.85rem' }}>
                     <code style={{ 
-                      color: 'var(--accent-cyan)', 
-                      fontWeight: '600', 
-                      background: 'rgba(6, 182, 212, 0.08)', 
+                      color: 'var(--accent-primary)', 
+                      fontWeight: '700', 
+                      backgroundColor: 'var(--accent-subtle)', 
                       padding: '2px 8px', 
-                      borderRadius: '4px',
-                      border: '1px solid rgba(6, 182, 212, 0.2)'
+                      borderRadius: 'var(--radius-xs)',
+                      border: '1px solid var(--accent-border)',
+                      fontFamily: 'var(--font-mono)'
                     }}>
                       {fullShortUrl}
                     </code>
-                    <span style={{ color: 'var(--text-dim)' }}>➔</span>
+                    <span style={{ color: 'var(--text-muted)' }}>➔</span>
                     <span style={{ 
-                      color: 'var(--text-muted)', 
-                      maxWidth: '300px', 
+                      color: 'var(--text-secondary)', 
+                      maxWidth: '320px', 
                       overflow: 'hidden', 
                       textOverflow: 'ellipsis', 
                       whiteSpace: 'nowrap' 
@@ -159,16 +178,17 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
                     </span>
                   </div>
 
-                  {/* Tags */}
+                  {/* Tag Pills */}
                   {link.tags && link.tags.length > 0 && (
-                    <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.45rem', flexWrap: 'wrap' }}>
                       {link.tags.map((tag, i) => (
                         <span key={i} style={{ 
                           fontSize: '0.7rem', 
-                          color: 'var(--text-dim)', 
-                          background: 'rgba(255,255,255,0.04)', 
+                          fontWeight: '500',
+                          color: 'var(--text-muted)', 
+                          backgroundColor: 'var(--bg-surface-muted)', 
                           padding: '1px 6px', 
-                          borderRadius: '4px' 
+                          borderRadius: 'var(--radius-xs)' 
                         }}>
                           #{tag}
                         </span>
@@ -177,24 +197,24 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
                   )}
                 </div>
 
-                {/* Right Action Tools & Clicks */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                  {/* Click Counter Button */}
+                {/* Right Action Tools & Tabular Clicks */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  {/* Click Badge with Tabular Numeral */}
                   <button
                     onClick={() => onOpenAnalytics(link)}
                     className="btn-ghost"
                     style={{ 
-                      background: 'rgba(99, 102, 241, 0.08)', 
-                      border: '1px solid rgba(99, 102, 241, 0.2)',
-                      padding: '0.4rem 0.85rem',
-                      borderRadius: '8px',
+                      backgroundColor: 'var(--accent-subtle)', 
+                      border: '1px solid var(--accent-border)',
+                      padding: '0.35rem 0.75rem',
+                      borderRadius: 'var(--radius-md)',
                       textAlign: 'left'
                     }}
                     title="View Deep Analytics"
                   >
-                    <div style={{ fontSize: '0.65rem', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '600' }}>Clicks</div>
-                    <div style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                      <BarChart3 size={15} color="#818cf8" /> {(link.clicks || 0).toLocaleString()}
+                    <div style={{ fontSize: '0.65rem', color: 'var(--accent-primary)', textTransform: 'uppercase', fontWeight: '700' }}>Clicks</div>
+                    <div className="tabular-nums" style={{ fontSize: '1.05rem', fontWeight: '800', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                      <BarChart3 size={14} color="var(--accent-primary)" /> {(link.clicks || 0).toLocaleString()}
                     </div>
                   </button>
 
@@ -203,16 +223,17 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
                     <button
                       onClick={() => handleCopy(link)}
                       className="btn-secondary"
-                      style={{ padding: '0.45rem 0.75rem', fontSize: '0.8rem' }}
+                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}
                       title="Copy Short URL"
                     >
-                      {copiedId === link.id ? <><Check size={14} color="#10b981" /> Copied</> : <><Copy size={14} /> Copy</>}
+                      {copiedId === link.id ? <><Check size={14} color="#059669" /> Copied</> : <><Copy size={14} /> Copy</>}
                     </button>
 
                     <button
                       onClick={() => onOpenQR(link)}
                       className="btn-icon"
                       title="Generate Studio QR Code"
+                      aria-label="Generate QR Code"
                     >
                       <QrCode size={16} />
                     </button>
@@ -221,15 +242,17 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
                       onClick={() => onOpenSimulator(link)}
                       className="btn-icon"
                       title="Test in Edge Routing Simulator"
+                      aria-label="Simulate Routing"
                     >
-                      <Play size={16} color="#38bdf8" />
+                      <Play size={16} color="var(--accent-primary)" />
                     </button>
 
                     <button
                       onClick={() => onDelete(link.id)}
                       className="btn-icon"
-                      style={{ color: 'var(--accent-rose)' }}
+                      style={{ color: 'var(--badge-rose-text)' }}
                       title="Delete Link"
+                      aria-label="Delete Link"
                     >
                       <Trash2 size={16} />
                     </button>

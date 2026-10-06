@@ -1,73 +1,110 @@
 import React from 'react';
-import { Sparkles, Plus, Download, Upload, Server, Zap, Shield, Globe } from 'lucide-react';
+import { Zap, Plus, Download, Server, Sun, Moon } from 'lucide-react';
 import { exportLinksAsCSV, exportLinksAsJSON } from '../services/storageService';
 
-export default function Header({ onOpenCreateModal, onOpenDeployModal, totalLinks, totalClicks }) {
+export default function Header({ onOpenCreateModal, onOpenDeployModal, totalLinks, totalClicks, theme, onToggleTheme }) {
   return (
-    <header className="glass-panel" style={{ padding: '1rem 1.75rem', marginBottom: '1.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-      {/* Brand Logo & Name */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+    <header 
+      className="card-surface" 
+      style={{ 
+        padding: '1rem 1.5rem', 
+        marginBottom: '1.75rem', 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        flexWrap: 'wrap', 
+        gap: '1rem',
+        borderBottom: '2px solid var(--border-subtle)'
+      }}
+    >
+      {/* Brand & Value Statement */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
         <div style={{
-          width: '42px',
-          height: '42px',
-          borderRadius: '12px',
-          background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
+          width: '40px',
+          height: '40px',
+          borderRadius: 'var(--radius-md)',
+          backgroundColor: 'var(--accent-primary)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 0 16px rgba(99, 102, 241, 0.4)'
+          boxShadow: 'var(--shadow-accent)',
+          color: '#ffffff'
         }}>
-          <Zap size={22} color="#ffffff" />
+          <Zap size={22} fill="currentColor" />
         </div>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <h1 style={{ fontSize: '1.35rem', fontWeight: '800', letterSpacing: '-0.02em', background: 'linear-gradient(to right, #ffffff, #cbd5e1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <h1 style={{ fontSize: '1.35rem', fontWeight: '800', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
               LinkPulse
             </h1>
-            <span className="badge badge-emerald" style={{ padding: '0.15rem 0.5rem', fontSize: '0.65rem' }}>
-              <span className="pulse-indicator" /> v1 Live
+            <span className="badge badge-emerald">
+              <span className="pulse-indicator" /> Live v1
             </span>
           </div>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            Next-Gen Smart Link Intelligence • $0/mo Edge Architecture
+          <p style={{ fontSize: '0.775rem', color: 'var(--text-muted)' }}>
+            High-Performance Link Management • $0/mo Edge Architecture
           </p>
         </div>
       </div>
 
-      {/* Metrics Bar */}
-      <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '0.4rem 1rem', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+      {/* KPI Counters (Tabular Numbers) */}
+      <div style={{ 
+        display: 'flex', 
+        gap: '1.25rem', 
+        alignItems: 'center', 
+        backgroundColor: 'var(--bg-surface-muted)', 
+        padding: '0.45rem 1.15rem', 
+        borderRadius: 'var(--radius-md)',
+        border: '1px solid var(--border-subtle)'
+      }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '0.65rem', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '600' }}>Active Links</div>
-          <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#fff' }}>{totalLinks}</div>
+          <div style={{ fontSize: '0.675rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.04em' }}>
+            Active Links
+          </div>
+          <div className="tabular-nums" style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--text-primary)' }}>
+            {totalLinks}
+          </div>
         </div>
-        <div style={{ width: '1px', height: '24px', background: 'var(--border-subtle)' }} />
+        <div style={{ width: '1px', height: '24px', backgroundColor: 'var(--border-strong)' }} />
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '0.65rem', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '600' }}>Total Clicks</div>
-          <div style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--accent-cyan)' }}>{totalClicks.toLocaleString()}</div>
+          <div style={{ fontSize: '0.675rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.04em' }}>
+            Total Clicks
+          </div>
+          <div className="tabular-nums" style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--accent-primary)' }}>
+            {totalClicks.toLocaleString()}
+          </div>
         </div>
       </div>
 
-      {/* Action Buttons */}
+      {/* Action Controls & Theme Toggle */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+        {/* Theme Toggle Button */}
+        <button
+          onClick={onToggleTheme}
+          className="btn-icon"
+          title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+          aria-label="Toggle Theme"
+        >
+          {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+        </button>
+
         <button
           onClick={onOpenDeployModal}
           className="btn-secondary"
-          style={{ fontSize: '0.825rem', borderColor: 'rgba(16, 185, 129, 0.3)' }}
-          title="Free Deployment Guide"
+          style={{ fontSize: '0.825rem', color: 'var(--text-secondary)' }}
+          title="100% Free Production Deployment Blueprint"
         >
-          <Server size={14} color="#34d399" /> $0 Production Stack
+          <Server size={14} color="#10b981" /> $0 Production Stack
         </button>
 
-        <div style={{ display: 'flex', gap: '0.3rem' }}>
-          <button
-            onClick={exportLinksAsCSV}
-            className="btn-ghost"
-            style={{ fontSize: '0.8rem', padding: '0.5rem 0.7rem' }}
-            title="Export CSV"
-          >
-            <Download size={14} /> CSV
-          </button>
-        </div>
+        <button
+          onClick={exportLinksAsCSV}
+          className="btn-ghost"
+          style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
+          title="Export CSV data"
+        >
+          <Download size={14} /> Export CSV
+        </button>
 
         <button
           onClick={onOpenCreateModal}

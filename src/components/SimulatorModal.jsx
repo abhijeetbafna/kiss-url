@@ -36,7 +36,7 @@ export default function SimulatorModal({ link, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div 
-        className="glass-panel modal-content" 
+        className="modal-content" 
         style={{ width: '100%', maxWidth: '640px', padding: '1.75rem', position: 'relative' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -44,49 +44,50 @@ export default function SimulatorModal({ link, onClose }) {
           onClick={onClose}
           className="btn-icon"
           style={{ position: 'absolute', top: '1.25rem', right: '1.25rem' }}
+          aria-label="Close Simulator"
         >
           <X size={18} />
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.25rem' }}>
-          <span className="badge badge-cyan">
+          <span className="badge badge-emerald">
             <RefreshCw size={12} /> Edge Routing Simulator
           </span>
         </div>
-        <h2 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '0.25rem' }}>
+        <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
           Test Link Resolution
         </h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
-          Simulate how this short link resolves across devices, robots, and security gates at the global edge.
+          Simulate how this short link resolves across devices, robots, and security gates at the edge.
         </p>
 
         {/* Device Switcher */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', background: 'rgba(255,255,255,0.03)', padding: '0.4rem', borderRadius: '10px' }}>
+        <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.25rem', backgroundColor: 'var(--bg-surface-muted)', padding: '0.35rem', borderRadius: 'var(--radius-md)' }}>
           <button
             onClick={() => setDeviceMode('desktop')}
             className={`btn-ghost ${deviceMode === 'desktop' ? 'badge-indigo' : ''}`}
-            style={{ flex: 1, justifyContent: 'center', borderRadius: '6px' }}
+            style={{ flex: 1, justifyContent: 'center', borderRadius: 'var(--radius-sm)' }}
           >
             <Monitor size={15} /> Desktop
           </button>
           <button
             onClick={() => setDeviceMode('ios')}
             className={`btn-ghost ${deviceMode === 'ios' ? 'badge-indigo' : ''}`}
-            style={{ flex: 1, justifyContent: 'center', borderRadius: '6px' }}
+            style={{ flex: 1, justifyContent: 'center', borderRadius: 'var(--radius-sm)' }}
           >
             <Smartphone size={15} /> Apple iOS
           </button>
           <button
             onClick={() => setDeviceMode('android')}
             className={`btn-ghost ${deviceMode === 'android' ? 'badge-indigo' : ''}`}
-            style={{ flex: 1, justifyContent: 'center', borderRadius: '6px' }}
+            style={{ flex: 1, justifyContent: 'center', borderRadius: 'var(--radius-sm)' }}
           >
             <Smartphone size={15} /> Android
           </button>
           <button
             onClick={() => setDeviceMode('bot')}
             className={`btn-ghost ${deviceMode === 'bot' ? 'badge-indigo' : ''}`}
-            style={{ flex: 1, justifyContent: 'center', borderRadius: '6px' }}
+            style={{ flex: 1, justifyContent: 'center', borderRadius: 'var(--radius-sm)' }}
           >
             <Bot size={15} /> Crawler Bot
           </button>
@@ -94,9 +95,9 @@ export default function SimulatorModal({ link, onClose }) {
 
         {/* Simulation Output Box */}
         <div style={{
-          background: '#040711',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: '12px',
+          backgroundColor: 'var(--bg-surface-subtle)',
+          border: '1px solid var(--border-subtle)',
+          borderRadius: 'var(--radius-md)',
           padding: '1.5rem',
           minHeight: '220px',
           display: 'flex',
@@ -107,16 +108,16 @@ export default function SimulatorModal({ link, onClose }) {
         }}>
           {isExpired || isCapReached ? (
             <div>
-              <AlertTriangle size={42} color="#f43f5e" style={{ margin: '0 auto 0.75rem' }} />
-              <h3 style={{ color: '#fb7185', fontSize: '1.1rem', fontWeight: '700' }}>410 - Link Expired / Burned</h3>
+              <AlertTriangle size={42} color="#e11d48" style={{ margin: '0 auto 0.75rem' }} />
+              <h3 style={{ color: '#be123c', fontSize: '1.1rem', fontWeight: '700' }}>410 - Link Expired / Burned</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.25rem' }}>
                 {isExpired ? `Expired on ${new Date(link.protection.expiresAt).toLocaleString()}` : `Max clicks reached (${link.protection.maxClicks}).`}
               </p>
             </div>
           ) : link.protection?.isPasswordProtected && !passwordUnlocked ? (
             <form onSubmit={handlePasswordSubmit} style={{ maxWidth: '340px', width: '100%' }}>
-              <Shield size={36} color="#f59e0b" style={{ margin: '0 auto 0.5rem' }} />
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '700', marginBottom: '0.25rem' }}>Password Protected</h3>
+              <Shield size={36} color="#d97706" style={{ margin: '0 auto 0.5rem' }} />
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Password Protected</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '1rem' }}>
                 Enter the passcode to unlock this destination.
               </p>
@@ -126,7 +127,7 @@ export default function SimulatorModal({ link, onClose }) {
                 value={enteredPassword}
                 onChange={(e) => setEnteredPassword(e.target.value)}
                 className="input-field"
-                style={{ textAlign: 'center', marginBottom: '0.75rem' }}
+                style={{ textAlign: 'center', marginBottom: '0.75rem', fontFamily: 'var(--font-mono)' }}
                 autoFocus
               />
               <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
@@ -135,18 +136,19 @@ export default function SimulatorModal({ link, onClose }) {
             </form>
           ) : deviceMode === 'bot' ? (
             <div style={{ textAlign: 'left', width: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', color: '#c084fc', fontSize: '0.85rem', fontWeight: '600' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', color: '#7c3aed', fontSize: '0.85rem', fontWeight: '700' }}>
                 <Bot size={16} /> Edge Crawler Intercept Response (OG Metadata):
               </div>
               <pre style={{
-                background: 'rgba(255,255,255,0.03)',
+                backgroundColor: 'var(--bg-surface-muted)',
+                border: '1px solid var(--border-subtle)',
                 padding: '1rem',
-                borderRadius: '8px',
-                fontSize: '0.75rem',
-                color: '#a5f3fc',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: '0.775rem',
+                color: 'var(--text-primary)',
                 fontFamily: 'var(--font-mono)',
                 overflowX: 'auto',
-                lineHeight: '1.4'
+                lineHeight: '1.5'
               }}>
 {`<meta property="og:title" content="${link.socialOg?.title || link.title || 'LinkPulse'}" />
 <meta property="og:description" content="${link.socialOg?.description || 'Smart link powered by LinkPulse'}" />
@@ -157,14 +159,14 @@ export default function SimulatorModal({ link, onClose }) {
             </div>
           ) : (
             <div>
-              <CheckCircle size={40} color="#10b981" style={{ margin: '0 auto 0.75rem' }} />
-              <div style={{ fontSize: '0.8rem', color: '#34d399', fontWeight: '700', textTransform: 'uppercase' }}>
+              <CheckCircle size={40} color="#059669" style={{ margin: '0 auto 0.75rem' }} />
+              <div style={{ fontSize: '0.775rem', color: '#059669', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 HTTP 302 Found (Sub-15ms Edge Redirect)
               </div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '700', marginTop: '0.25rem', wordBreak: 'break-all' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-primary)', marginTop: '0.25rem', wordBreak: 'break-all' }}>
                 {resolvedDestination}
               </h3>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', marginTop: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.875rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                 <span>Simulated Mode:</span>
                 <span className="badge badge-indigo">{deviceMode.toUpperCase()}</span>
               </div>
