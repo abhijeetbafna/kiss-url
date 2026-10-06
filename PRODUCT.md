@@ -1,68 +1,47 @@
 # KissURL Product Architecture & Requirements (PRODUCT.md)
 
-## 1. Product Purpose & Value Proposition
-KissURL (Keep It Simple Short URL) is an intelligent, high-performance link management platform designed for content creators, growth marketers, engineering teams, and modern developers. It replaces legacy bloated tools (Bitly/TinyURL) with a fast, privacy-first, zero-monthly-cost edge architecture ($0/mo).
+## 1. Product Purpose & Philosophy
+KissURL (**Keep It Simple Short URL**) is a fast, public-facing URL shortening service. It is designed to perform one core job flawlessly:
+
+> **Paste a long link → Shorten it → Copy and use the clean short URL.**
+
+Secondary capabilities (custom aliases, QR codes, link history, analytics, OpenGraph customization) are available contextually without cluttering the primary user journey.
 
 ---
 
-## 2. Information Architecture & Navigation
+## 2. Information Architecture
 
 ```mermaid
 graph TD
-    App[KissURL Web Application]
-    App --> Nav[Top Navigation Bar]
-    App --> Landing[Landing Page & Hero Shortener]
-    App --> Features[Capabilities Showcase & Live Demos]
-    App --> Workflow[End-to-End Workflow]
-    App --> Hub[Link Management Hub]
-    App --> Modals[Interactive Specialized Studios]
-    App --> Footer[Footer & System Metadata]
-
-    Modals --> QR[Studio QR Code Designer]
-    Modals --> Analytics[Live Link Intelligence Analytics]
-    Modals --> Simulator[Edge Routing Simulator]
-    Modals --> Social[Dynamic Social Card Studio]
-    Modals --> Deploy[Zero-Cost Production Blueprint]
+    User[Public Visitor] --> Nav[1. Minimal Navigation]
+    User --> Hero[2. Hero Shortener: Input -> Validate -> Shorten -> Result]
+    Hero --> ResultCard[3. Major Result Card: Copy, Open, QR, Social Card]
+    User --> History[4. Recent Links History Drawer]
+    User --> Trust[5. Real Value Pillars]
+    User --> Footer[6. Clean Footer]
 ```
 
 ---
 
-## 3. End-to-End User Journey (The Primary Flow)
+## 3. Core Shortening Workflow
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor User
-    participant Hero as Hero Shortener
-    participant Engine as Link Engine
-    participant Result as Major Result Card
-    participant Hub as Link Management Hub
-
-    User->>Hero: 1. Paste long URL
-    User->>Hero: 2. (Optional) Custom slug & domain
-    User->>Hero: 3. Click "Shorten URL"
-    Hero->>Engine: Validate URL & Generate Base62 Slug
-    Engine-->>Result: Render Prominent Result State
-    User->>Result: 4. Copy Short Link / Open / Download QR / Customize Social Card
-    User->>Hub: 5. Inspect active link in management hub
-    User->>Hub: 6. View real-time analytics & simulate edge traffic
+```
+1. Visitor arrives on https://kiss.url
+2. Immediate clarity: Headline & URL Input field
+3. Paste long URL (e.g. https://github.com/my-project)
+4. (Optional) Expand "Customize alias & options"
+5. Click "Shorten"
+6. Major Result Card appears:
+   - Large Short URL (https://kiss.url/my-slug)
+   - 1-Click "Copy Link" (instant confirmation)
+   - "Open" in new tab
+   - "QR Code" generator trigger
+7. Link is automatically saved to "Recent Links" below
 ```
 
 ---
 
-## 4. State Matrix for URL Shortening Interaction
-
-| State | Visual Behavior | Interactive Actions |
-| :--- | :--- | :--- |
-| **1. Empty** | Placeholder visible, clean neutral input, Shorten button enabled. | User can type or paste URL. |
-| **2. Typing / Populated** | Clear icon appears, URL scheme auto-validated. | User can pick custom domain, enter custom alias, or click auto-generate slug. |
-| **3. Validating / Loading** | Input locked, subtle spinner in button with "Shortening...". | Prevents double submissions. |
-| **4. Success (Major Result)** | Result panel expands with short URL, 1-click copy, QR generator button, social preview button, test redirect button, and "Shorten Another" button. | User can immediately copy or further customize smart rules. |
-| **5. Error** | High-contrast error message explaining issue (e.g., "Invalid URL format" or "Alias already in use") with quick fix suggestions. | User can edit input without losing other form fields. |
-
----
-
-## 5. Responsive & Zoom Requirements
-- **Viewport range**: 320px (mobile) to 4K ultra-wide.
-- **Browser zoom**: Fully resilient from 80% to 200% zoom without clipping or breaking inputs/buttons.
-- **Touch Targets**: Minimum 44px on mobile devices.
+## 4. Navigation & Public Experience Guidelines
+- **No fake marketing fluff**: No fake enterprise logos, no fake user numbers, no fake 5-star badges.
+- **No dashboard clutter on public homepage**: Link history and analytics are subordinated below the primary action.
+- **Dynamic Zoom & Mobile Readiness**: Fully operational from 80% to 200% zoom with accessible $\ge 44\text{px}$ touch targets.

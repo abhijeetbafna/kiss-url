@@ -1,42 +1,35 @@
 import React from 'react';
-import { Zap, Plus, Sun, Moon, Server } from 'lucide-react';
+import { Zap, Sun, Moon, History } from 'lucide-react';
 
-export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, onOpenDeployModal, totalLinks }) {
-  const scrollToSection = (id) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
+export default function Navbar({ theme, onToggleTheme, recentCount, onScrollToHistory }) {
   return (
-    <nav 
-      className="card-surface" 
+    <header 
+      className="surface-card" 
       style={{ 
         position: 'sticky', 
         top: '1rem', 
         zIndex: 40, 
-        padding: '0.75rem 1.5rem', 
+        padding: '0.75rem 1.25rem', 
         marginBottom: '2rem', 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
         gap: '1rem',
         backdropFilter: 'blur(12px)',
-        backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.92)' : 'rgba(15, 23, 42, 0.92)'
+        backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)'
       }}
       aria-label="Main Navigation"
     >
-      {/* Brand Logo & Name */}
-      <div 
-        style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
-        onClick={() => scrollToSection('hero-section')}
+      {/* Brand Logo & Tagline */}
+      <a 
+        href="/" 
+        style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}
       >
         <div style={{
           width: '36px',
           height: '36px',
-          borderRadius: 'var(--radius-md)',
-          backgroundColor: 'var(--color-accent)',
+          borderRadius: 'var(--radius-sm)',
+          backgroundColor: 'var(--accent-primary)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -46,59 +39,28 @@ export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, onOpen
           <Zap size={20} fill="currentColor" />
         </div>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.03em', color: 'var(--color-text-primary)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.03em', color: 'var(--text-primary)' }}>
               KissURL
             </span>
-            <span className="badge badge-emerald" style={{ fontSize: '0.65rem', padding: '0.15rem 0.5rem' }}>
-              <span className="pulse-indicator" /> v1.0
+            <span className="badge badge-success" style={{ fontSize: '0.65rem', padding: '0.1rem 0.45rem' }}>
+              <span className="pulse-indicator" /> Free
             </span>
           </div>
         </div>
-      </div>
+      </a>
 
-      {/* Nav Links */}
-      <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center', flexWrap: 'wrap' }} className="nav-links-container">
-        <button 
-          onClick={() => scrollToSection('hero-section')} 
-          className="btn-ghost" 
-          style={{ fontSize: '0.85rem' }}
-        >
-          Shorten
-        </button>
-        <button 
-          onClick={() => scrollToSection('demos-section')} 
-          className="btn-ghost" 
-          style={{ fontSize: '0.85rem' }}
-        >
-          Capabilities
-        </button>
-        <button 
-          onClick={() => scrollToSection('workflow-section')} 
-          className="btn-ghost" 
-          style={{ fontSize: '0.85rem' }}
-        >
-          How It Works
-        </button>
-        <button 
-          onClick={() => scrollToSection('hub-section')} 
-          className="btn-ghost" 
-          style={{ fontSize: '0.85rem' }}
-        >
-          Link Hub <span className="tabular-nums" style={{ fontWeight: '700', color: 'var(--color-accent)', marginLeft: '2px' }}>({totalLinks})</span>
-        </button>
-      </div>
-
-      {/* Actions & Theme Switcher */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <button
-          onClick={onOpenDeployModal}
-          className="btn-secondary"
-          style={{ fontSize: '0.825rem', padding: '0.45rem 0.85rem' }}
-          title="$0/month Production Architecture"
-        >
-          <Server size={14} color="#059669" /> $0 Stack
-        </button>
+      {/* Right Controls */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        {recentCount > 0 && (
+          <button
+            onClick={onScrollToHistory}
+            className="btn-ghost"
+            style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}
+          >
+            <History size={15} /> My Links <span className="tabular-nums badge badge-info" style={{ marginLeft: '4px' }}>{recentCount}</span>
+          </button>
+        )}
 
         <button
           onClick={onToggleTheme}
@@ -108,15 +70,7 @@ export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, onOpen
         >
           {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
         </button>
-
-        <button
-          onClick={onOpenCreateModal}
-          className="btn-primary"
-          style={{ fontSize: '0.85rem', padding: '0.45rem 0.95rem' }}
-        >
-          <Plus size={15} /> Create Link
-        </button>
       </div>
-    </nav>
+    </header>
   );
 }
