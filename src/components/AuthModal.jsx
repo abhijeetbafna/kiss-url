@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   X, User, Mail, Lock, LogIn, UserPlus, LogOut, CheckCircle2, ShieldCheck, Sparkles 
 } from 'lucide-react';
-import { apiLogin, apiRegister, apiLogout } from '../services/api';
+import { apiLogin, apiRegister, apiLogout, apiDemoLogin } from '../services/api';
 import confetti from 'canvas-confetti';
 
 export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
@@ -47,7 +47,12 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
     setError('');
     setLoading(true);
     try {
-      const res = await apiLogin('demo@kissurl.dev', 'demo1234');
+      const res = await apiDemoLogin();
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.6 }
+      });
       if (onAuthSuccess) onAuthSuccess(res.user, res.workspaces, res.activeWorkspaceId);
       onClose();
     } catch (err) {

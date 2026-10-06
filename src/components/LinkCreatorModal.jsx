@@ -9,19 +9,20 @@ import {
   BarChart2, 
   ShieldCheck, 
   AlertTriangle, 
-  ShieldAlert, 
   Shuffle, 
   Globe, 
-  Target, 
   Plus, 
   Trash2,
   Tag,
   Activity,
   CheckCircle2,
   Play,
-  RotateCcw,
   Laptop,
-  Dice5
+  Dice5,
+  Lock,
+  Layers,
+  Calendar,
+  Share2
 } from 'lucide-react';
 import SocialCardPreview from './SocialCardPreview';
 import confetti from 'canvas-confetti';
@@ -118,94 +119,65 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
   // Geo Routing
   const [geoEnabled, setGeoEnabled] = useState(initialData?.geoRouting?.enabled ?? false);
   const [geoRules, setGeoRules] = useState(initialData?.geoRouting?.rules?.length ? initialData.geoRouting.rules : [
-    { id: 'g_1', country: 'US', url: '' }
+    { id: 'g_1', country: 'US', url: '' },
+    { id: 'g_2', country: 'GB', url: '' },
   ]);
 
-  // Protection & Expiration
+  // Security & Protection
   const [isPasswordProtected, setIsPasswordProtected] = useState(initialData?.protection?.isPasswordProtected ?? false);
   const [password, setPassword] = useState(initialData?.protection?.password || '');
   const [expiresAt, setExpiresAt] = useState(initialData?.protection?.expiresAt || '');
-  const [maxClicks, setMaxClicks] = useState(initialData?.protection?.maxClicks || 0);
+  const [maxClicks, setMaxClicks] = useState(initialData?.protection?.maxClicks || '');
   const [fallbackUrl, setFallbackUrl] = useState(initialData?.protection?.fallbackUrl || '');
 
-  // UTM parameters
-  const [utmSource, setUtmSource] = useState('');
-  const [utmMedium, setUtmMedium] = useState('');
-  const [utmCampaign, setUtmCampaign] = useState('');
-  const [utmTerm, setUtmTerm] = useState('');
-  const [utmContent, setUtmContent] = useState('');
+  // UTM Parameters
+  const [utmSource, setUtmSource] = useState(initialData?.utmSource || '');
+  const [utmMedium, setUtmMedium] = useState(initialData?.utmMedium || '');
+  const [utmCampaign, setUtmCampaign] = useState(initialData?.utmCampaign || '');
+  const [utmTerm, setUtmTerm] = useState(initialData?.utmTerm || '');
+  const [utmContent, setUtmContent] = useState(initialData?.utmContent || '');
 
-  // Destination Health Sentinel state
+  // Health Sentinel status
   const [healthStatus, setHealthStatus] = useState(null);
   const [isCheckingHealth, setIsCheckingHealth] = useState(false);
 
-  // Live Routing Simulator state
+  // Live Simulator sandbox states
   const [simDevice, setSimDevice] = useState('Desktop');
   const [simCountry, setSimCountry] = useState('US');
   const [simResult, setSimResult] = useState(null);
 
+  // Auto audit health sentinel whenever targetUrl changes
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-    };
-    if (isOpen) window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
-  // Live health ping when targetUrl changes
-  useEffect(() => {
-    if (!targetUrl || targetUrl.length < 8) {
+    if (!targetUrl || !targetUrl.includes('.')) {
       setHealthStatus(null);
       return;
     }
+
     const timer = setTimeout(async () => {
       setIsCheckingHealth(true);
       try {
-        const res = await apiCheckLinkHealth(targetUrl);
+        const fullUrl = targetUrl.startsWith('http') ? targetUrl : `https://${targetUrl}`;
+        const res = await apiCheckLinkHealth(fullUrl);
         setHealthStatus(res);
       } catch {
-        setHealthStatus({ isHealthy: true, latencyMs: 70, status: 200, isHttps: targetUrl.startsWith('https://') });
+        const localAudit = auditUrlSafety(targetUrl);
+        setHealthStatus({
+          isHealthy: localAudit.isSafe,
+          statusCode: localAudit.isSafe ? 200 : 400,
+          statusText: localAudit.isSafe ? 'OK (Simulated)' : localAudit.flaggedIssues[0] || 'Unsafe',
+          latencyMs: 42,
+          isHttps: targetUrl.startsWith('https://'),
+          flaggedReason: localAudit.flaggedIssues[0] || null
+        });
       } finally {
         setIsCheckingHealth(false);
       }
-    }, 600);
+    }, 400);
 
     return () => clearTimeout(timer);
   }, [targetUrl]);
 
   if (!isOpen) return null;
-
-  // Smart Suggestion Generator
-  const handleSmartAutoSuggest = () => {
-    if (!targetUrl) {
-      alert('Please enter a Target URL first to auto-generate slugs and tags.');
-      return;
-    }
-
-    try {
-      const parsed = new URL(targetUrl.startsWith('http') ? targetUrl : `https://${targetUrl}`);
-      const domainName = parsed.hostname.replace('www.', '').split('.')[0];
-      const pathWords = parsed.pathname.split('/').filter(Boolean).map(w => w.toLowerCase());
-      
-      const smartSlug = [domainName, pathWords[0] || 'launch', Math.floor(10 + Math.random() * 89)]
-        .filter(Boolean)
-        .join('-');
-
-      setSlug(smartSlug);
-      
-      const generatedTitle = `${domainName.charAt(0).toUpperCase() + domainName.slice(1)} — ${pathWords[0] ? pathWords[0].toUpperCase() : 'Official Portal'}`;
-      setTitle(generatedTitle);
-
-      const generatedTags = [domainName, pathWords[0] || 'growth', 'campaign', '2026'].join(', ');
-      setTags(generatedTags);
-
-      if (!ogTitle) setOgTitle(generatedTitle);
-      if (!ogDesc) setOgDesc(`Direct secure link to ${parsed.hostname} powered by KissURL.`);
-    } catch {
-      const randomWord = SAMPLE_SLUGS[Math.floor(Math.random() * SAMPLE_SLUGS.length)];
-      setSlug(`${randomWord}-${Math.floor(100 + Math.random() * 900)}`);
-    }
-  };
 
   const generateRandomSlug = () => {
     const randomWord = SAMPLE_SLUGS[Math.floor(Math.random() * SAMPLE_SLUGS.length)];
@@ -213,7 +185,30 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
     setSlug(`${randomWord}-${randomNum}`);
   };
 
-  // UTM Handlers
+  const handleSmartAutoSuggest = () => {
+    if (!targetUrl) return;
+    try {
+      const cleanUrl = targetUrl.startsWith('http') ? targetUrl : `https://${targetUrl}`;
+      const parsed = new URL(cleanUrl);
+      const hostParts = parsed.hostname.replace('www.', '').split('.');
+      const brand = hostParts[0] || 'link';
+      const pathSegments = parsed.pathname.split('/').filter(Boolean);
+      const lastSeg = pathSegments[pathSegments.length - 1] || 'deal';
+
+      const candidate = `${brand}-${lastSeg}`.substring(0, 18).toLowerCase().replace(/[^a-z0-9]/g, '-');
+      setSlug(candidate);
+
+      if (!title) {
+        setTitle(`${brand.toUpperCase()} - ${lastSeg.replace(/[-_]/g, ' ')}`);
+      }
+      if (!tags) {
+        setTags(`${brand}, promo, web`);
+      }
+    } catch {
+      generateRandomSlug();
+    }
+  };
+
   const handleApplyPreset = (preset) => {
     setUtmSource(preset.source);
     setUtmMedium(preset.medium);
@@ -225,13 +220,14 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
   const getComputedUtmUrl = () => {
     if (!targetUrl) return '';
     try {
-      const parsed = new URL(targetUrl.startsWith('http') ? targetUrl : `https://${targetUrl}`);
-      if (utmSource) parsed.searchParams.set('utm_source', utmSource);
-      if (utmMedium) parsed.searchParams.set('utm_medium', utmMedium);
-      if (utmCampaign) parsed.searchParams.set('utm_campaign', utmCampaign);
-      if (utmTerm) parsed.searchParams.set('utm_term', utmTerm);
-      if (utmContent) parsed.searchParams.set('utm_content', utmContent);
-      return parsed.toString();
+      const base = targetUrl.startsWith('http') ? targetUrl : `https://${targetUrl}`;
+      const urlObj = new URL(base);
+      if (utmSource) urlObj.searchParams.set('utm_source', utmSource);
+      if (utmMedium) urlObj.searchParams.set('utm_medium', utmMedium);
+      if (utmCampaign) urlObj.searchParams.set('utm_campaign', utmCampaign);
+      if (utmTerm) urlObj.searchParams.set('utm_term', utmTerm);
+      if (utmContent) urlObj.searchParams.set('utm_content', utmContent);
+      return urlObj.toString();
     } catch {
       return targetUrl;
     }
@@ -245,7 +241,6 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
     }
   };
 
-  // Run live simulation
   const handleRunSimulation = () => {
     // 1. Device routing check
     if (routingEnabled) {
@@ -307,6 +302,11 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
       domain,
       title: title.trim() || targetUrl,
       tags: tags.split(',').map(t => t.trim()).filter(Boolean),
+      utmSource,
+      utmMedium,
+      utmCampaign,
+      utmTerm,
+      utmContent,
       socialOg: {
         enabled: ogEnabled,
         title: ogTitle,
@@ -354,40 +354,54 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
     onClose();
   };
 
+  const tabs = [
+    { key: 'general', label: 'General', icon: LinkIcon },
+    { key: 'utm', label: 'UTM Builder', icon: Tag },
+    { key: 'split', label: 'A/B Split', icon: Shuffle },
+    { key: 'routing', label: 'Devices', icon: Smartphone },
+    { key: 'geo', label: 'Geo-Target', icon: Globe },
+    { key: 'social', label: 'Social Card', icon: Sparkles },
+    { key: 'protection', label: 'Protection', icon: Shield }
+  ];
+
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-panel max-w-3xl" onClick={(e) => e.stopPropagation()}>
+      <div 
+        className="modal-panel" 
+        style={{ maxWidth: '680px', width: '100%', maxHeight: '90vh' }} 
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="modal-header flex items-center justify-between border-b border-border/40 p-5 bg-card/40">
+        <div className="modal-header">
           <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-foreground">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.15rem' }}>
+              <h2 style={{ fontSize: '1.05rem', fontWeight: '700', color: 'var(--text-primary)' }}>
                 {initialData ? 'Edit Smart Short Link' : 'Create Smart Short Link'}
               </h2>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+              <span className="badge badge-blue" style={{ fontSize: '0.65rem', padding: '1px 6px', fontWeight: '700' }}>
                 PRO ENGINE
               </span>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p style={{ fontSize: '0.785rem', color: 'var(--text-muted)' }}>
               Dynamic A/B routing, device & geo targeting, UTM campaign builder, and health sentinel.
             </p>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors">
-            <X size={18} />
+          <button onClick={onClose} className="btn-icon" aria-label="Close modal">
+            <X size={16} />
           </button>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-1.5 px-5 py-2.5 border-b border-border/40 bg-card/20 overflow-x-auto text-xs">
-          {[
-            { key: 'general', label: 'General', icon: LinkIcon },
-            { key: 'utm', label: 'UTM Builder', icon: Tag },
-            { key: 'split', label: 'A/B Split', icon: Shuffle },
-            { key: 'routing', label: 'Devices', icon: Smartphone },
-            { key: 'geo', label: 'Geo-Target', icon: Globe },
-            { key: 'social', label: 'Social Card', icon: Sparkles },
-            { key: 'protection', label: 'Protection', icon: Shield }
-          ].map(tab => {
+        <div style={{ 
+          display: 'flex', 
+          gap: '0.35rem', 
+          padding: '0.5rem 1.4rem', 
+          borderBottom: '1px solid var(--border-subtle)', 
+          backgroundColor: 'var(--bg-subtle)',
+          overflowX: 'auto',
+          flexShrink: 0
+        }}>
+          {tabs.map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
             return (
@@ -395,31 +409,40 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all ${
-                  isActive 
-                    ? 'bg-primary text-primary-foreground shadow-sm' 
-                    : 'text-muted-foreground hover:text-foreground hover:bg-card/60'
-                }`}
+                className={`btn ${isActive ? 'btn-primary' : 'btn-ghost'}`}
+                style={{ 
+                  fontSize: '0.775rem', 
+                  padding: '0.3rem 0.65rem', 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '0.35rem',
+                  borderRadius: 'var(--radius-sm)',
+                  whiteSpace: 'nowrap'
+                }}
               >
-                <Icon size={13} /> {tab.label}
+                <Icon size={12} /> {tab.label}
               </button>
             );
           })}
         </div>
 
         {/* Body */}
-        <div className="modal-body p-6 space-y-5 max-h-[68vh] overflow-y-auto">
+        <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          
           {/* TAB 1: GENERAL */}
           {activeTab === 'general' && (
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {/* Target URL */}
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-foreground">Destination Target URL</label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+                    Destination Target URL <span style={{ color: 'var(--error-text)' }}>*</span>
+                  </label>
                   <button
                     type="button"
                     onClick={handleSmartAutoSuggest}
-                    className="flex items-center gap-1 text-xs text-primary font-medium hover:underline"
+                    className="btn-ghost"
+                    style={{ fontSize: '0.75rem', color: 'var(--accent)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.25rem', padding: '0 4px' }}
                   >
                     <Wand2 size={12} /> Smart Auto-Suggest
                   </button>
@@ -429,91 +452,117 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   value={targetUrl}
                   onChange={(e) => setTargetUrl(e.target.value)}
                   placeholder="https://yourbrand.com/special-launch"
-                  className="w-full text-xs font-mono bg-card/60 border border-border/60 rounded-lg px-3 py-2.5 text-foreground focus:outline-none focus:border-primary"
+                  className="input input-mono"
+                  style={{ width: '100%' }}
                   required
                 />
 
                 {/* Health Sentinel Status Bar */}
                 {targetUrl && (
-                  <div className="flex items-center justify-between mt-2 p-2.5 rounded-lg border border-border/40 bg-card/30 text-xs">
-                    <div className="flex items-center gap-2">
-                      <Activity size={13} className={isCheckingHealth ? 'animate-spin text-primary' : 'text-emerald-400'} />
-                      <span className="text-muted-foreground">Sentinel Health:</span>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginTop: '0.5rem',
+                    padding: '0.5rem 0.75rem',
+                    borderRadius: 'var(--radius-sm)',
+                    backgroundColor: 'var(--bg-subtle)',
+                    border: '1px solid var(--border-subtle)',
+                    fontSize: '0.75rem'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <Activity size={13} style={{ color: isCheckingHealth ? 'var(--accent)' : '#10b981' }} />
+                      <span style={{ color: 'var(--text-muted)' }}>Sentinel Health:</span>
                       {isCheckingHealth ? (
-                        <span className="text-muted-foreground animate-pulse">Pinging destination...</span>
+                        <span style={{ color: 'var(--text-muted)' }}>Pinging destination...</span>
                       ) : healthStatus?.isHealthy ? (
-                        <span className="text-emerald-400 font-mono font-medium flex items-center gap-1">
+                        <span className="tabular-nums" style={{ color: '#15803d', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
                           <CheckCircle2 size={12} /> 200 OK ({healthStatus.latencyMs}ms) • {healthStatus.isHttps ? 'HTTPS Secure' : 'HTTP'}
                         </span>
                       ) : (
-                        <span className="text-amber-400 font-mono font-medium flex items-center gap-1">
+                        <span style={{ color: 'var(--warning-text)', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
                           <AlertTriangle size={12} /> {healthStatus?.statusText || 'Unreachable or Redirect'}
                         </span>
                       )}
                     </div>
-                    <span className="text-[10px] text-muted-foreground font-mono">Live Prober</span>
+                    <span className="badge" style={{ fontSize: '0.65rem' }}>Live Sentinel</span>
                   </div>
                 )}
               </div>
 
               {/* Domain & Slug */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '0.75rem' }}>
                 <div>
-                  <label className="text-xs font-semibold text-foreground block mb-1">Domain</label>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
+                    Domain
+                  </label>
                   <select
                     value={domain}
                     onChange={(e) => setDomain(e.target.value)}
-                    className="w-full text-xs bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                    className="select"
+                    style={{ width: '100%' }}
                   >
                     <option value="kiss.url">kiss.url (Default)</option>
                     <option value="go.brand.io">go.brand.io (Custom)</option>
                     <option value="link.io">link.io</option>
                   </select>
                 </div>
-                <div className="sm:col-span-2">
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-semibold text-foreground">Custom Slug</label>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                    <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+                      Custom Slug
+                    </label>
                     <button
                       type="button"
                       onClick={generateRandomSlug}
-                      className="text-[11px] text-primary hover:underline flex items-center gap-1"
+                      className="btn-ghost"
+                      style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.2rem', padding: '0 4px' }}
                     >
                       <Dice5 size={12} /> Randomize
                     </button>
                   </div>
-                  <div className="relative">
-                    <span className="absolute left-3 top-2 text-xs text-muted-foreground font-mono">/</span>
+                  <div style={{ position: 'relative' }}>
+                    <span style={{ position: 'absolute', left: '0.65rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}>
+                      /
+                    </span>
                     <input
                       type="text"
                       value={slug}
                       onChange={(e) => setSlug(e.target.value)}
                       placeholder="launch-deal"
-                      className="w-full text-xs font-mono bg-card/60 border border-border/60 rounded-lg pl-6 pr-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                      className="input input-mono"
+                      style={{ width: '100%', paddingLeft: '1.4rem' }}
                     />
                   </div>
                 </div>
               </div>
 
               {/* Title & Tags */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 <div>
-                  <label className="text-xs font-semibold text-foreground block mb-1">Internal Reference Title</label>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
+                    Internal Reference Title
+                  </label>
                   <input
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g., Summer 2026 Promo Campaign"
-                    className="w-full text-xs bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                    className="input"
+                    style={{ width: '100%' }}
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-foreground block mb-1">Tags (comma separated)</label>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
+                    Tags (comma separated)
+                  </label>
                   <input
                     type="text"
                     value={tags}
                     onChange={(e) => setTags(e.target.value)}
                     placeholder="e.g., marketing, social, q3"
-                    className="w-full text-xs bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                    className="input"
+                    style={{ width: '100%' }}
                   />
                 </div>
               </div>
@@ -522,18 +571,19 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
 
           {/* TAB 2: UTM BUILDER */}
           {activeTab === 'utm' && (
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
-                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">
+                <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '0.5rem' }}>
                   1-Click Campaign Presets
                 </span>
-                <div className="flex flex-wrap gap-2">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
                   {UTM_PRESETS.map((preset, idx) => (
                     <button
                       key={idx}
                       type="button"
                       onClick={() => handleApplyPreset(preset)}
-                      className="text-xs px-2.5 py-1.5 rounded-lg border border-border/50 bg-card/40 hover:bg-card hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all"
+                      className="btn btn-secondary"
+                      style={{ fontSize: '0.75rem', padding: '0.25rem 0.55rem' }}
                     >
                       {preset.name}
                     </button>
@@ -541,72 +591,107 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
                 <div>
-                  <label className="text-xs font-medium text-foreground block mb-1">utm_source</label>
+                  <label style={{ display: 'block', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                    utm_source
+                  </label>
                   <input
                     type="text"
                     value={utmSource}
                     onChange={(e) => setUtmSource(e.target.value)}
-                    placeholder="google, meta, newsletter"
-                    className="w-full text-xs bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                    placeholder="google, meta"
+                    className="input input-mono"
+                    style={{ width: '100%' }}
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-foreground block mb-1">utm_medium</label>
+                  <label style={{ display: 'block', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                    utm_medium
+                  </label>
                   <input
                     type="text"
                     value={utmMedium}
                     onChange={(e) => setUtmMedium(e.target.value)}
-                    placeholder="cpc, social_paid, email"
-                    className="w-full text-xs bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                    placeholder="cpc, social"
+                    className="input input-mono"
+                    style={{ width: '100%' }}
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-foreground block mb-1">utm_campaign</label>
+                  <label style={{ display: 'block', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                    utm_campaign
+                  </label>
                   <input
                     type="text"
                     value={utmCampaign}
                     onChange={(e) => setUtmCampaign(e.target.value)}
-                    placeholder="launch_2026, q3_promo"
-                    className="w-full text-xs bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                    placeholder="launch_2026"
+                    className="input input-mono"
+                    style={{ width: '100%' }}
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 <div>
-                  <label className="text-xs font-medium text-foreground block mb-1">utm_term (keywords / audience)</label>
+                  <label style={{ display: 'block', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                    utm_term (keywords / audience)
+                  </label>
                   <input
                     type="text"
                     value={utmTerm}
                     onChange={(e) => setUtmTerm(e.target.value)}
-                    placeholder="tech_founders, story_ad"
-                    className="w-full text-xs bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                    placeholder="tech_founders"
+                    className="input input-mono"
+                    style={{ width: '100%' }}
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-foreground block mb-1">utm_content (ad variation)</label>
+                  <label style={{ display: 'block', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                    utm_content (ad variation)
+                  </label>
                   <input
                     type="text"
                     value={utmContent}
                     onChange={(e) => setUtmContent(e.target.value)}
-                    placeholder="hero_banner, video_b"
-                    className="w-full text-xs bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                    placeholder="hero_banner"
+                    className="input input-mono"
+                    style={{ width: '100%' }}
                   />
                 </div>
               </div>
 
               {/* Live Appended Preview */}
-              <div className="p-3 rounded-xl border border-primary/30 bg-primary/5 space-y-2">
-                <span className="text-xs font-semibold text-primary block">Calculated Destination with UTMs:</span>
-                <div className="text-xs font-mono text-muted-foreground break-all bg-card/70 p-2.5 rounded-lg border border-border/40">
+              <div style={{
+                padding: '0.85rem',
+                borderRadius: 'var(--radius-sm)',
+                backgroundColor: 'var(--bg-subtle)',
+                border: '1px solid var(--border-subtle)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem'
+              }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--accent-text)' }}>
+                  Calculated Destination with UTMs:
+                </span>
+                <div style={{
+                  fontSize: '0.75rem',
+                  fontFamily: 'var(--font-mono)',
+                  color: 'var(--text-secondary)',
+                  wordBreak: 'break-all',
+                  backgroundColor: 'var(--bg-surface)',
+                  padding: '0.5rem 0.65rem',
+                  borderRadius: 'var(--radius-xs)',
+                  border: '1px solid var(--border-subtle)'
+                }}>
                   {getComputedUtmUrl() || 'Enter a Target URL in General tab to preview.'}
                 </div>
                 <button
                   type="button"
                   onClick={handleApplyUtmToTarget}
-                  className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                  className="btn btn-secondary"
+                  style={{ alignSelf: 'flex-start', fontSize: '0.75rem' }}
                 >
                   Apply to Target URL
                 </button>
@@ -616,11 +701,21 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
 
           {/* TAB 3: A/B SPLIT TESTING */}
           {activeTab === 'split' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3.5 rounded-xl border border-border/40 bg-card/30">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0.85rem 1rem',
+                borderRadius: 'var(--radius-sm)',
+                backgroundColor: 'var(--bg-subtle)',
+                border: '1px solid var(--border-subtle)'
+              }}>
                 <div>
-                  <div className="text-xs font-semibold text-foreground">Enable A/B Split Traffic Distribution</div>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">
+                  <div style={{ fontSize: '0.825rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+                    Enable A/B Split Traffic Distribution
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                     Route incoming visitors across multiple landing pages based on percentage weights.
                   </div>
                 </div>
@@ -628,15 +723,23 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   type="checkbox"
                   checked={splitEnabled}
                   onChange={(e) => setSplitEnabled(e.target.checked)}
-                  className="w-4 h-4 text-primary rounded border-border focus:ring-0 cursor-pointer"
+                  style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                 />
               </div>
 
               {splitEnabled && (
-                <div className="space-y-3">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   {variants.map((v, idx) => (
-                    <div key={v.id || idx} className="p-3.5 rounded-xl border border-border/60 bg-card/50 space-y-2">
-                      <div className="flex items-center justify-between gap-3">
+                    <div key={v.id || idx} style={{
+                      padding: '0.85rem',
+                      borderRadius: 'var(--radius-sm)',
+                      backgroundColor: 'var(--bg-surface)',
+                      border: '1px solid var(--border-default)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.5rem'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
                         <input
                           type="text"
                           value={v.name}
@@ -646,10 +749,13 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                             setVariants(updated);
                           }}
                           placeholder={`Variant ${String.fromCharCode(65 + idx)}`}
-                          className="w-32 text-xs font-semibold bg-transparent border-b border-border/40 text-foreground focus:outline-none"
+                          className="input"
+                          style={{ width: '130px', fontSize: '0.8rem', fontWeight: '600' }}
                         />
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-mono text-muted-foreground">{v.weight}% weight</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span className="tabular-nums" style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+                            {v.weight}% weight
+                          </span>
                           <input
                             type="range"
                             min="0"
@@ -660,13 +766,14 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                               updated[idx].weight = Number(e.target.value);
                               setVariants(updated);
                             }}
-                            className="w-24 accent-primary"
+                            style={{ width: '90px' }}
                           />
                           {variants.length > 2 && (
                             <button
                               type="button"
                               onClick={() => setVariants(variants.filter((_, i) => i !== idx))}
-                              className="p-1 text-muted-foreground hover:text-rose-400"
+                              className="btn-icon"
+                              style={{ color: 'var(--error-text)' }}
                             >
                               <Trash2 size={13} />
                             </button>
@@ -682,7 +789,8 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                           setVariants(updated);
                         }}
                         placeholder={`https://yourdomain.com/landing-page-${String.fromCharCode(65 + idx).toLowerCase()}`}
-                        className="w-full text-xs font-mono bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                        className="input input-mono"
+                        style={{ width: '100%', fontSize: '0.785rem' }}
                       />
                     </div>
                   ))}
@@ -690,7 +798,8 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   <button
                     type="button"
                     onClick={() => setVariants([...variants, { id: 'v_' + Date.now(), name: `Variant ${String.fromCharCode(65 + variants.length)}`, url: '', weight: 30 }])}
-                    className="flex items-center gap-1.5 text-xs text-primary font-medium hover:underline"
+                    className="btn btn-secondary"
+                    style={{ alignSelf: 'flex-start', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
                   >
                     <Plus size={13} /> Add Another Variant
                   </button>
@@ -701,11 +810,21 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
 
           {/* TAB 4: DEVICE ROUTING */}
           {activeTab === 'routing' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3.5 rounded-xl border border-border/40 bg-card/30">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0.85rem 1rem',
+                borderRadius: 'var(--radius-sm)',
+                backgroundColor: 'var(--bg-subtle)',
+                border: '1px solid var(--border-subtle)'
+              }}>
                 <div>
-                  <div className="text-xs font-semibold text-foreground">Device-Aware Dynamic Redirection</div>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">
+                  <div style={{ fontSize: '0.825rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+                    Device-Aware Dynamic Redirection
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                     Redirect iOS visitors to the Apple App Store, Android to Google Play, and Desktop to your web app.
                   </div>
                 </div>
@@ -713,46 +832,49 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   type="checkbox"
                   checked={routingEnabled}
                   onChange={(e) => setRoutingEnabled(e.target.checked)}
-                  className="w-4 h-4 text-primary rounded border-border focus:ring-0 cursor-pointer"
+                  style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                 />
               </div>
 
               {routingEnabled && (
-                <div className="space-y-3">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   <div>
-                    <label className="text-xs font-medium text-foreground flex items-center gap-1.5 mb-1">
-                      <Smartphone size={13} className="text-primary" /> iOS / iPhone / iPad Destination URL
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                      <Smartphone size={13} style={{ color: 'var(--accent)' }} /> iOS / iPhone / iPad Destination URL
                     </label>
                     <input
                       type="url"
                       value={iosUrl}
                       onChange={(e) => setIosUrl(e.target.value)}
                       placeholder="https://apps.apple.com/app/id123456789"
-                      className="w-full text-xs font-mono bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                      className="input input-mono"
+                      style={{ width: '100%' }}
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-foreground flex items-center gap-1.5 mb-1">
-                      <Smartphone size={13} className="text-emerald-500" /> Android Destination URL
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                      <Smartphone size={13} style={{ color: '#10b981' }} /> Android Destination URL
                     </label>
                     <input
                       type="url"
                       value={androidUrl}
                       onChange={(e) => setAndroidUrl(e.target.value)}
                       placeholder="https://play.google.com/store/apps/details?id=com.brand.app"
-                      className="w-full text-xs font-mono bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                      className="input input-mono"
+                      style={{ width: '100%' }}
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-foreground flex items-center gap-1.5 mb-1">
-                      <Laptop size={13} className="text-muted-foreground" /> Desktop / Web Fallback URL
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                      <Laptop size={13} style={{ color: 'var(--text-muted)' }} /> Desktop / Web Fallback URL
                     </label>
                     <input
                       type="url"
                       value={desktopUrl}
                       onChange={(e) => setDesktopUrl(e.target.value)}
                       placeholder="https://app.yourbrand.com"
-                      className="w-full text-xs font-mono bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                      className="input input-mono"
+                      style={{ width: '100%' }}
                     />
                   </div>
                 </div>
@@ -762,26 +884,44 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
 
           {/* TAB 5: GEO ROUTING */}
           {activeTab === 'geo' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3.5 rounded-xl border border-border/40 bg-card/30">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0.85rem 1rem',
+                borderRadius: 'var(--radius-sm)',
+                backgroundColor: 'var(--bg-subtle)',
+                border: '1px solid var(--border-subtle)'
+              }}>
                 <div>
-                  <div className="text-xs font-semibold text-foreground">Geo-Location Country Targeting</div>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">
-                    Serve localized landing pages based on visitor country headers.
+                  <div style={{ fontSize: '0.825rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+                    Geo-Location Country Targeting
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    Serve localized landing pages based on visitor country origin.
                   </div>
                 </div>
                 <input
                   type="checkbox"
                   checked={geoEnabled}
                   onChange={(e) => setGeoEnabled(e.target.checked)}
-                  className="w-4 h-4 text-primary rounded border-border focus:ring-0 cursor-pointer"
+                  style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                 />
               </div>
 
               {geoEnabled && (
-                <div className="space-y-3">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   {geoRules.map((r, idx) => (
-                    <div key={r.id || idx} className="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-card/50">
+                    <div key={r.id || idx} style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      padding: '0.65rem',
+                      borderRadius: 'var(--radius-sm)',
+                      backgroundColor: 'var(--bg-surface)',
+                      border: '1px solid var(--border-default)'
+                    }}>
                       <select
                         value={r.country}
                         onChange={(e) => {
@@ -789,7 +929,8 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                           updated[idx].country = e.target.value;
                           setGeoRules(updated);
                         }}
-                        className="w-44 text-xs bg-card border border-border/60 rounded-lg px-2.5 py-1.5 text-foreground focus:outline-none"
+                        className="select"
+                        style={{ width: '160px', fontSize: '0.75rem' }}
                       >
                         {COUNTRY_OPTIONS.map(c => (
                           <option key={c.code} value={c.code}>{c.name}</option>
@@ -804,13 +945,15 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                           setGeoRules(updated);
                         }}
                         placeholder={`https://yourdomain.com/${r.country.toLowerCase()}`}
-                        className="flex-1 text-xs font-mono bg-card/60 border border-border/60 rounded-lg px-3 py-1.5 text-foreground focus:outline-none focus:border-primary"
+                        className="input input-mono"
+                        style={{ flex: 1, fontSize: '0.785rem' }}
                       />
                       {geoRules.length > 1 && (
                         <button
                           type="button"
                           onClick={() => setGeoRules(geoRules.filter((_, i) => i !== idx))}
-                          className="p-1 text-muted-foreground hover:text-rose-400"
+                          className="btn-icon"
+                          style={{ color: 'var(--error-text)' }}
                         >
                           <Trash2 size={13} />
                         </button>
@@ -821,7 +964,8 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   <button
                     type="button"
                     onClick={() => setGeoRules([...geoRules, { id: 'g_' + Date.now(), country: 'GB', url: '' }])}
-                    className="flex items-center gap-1.5 text-xs text-primary font-medium hover:underline"
+                    className="btn btn-secondary"
+                    style={{ alignSelf: 'flex-start', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
                   >
                     <Plus size={13} /> Add Country Rule
                   </button>
@@ -832,60 +976,81 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
 
           {/* TAB 6: SOCIAL CARD */}
           {activeTab === 'social' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3.5 rounded-xl border border-border/40 bg-card/30">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0.85rem 1rem',
+                borderRadius: 'var(--radius-sm)',
+                backgroundColor: 'var(--bg-subtle)',
+                border: '1px solid var(--border-subtle)'
+              }}>
                 <div>
-                  <div className="text-xs font-semibold text-foreground">Custom Social OpenGraph Card</div>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">
-                    Customize the title, description, and thumbnail image displayed when shared on Twitter/X, Discord, Slack, iMessage, and WhatsApp.
+                  <div style={{ fontSize: '0.825rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+                    Custom Social OpenGraph Card
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    Customize rich preview cards for Twitter/X, Discord, Slack, iMessage, and WhatsApp.
                   </div>
                 </div>
                 <input
                   type="checkbox"
                   checked={ogEnabled}
                   onChange={(e) => setOgEnabled(e.target.checked)}
-                  className="w-4 h-4 text-primary rounded border-border focus:ring-0 cursor-pointer"
+                  style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                 />
               </div>
 
               {ogEnabled && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-3">
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     <div>
-                      <label className="text-xs font-medium text-foreground block mb-1">OG Title</label>
+                      <label style={{ display: 'block', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                        OG Title
+                      </label>
                       <input
                         type="text"
                         value={ogTitle}
                         onChange={(e) => setOgTitle(e.target.value)}
                         placeholder="e.g., Check out our brand new release"
-                        className="w-full text-xs bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                        className="input"
+                        style={{ width: '100%' }}
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-foreground block mb-1">OG Description</label>
+                      <label style={{ display: 'block', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                        OG Description
+                      </label>
                       <textarea
                         value={ogDesc}
                         onChange={(e) => setOgDesc(e.target.value)}
                         placeholder="Brief summary for rich preview cards..."
                         rows={3}
-                        className="w-full text-xs bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary resize-none"
+                        className="input"
+                        style={{ width: '100%', resize: 'none' }}
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-foreground block mb-1">OG Image URL</label>
+                      <label style={{ display: 'block', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                        OG Image URL
+                      </label>
                       <input
                         type="url"
                         value={ogImage}
                         onChange={(e) => setOgImage(e.target.value)}
                         placeholder="https://yourbrand.com/og-banner.png"
-                        className="w-full text-xs font-mono bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                        className="input input-mono"
+                        style={{ width: '100%' }}
                       />
                     </div>
                   </div>
 
                   {/* Social Preview */}
                   <div>
-                    <span className="text-xs font-medium text-muted-foreground block mb-2">Live Preview (Twitter/X & Discord)</span>
+                    <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>
+                      Live Preview (Twitter/X & Discord)
+                    </span>
                     <SocialCardPreview
                       title={ogTitle || title || 'Your Page Title'}
                       description={ogDesc || 'Your page description preview will appear here.'}
@@ -900,11 +1065,21 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
 
           {/* TAB 7: PROTECTION */}
           {activeTab === 'protection' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3.5 rounded-xl border border-border/40 bg-card/30">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0.85rem 1rem',
+                borderRadius: 'var(--radius-sm)',
+                backgroundColor: 'var(--bg-subtle)',
+                border: '1px solid var(--border-subtle)'
+              }}>
                 <div>
-                  <div className="text-xs font-semibold text-foreground">Passcode Protection Gate</div>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">
+                  <div style={{ fontSize: '0.825rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+                    Passcode Protection Gate
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                     Require visitors to enter a passcode before unlocking the destination URL.
                   </div>
                 </div>
@@ -912,41 +1087,50 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   type="checkbox"
                   checked={isPasswordProtected}
                   onChange={(e) => setIsPasswordProtected(e.target.checked)}
-                  className="w-4 h-4 text-primary rounded border-border focus:ring-0 cursor-pointer"
+                  style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                 />
               </div>
 
               {isPasswordProtected && (
                 <div>
-                  <label className="text-xs font-medium text-foreground block mb-1">Secret Access Passcode</label>
+                  <label style={{ display: 'block', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                    Secret Access Passcode
+                  </label>
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter secret passcode..."
-                    className="w-full text-xs font-mono bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                    className="input input-mono"
+                    style={{ width: '100%' }}
                   />
                 </div>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 <div>
-                  <label className="text-xs font-medium text-foreground block mb-1">Link Expiration Date & Time</label>
+                  <label style={{ display: 'block', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                    Link Expiration Date & Time
+                  </label>
                   <input
                     type="datetime-local"
                     value={expiresAt}
                     onChange={(e) => setExpiresAt(e.target.value)}
-                    className="w-full text-xs bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                    className="input"
+                    style={{ width: '100%' }}
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-foreground block mb-1">Max Click Limit (0 for unlimited)</label>
+                  <label style={{ display: 'block', fontSize: '0.785rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                    Max Click Limit (0 for unlimited)
+                  </label>
                   <input
                     type="number"
                     min="0"
                     value={maxClicks}
                     onChange={(e) => setMaxClicks(e.target.value)}
-                    className="w-full text-xs bg-card/60 border border-border/60 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-primary"
+                    className="input tabular-nums"
+                    style={{ width: '100%' }}
                   />
                 </div>
               </div>
@@ -954,25 +1138,35 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
           )}
 
           {/* Live Dynamic Routing Sandbox Simulator */}
-          <div className="p-3.5 rounded-xl border border-border/40 bg-card/30 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                <Play size={12} className="text-primary" /> Live Routing Simulator
+          <div style={{
+            padding: '0.85rem',
+            borderRadius: 'var(--radius-sm)',
+            backgroundColor: 'var(--bg-subtle)',
+            border: '1px solid var(--border-subtle)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.65rem'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '0.785rem', fontWeight: '700', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Play size={12} style={{ color: 'var(--accent)' }} /> Live Routing Simulator
               </span>
               <button
                 type="button"
                 onClick={handleRunSimulation}
-                className="px-2.5 py-1 text-xs font-medium bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-lg transition-colors"
+                className="btn btn-secondary"
+                style={{ fontSize: '0.725rem', padding: '0.25rem 0.55rem' }}
               >
                 Test Dynamic Resolution
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', fontSize: '0.75rem' }}>
               <select
                 value={simDevice}
                 onChange={(e) => setSimDevice(e.target.value)}
-                className="bg-card border border-border/40 rounded-lg px-2.5 py-1.5 text-foreground"
+                className="select"
+                style={{ fontSize: '0.75rem' }}
               >
                 <option value="Desktop">Device: Desktop (Mac/Win)</option>
                 <option value="iOS">Device: Apple iOS / iPhone</option>
@@ -982,37 +1176,50 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
               <select
                 value={simCountry}
                 onChange={(e) => setSimCountry(e.target.value)}
-                className="bg-card border border-border/40 rounded-lg px-2.5 py-1.5 text-foreground"
+                className="select"
+                style={{ fontSize: '0.75rem' }}
               >
                 {COUNTRY_OPTIONS.map(c => (
                   <option key={c.code} value={c.code}>Country: {c.code}</option>
                 ))}
               </select>
 
-              <div className="text-xs font-mono flex items-center gap-1 text-muted-foreground">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                 <Dice5 size={12} /> Random Roll Ready
               </div>
             </div>
 
             {simResult && (
-              <div className="p-2 rounded-lg bg-background/80 border border-border/40 text-xs space-y-1">
-                <div className="text-[11px] font-semibold text-primary">{simResult.rule}</div>
-                <div className="font-mono text-[11px] text-foreground truncate">{simResult.target}</div>
+              <div style={{
+                padding: '0.6rem',
+                borderRadius: 'var(--radius-xs)',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--border-default)',
+                fontSize: '0.75rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.2rem'
+              }}>
+                <div style={{ fontWeight: '600', color: 'var(--accent-text)' }}>{simResult.rule}</div>
+                <div className="input-mono" style={{ color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {simResult.target}
+                </div>
               </div>
             )}
           </div>
+
         </div>
 
         {/* Footer */}
-        <div className="modal-footer p-4 border-t border-border/40 bg-card/40 flex items-center justify-between">
-          <div className="text-xs font-mono text-muted-foreground">
+        <div className="modal-footer" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="tabular-nums" style={{ fontSize: '0.785rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
             {domain}/{slug || '...'}
           </div>
-          <div className="flex items-center gap-2">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <button
               type="button"
               onClick={onClose}
-              className="px-3.5 py-1.5 text-xs font-medium rounded-lg border border-border/40 hover:bg-card text-muted-foreground hover:text-foreground transition-colors"
+              className="btn btn-secondary"
             >
               Cancel
             </button>
@@ -1020,12 +1227,13 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
               type="button"
               onClick={handleSubmit}
               disabled={!targetUrl}
-              className="px-4 py-1.5 text-xs font-semibold rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-colors disabled:opacity-50"
+              className="btn btn-primary"
             >
               {initialData ? 'Save Changes' : 'Create Link'}
             </button>
           </div>
         </div>
+
       </div>
     </div>
   );

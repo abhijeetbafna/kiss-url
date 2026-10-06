@@ -135,11 +135,52 @@ app.post('/api/auth/register', (req, res) => {
   });
 });
 
+// 1-Click Demo Login Route (Guaranteed Instant Setup & Access)
+app.post('/api/auth/demo', (req, res) => {
+  seedInitialDataIfNeeded();
+  let demoUser = db.getUserByEmail('demo@kissurl.dev');
+  if (!demoUser) {
+    const salt = bcrypt.genSaltSync(10);
+    const demoPasswordHash = bcrypt.hashSync('demo1234', salt);
+    demoUser = db.createUser({
+      email: 'demo@kissurl.dev',
+      passwordHash: demoPasswordHash,
+      name: 'Alex Rivera'
+    });
+  }
+
+  let workspaces = db.getWorkspacesForUser(demoUser.id);
+  if (workspaces.length === 0) {
+    const wsPersonal = db.createWorkspace({
+      name: 'Personal Space',
+      ownerId: demoUser.id,
+      icon: 'user',
+      color: '#6366f1',
+      description: 'Default personal projects and short links'
+    });
+    workspaces = [wsPersonal];
+  }
+
+  const token = jwt.sign({ userId: demoUser.id, email: demoUser.email }, JWT_SECRET, { expiresIn: '30d' });
+
+  return res.json({
+    user: { id: demoUser.id, email: demoUser.email, name: demoUser.name },
+    token,
+    workspaces,
+    activeWorkspaceId: workspaces[0].id
+  });
+});
+
 // Login
 app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  // If attempting demo login, ensure demo account is initialized
+  if (email === 'demo@kissurl.dev') {
+    seedInitialDataIfNeeded();
   }
 
   const user = db.getUserByEmail(email);

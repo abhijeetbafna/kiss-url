@@ -47,6 +47,14 @@
       "name": "EndToEnd Tester",
       "createdAt": "2026-10-06T13:27:29.231Z",
       "updatedAt": "2026-10-06T13:27:29.232Z"
+    },
+    {
+      "id": "usr_1791307164287_jicna",
+      "email": "e2e_user_1791307164286@example.com",
+      "passwordHash": "hash_12345",
+      "name": "EndToEnd Tester",
+      "createdAt": "2026-10-06T17:19:24.289Z",
+      "updatedAt": "2026-10-06T17:19:24.293Z"
     }
   ],
   "workspaces": [
@@ -115,6 +123,17 @@
       "ownerId": "usr_1791293249230_17y7p",
       "createdAt": "2026-10-06T13:27:29.236Z",
       "updatedAt": "2026-10-06T13:27:29.236Z"
+    },
+    {
+      "id": "ws_1791307164303_eynwd",
+      "name": "Production Workspace",
+      "slug": "production-workspace",
+      "icon": "briefcase",
+      "color": "#3b82f6",
+      "description": "Production links and campaigns",
+      "ownerId": "usr_1791307164287_jicna",
+      "createdAt": "2026-10-06T17:19:24.303Z",
+      "updatedAt": "2026-10-06T17:19:24.303Z"
     }
   ],
   "workspace_members": [
@@ -159,9 +178,51 @@
       "userId": "usr_1791293249230_17y7p",
       "role": "owner",
       "createdAt": "2026-10-06T13:27:29.236Z"
+    },
+    {
+      "id": "mem_1791307164303",
+      "workspaceId": "ws_1791307164303_eynwd",
+      "userId": "usr_1791307164287_jicna",
+      "role": "owner",
+      "createdAt": "2026-10-06T17:19:24.303Z"
     }
   ],
   "links": [
+    {
+      "id": "lp_1791307164335_s9alu",
+      "workspaceId": "ws_1791307164303_eynwd",
+      "creatorId": "usr_1791307164287_jicna",
+      "targetUrl": "https://example.com/summer-sale?src=kissurl",
+      "slug": "promo-1791307164334",
+      "domain": "kiss.url",
+      "title": "Summer Sale 2026",
+      "tags": [
+        "Summer",
+        "Sale",
+        "Marketing"
+      ],
+      "clicks": 1,
+      "socialOg": {
+        "enabled": false
+      },
+      "routing": {
+        "enabled": false
+      },
+      "protection": {
+        "isPasswordProtected": false
+      },
+      "splitTesting": {
+        "enabled": false,
+        "variants": []
+      },
+      "geoRouting": {
+        "enabled": false,
+        "rules": []
+      },
+      "pixels": {},
+      "createdAt": "2026-10-06T17:19:24.335Z",
+      "updatedAt": "2026-10-06T17:19:24.335Z"
+    },
     {
       "id": "lp_1791293249248_b4nw3",
       "workspaceId": "ws_1791293249236_doow7",
@@ -377,6 +438,16 @@
       "country": "United States",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       "timestamp": "2026-10-06T13:27:29.252Z"
+    },
+    {
+      "id": "clk_1791307164340_6d2i",
+      "linkId": "lp_1791307164335_s9alu",
+      "workspaceId": "ws_1791307164303_eynwd",
+      "referrer": "https://twitter.com",
+      "device": "Desktop",
+      "country": "United States",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "timestamp": "2026-10-06T17:19:24.340Z"
     }
   ],
   "bio_pages": [
@@ -423,6 +494,28 @@
       "id": "bio_1791293249255",
       "views": 0,
       "createdAt": "2026-10-06T13:27:29.255Z"
+    },
+    {
+      "workspaceId": "ws_1791307164303_eynwd",
+      "handle": "tester_1791307164357",
+      "name": "Tester Bio Profile",
+      "tagline": "Engineering & Product",
+      "bio": "All my favorite tools in one curated link in bio.",
+      "avatarUrl": "",
+      "theme": "midnight",
+      "socials": {},
+      "links": [
+        {
+          "id": "b1",
+          "title": "Main Documentation",
+          "url": "https://developer.mozilla.org",
+          "type": "link"
+        }
+      ],
+      "updatedAt": "2026-10-06T17:19:24.358Z",
+      "id": "bio_1791307164358",
+      "views": 0,
+      "createdAt": "2026-10-06T17:19:24.358Z"
     }
   ],
   "bio_leads": [],
@@ -434,11 +527,26 @@
       "targetHost": "cname.kissurl.dev",
       "status": "active",
       "createdAt": "2026-10-06T13:27:29.260Z"
+    },
+    {
+      "id": "dom_1791307164368",
+      "workspaceId": "ws_1791307164303_eynwd",
+      "domain": "go.mybrand.io",
+      "targetHost": "cname.kissurl.dev",
+      "status": "active",
+      "createdAt": "2026-10-06T17:19:24.368Z"
     }
   ],
   "error_branding": [
     {
       "workspaceId": "ws_1791293249236_doow7",
+      "brandName": "MyBrand Portal",
+      "logoIcon": "zap",
+      "supportUrl": "https://mybrand.io/support",
+      "customMessage": "This link has expired or reached maximum clicks."
+    },
+    {
+      "workspaceId": "ws_1791307164303_eynwd",
       "brandName": "MyBrand Portal",
       "logoIcon": "zap",
       "supportUrl": "https://mybrand.io/support",
@@ -451,6 +559,12 @@
       "metaPixelId": "META_99887766",
       "gaMeasurementId": "G-12345678",
       "updatedAt": "2026-10-06T13:27:29.257Z"
+    },
+    {
+      "workspaceId": "ws_1791307164303_eynwd",
+      "metaPixelId": "META_99887766",
+      "gaMeasurementId": "G-12345678",
+      "updatedAt": "2026-10-06T17:19:24.363Z"
     }
   ],
   "webhooks": [
@@ -470,6 +584,23 @@
       "lastDeliveryAt": null,
       "createdAt": "2026-10-06T13:27:29.258Z",
       "updatedAt": "2026-10-06T13:27:29.258Z"
+    },
+    {
+      "id": "wh_1791307164364_bjc1",
+      "workspaceId": "ws_1791307164303_eynwd",
+      "name": "Zapier Slack Alert",
+      "url": "https://hooks.zapier.com/hooks/catch/12345/abcde",
+      "events": [
+        "click.created",
+        "milestone.reached"
+      ],
+      "secret": "whsec_39g1jz5qa7",
+      "active": true,
+      "deliveriesCount": 0,
+      "lastDeliveryStatus": "pending",
+      "lastDeliveryAt": null,
+      "createdAt": "2026-10-06T17:19:24.364Z",
+      "updatedAt": "2026-10-06T17:19:24.364Z"
     }
   ]
 }

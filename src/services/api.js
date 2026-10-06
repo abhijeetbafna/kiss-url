@@ -82,6 +82,24 @@ const FALLBACK_DEMO_USER = {
   activeWorkspaceId: 'ws_personal'
 };
 
+export const apiDemoLogin = async () => {
+  try {
+    const res = await request('/auth/demo', {
+      method: 'POST',
+    });
+    if (res.token) {
+      setAuthToken(res.token);
+      if (res.activeWorkspaceId) setSavedActiveWorkspaceId(res.activeWorkspaceId);
+    }
+    return res;
+  } catch {
+    // Graceful offline fallback
+    setAuthToken(FALLBACK_DEMO_USER.token);
+    setSavedActiveWorkspaceId(FALLBACK_DEMO_USER.activeWorkspaceId);
+    return FALLBACK_DEMO_USER;
+  }
+};
+
 export const apiLogin = async (email, password) => {
   try {
     const res = await request('/auth/login', {
