@@ -1,7 +1,7 @@
 import React from 'react';
-import { Zap, Plus, Sun, Moon, Server, Layers, Sparkles, BarChart2 } from 'lucide-react';
+import { Zap, Plus, Sun, Moon, Layers, Sparkles } from 'lucide-react';
 
-export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, onOpenDeployModal, totalLinks }) {
+export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, totalLinks }) {
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) {
@@ -28,9 +28,13 @@ export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, onOpen
       aria-label="Main Navigation"
     >
       {/* Brand Logo & Tagline */}
-      <div 
-        style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
-        onClick={() => scrollToSection('hero-section')}
+      <a 
+        href="/" 
+        style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}
+        onClick={(e) => {
+          e.preventDefault();
+          scrollToSection('hero-section');
+        }}
       >
         <div style={{
           width: '36px',
@@ -51,11 +55,11 @@ export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, onOpen
               KissURL
             </span>
             <span className="badge badge-success" style={{ fontSize: '0.65rem', padding: '0.1rem 0.45rem' }}>
-              <span className="pulse-indicator" /> Live v1
+              <span className="pulse-indicator" /> Free
             </span>
           </div>
         </div>
-      </div>
+      </a>
 
       {/* Nav Links */}
       <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center', flexWrap: 'wrap' }} className="nav-desktop-links">
@@ -71,7 +75,7 @@ export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, onOpen
           className="btn-ghost" 
           style={{ fontSize: '0.85rem' }}
         >
-          <Sparkles size={13} color="var(--accent-primary)" /> Capabilities
+          <Sparkles size={13} color="var(--accent-primary)" /> Features
         </button>
         <button 
           onClick={() => scrollToSection('workflow-section')} 
@@ -85,21 +89,12 @@ export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, onOpen
           className="btn-ghost" 
           style={{ fontSize: '0.85rem' }}
         >
-          <Layers size={13} /> Link Hub <span className="tabular-nums badge badge-info" style={{ marginLeft: '2px' }}>{totalLinks}</span>
+          <Layers size={13} /> My Links <span className="tabular-nums badge badge-info" style={{ marginLeft: '2px' }}>{totalLinks}</span>
         </button>
       </div>
 
       {/* Right Actions & Theme Toggle */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <button
-          onClick={onOpenDeployModal}
-          className="btn-secondary"
-          style={{ fontSize: '0.8rem', padding: '0.4rem 0.75rem' }}
-          title="$0/month Self-Host Blueprint"
-        >
-          <Server size={14} color="#059669" /> $0 Stack
-        </button>
-
         <button
           onClick={onToggleTheme}
           className="btn-icon"
@@ -114,7 +109,7 @@ export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, onOpen
           className="btn-primary"
           style={{ fontSize: '0.85rem', padding: '0.45rem 0.95rem' }}
         >
-          <Plus size={15} /> Create Smart Link
+          <Plus size={15} /> Create Link
         </button>
       </div>
     </header>

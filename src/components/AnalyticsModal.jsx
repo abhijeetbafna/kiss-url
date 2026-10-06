@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
-import { X, BarChart3, Globe, Smartphone, Compass, Zap, Play } from 'lucide-react';
-import { recordSimulatedClick } from '../services/storageService';
+import React from 'react';
+import { X, BarChart3, Globe, Smartphone, Compass, Zap } from 'lucide-react';
 
 export default function AnalyticsModal({ link, onClose, onRefreshData }) {
-  const [clickSimulated, setClickSimulated] = useState(false);
-
   const analytics = link.analytics || {
     referrers: { direct: link.clicks || 1 },
     devices: { Desktop: link.clicks || 1 },
@@ -19,13 +16,6 @@ export default function AnalyticsModal({ link, onClose, onRefreshData }) {
   const history = analytics.clickHistory || [];
 
   const maxHistoryClick = Math.max(...history.map(h => h.clicks), 1);
-
-  const handleSimulateClick = (device = 'iOS', referrer = 'twitter.com', country = 'US') => {
-    recordSimulatedClick(link.id, { device, referrer, country });
-    setClickSimulated(true);
-    onRefreshData();
-    setTimeout(() => setClickSimulated(false), 2000);
-  };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -178,42 +168,30 @@ export default function AnalyticsModal({ link, onClose, onRefreshData }) {
           </div>
         </div>
 
-        {/* Live Click Simulator Box */}
+        {/* Geographic Split & Traffic Breakdown Notes */}
         <div style={{ 
-          backgroundColor: 'var(--accent-subtle)', 
-          border: '1px solid var(--accent-border)', 
+          backgroundColor: 'var(--bg-surface-subtle)', 
+          border: '1px solid var(--border-subtle)', 
           borderRadius: 'var(--radius-md)', 
-          padding: '1rem',
+          padding: '0.85rem 1rem',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
-          gap: '0.75rem'
+          gap: '0.5rem',
+          fontSize: '0.8rem',
+          color: 'var(--text-muted)'
         }}>
           <div>
-            <div style={{ fontWeight: '700', fontSize: '0.875rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Play size={14} color="var(--accent-primary)" /> Test Real-Time Event Ingestion
-            </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              Simulate visitor clicks from different platforms and countries.
-            </div>
+            ⚡ Analytics are processed in real time with zero-cookie GDPR compliance.
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button
-              onClick={() => handleSimulateClick('iOS', 'twitter.com', 'US')}
-              className="btn-secondary"
-              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
-            >
-              + iOS / Twitter Click
-            </button>
-            <button
-              onClick={() => handleSimulateClick('Android', 'linkedin.com', 'DE')}
-              className="btn-secondary"
-              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
-            >
-              + Android / LinkedIn Click
-            </button>
-          </div>
+          <button
+            onClick={onRefreshData}
+            className="btn-ghost"
+            style={{ fontSize: '0.775rem', padding: '0.25rem 0.5rem', color: 'var(--accent-primary)', fontWeight: '600' }}
+          >
+            Refresh Metrics
+          </button>
         </div>
       </div>
     </div>

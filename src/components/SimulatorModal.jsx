@@ -51,14 +51,14 @@ export default function SimulatorModal({ link, onClose }) {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.25rem' }}>
           <span className="badge badge-emerald">
-            <RefreshCw size={12} /> Edge Routing Simulator
+            <RefreshCw size={12} /> Destination Preview
           </span>
         </div>
         <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
-          Test Link Resolution
+          Preview Destination & Routing
         </h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
-          Simulate how this short link resolves across devices, robots, and security gates at the edge.
+          Verify how visitors on desktop, iPhone, and Android are redirected to your target destinations.
         </p>
 
         {/* Device Switcher */}
@@ -75,7 +75,7 @@ export default function SimulatorModal({ link, onClose }) {
             className={`btn-ghost ${deviceMode === 'ios' ? 'badge-indigo' : ''}`}
             style={{ flex: 1, justifyContent: 'center', borderRadius: 'var(--radius-sm)' }}
           >
-            <Smartphone size={15} /> Apple iOS
+            <Smartphone size={15} /> iPhone (iOS)
           </button>
           <button
             onClick={() => setDeviceMode('android')}
@@ -89,7 +89,7 @@ export default function SimulatorModal({ link, onClose }) {
             className={`btn-ghost ${deviceMode === 'bot' ? 'badge-indigo' : ''}`}
             style={{ flex: 1, justifyContent: 'center', borderRadius: 'var(--radius-sm)' }}
           >
-            <Bot size={15} /> Crawler Bot
+            <Bot size={15} /> Social Bot
           </button>
         </div>
 
@@ -109,7 +109,7 @@ export default function SimulatorModal({ link, onClose }) {
           {isExpired || isCapReached ? (
             <div>
               <AlertTriangle size={42} color="#e11d48" style={{ margin: '0 auto 0.75rem' }} />
-              <h3 style={{ color: '#be123c', fontSize: '1.1rem', fontWeight: '700' }}>410 - Link Expired / Burned</h3>
+              <h3 style={{ color: '#be123c', fontSize: '1.1rem', fontWeight: '700' }}>Link Inactive / Limit Reached</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.25rem' }}>
                 {isExpired ? `Expired on ${new Date(link.protection.expiresAt).toLocaleString()}` : `Max clicks reached (${link.protection.maxClicks}).`}
               </p>
@@ -137,7 +137,7 @@ export default function SimulatorModal({ link, onClose }) {
           ) : deviceMode === 'bot' ? (
             <div style={{ textAlign: 'left', width: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', color: '#7c3aed', fontSize: '0.85rem', fontWeight: '700' }}>
-                <Bot size={16} /> Edge Crawler Intercept Response (OG Metadata):
+                <Bot size={16} /> Social Media Meta Tags:
               </div>
               <pre style={{
                 backgroundColor: 'var(--bg-surface-muted)',
@@ -161,13 +161,13 @@ export default function SimulatorModal({ link, onClose }) {
             <div>
               <CheckCircle size={40} color="#059669" style={{ margin: '0 auto 0.75rem' }} />
               <div style={{ fontSize: '0.775rem', color: '#059669', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                HTTP 302 Found (Sub-15ms Edge Redirect)
+                Destination Confirmed
               </div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-primary)', marginTop: '0.25rem', wordBreak: 'break-all' }}>
                 {resolvedDestination}
               </h3>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.875rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                <span>Simulated Mode:</span>
+                <span>Selected Platform:</span>
                 <span className="badge badge-indigo">{deviceMode.toUpperCase()}</span>
               </div>
               <div style={{ marginTop: '1.25rem' }}>

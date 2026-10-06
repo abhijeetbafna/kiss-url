@@ -11,7 +11,6 @@ import LinkCreatorModal from './components/LinkCreatorModal';
 import QRCodeModal from './components/QRCodeModal';
 import AnalyticsModal from './components/AnalyticsModal';
 import SimulatorModal from './components/SimulatorModal';
-import ZeroCostDeployModal from './components/ZeroCostDeployModal';
 
 import { getStoredLinks, createLink, deleteLink } from './services/storageService';
 import { Layers } from 'lucide-react';
@@ -30,7 +29,6 @@ export default function App() {
   const [activeQRLink, setActiveQRLink] = useState(null);
   const [activeAnalyticsLink, setActiveAnalyticsLink] = useState(null);
   const [activeSimulatorLink, setActiveSimulatorLink] = useState(null);
-  const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -75,7 +73,6 @@ export default function App() {
           setCreateInitialData(null);
           setIsCreateModalOpen(true);
         }}
-        onOpenDeployModal={() => setIsDeployModalOpen(true)}
         totalLinks={links.length}
       />
 
@@ -90,7 +87,7 @@ export default function App() {
         }}
       />
 
-      {/* 3. Live Capabilities & Interactive Demos (Social Card, Device Routing, Vector QR, Edge Speed) */}
+      {/* 3. Live Capabilities & Interactive Demos (Social Card, Device Routing, Vector QR, Speed & Privacy) */}
       <ProductDemos
         onOpenCreateModal={() => {
           setCreateInitialData(null);
@@ -106,7 +103,7 @@ export default function App() {
         }}
       />
 
-      {/* 5. Full Link Management Hub (Search, Filters, Tags, Tabular Clicks, QR, Analytics, Simulator) */}
+      {/* 5. Full Link Management Hub (Search, Filters, Tags, Tabular Clicks, QR, Analytics, Device Preview) */}
       <main id="hub-section" style={{ marginBottom: '2.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
           <div>
@@ -136,12 +133,11 @@ export default function App() {
 
       {/* 7. Comprehensive Footer with System Status & Data Portability */}
       <Footer
-        onOpenDeployModal={() => setIsDeployModalOpen(true)}
         totalLinks={links.length}
         totalClicks={totalClicks}
       />
 
-      {/* 8. Specialized Studio Modals (All intact and functional) */}
+      {/* 8. Specialized Studio Modals */}
       <LinkCreatorModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
@@ -170,11 +166,6 @@ export default function App() {
           onClose={() => setActiveSimulatorLink(null)}
         />
       )}
-
-      <ZeroCostDeployModal
-        isOpen={isDeployModalOpen}
-        onClose={() => setIsDeployModalOpen(false)}
-      />
     </div>
   );
 }

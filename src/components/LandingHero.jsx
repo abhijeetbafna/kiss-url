@@ -338,7 +338,7 @@ export default function LandingHero({ onLinkCreated, onOpenQR, onOpenSimulator, 
             <div style={{ padding: '0.5rem 0' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
                 <span className="badge badge-emerald">
-                  <Check size={12} /> Link Successfully Generated & Edge-Deployed
+                  <Check size={12} /> Short Link Ready
                 </span>
               </div>
 
@@ -386,7 +386,7 @@ export default function LandingHero({ onLinkCreated, onOpenQR, onOpenSimulator, 
                     <QrCode size={13} /> Studio QR Code
                   </button>
                   <button onClick={() => onOpenSimulator(lastCreatedLink)} className="btn-secondary" style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}>
-                    <Play size={13} color="var(--color-accent)" /> Simulate Edge Redirect
+                    <Play size={13} color="var(--color-accent)" /> Preview Destination
                   </button>
                   <button onClick={() => onOpenStudioModal(lastCreatedLink)} className="btn-secondary" style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}>
                     <Sparkles size={13} color="#7c3aed" /> Customize Social Preview
@@ -404,16 +404,16 @@ export default function LandingHero({ onLinkCreated, onOpenQR, onOpenSimulator, 
         {/* Feature Checkmarks */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', fontSize: '0.8rem', color: 'var(--color-text-muted)', flexWrap: 'wrap' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            <span style={{ color: '#059669', fontWeight: 'bold' }}>✓</span> 0ms Cold Starts (<span style={{ color: 'var(--color-text-primary)', fontWeight: '600' }}>&lt;15ms Globally</span>)
+            <span style={{ color: '#059669', fontWeight: 'bold' }}>✓</span> Instant Global Redirects
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            <span style={{ color: '#059669', fontWeight: 'bold' }}>✓</span> OpenGraph Card Overrides
+            <span style={{ color: '#059669', fontWeight: 'bold' }}>✓</span> Custom Social Previews
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            <span style={{ color: '#059669', fontWeight: 'bold' }}>✓</span> Device & Geo Smart Routing
+            <span style={{ color: '#059669', fontWeight: 'bold' }}>✓</span> Smart Device Routing
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            <span style={{ color: '#059669', fontWeight: 'bold' }}>✓</span> Zero Monthly Hosting Bills
+            <span style={{ color: '#059669', fontWeight: 'bold' }}>✓</span> 100% Free Forever
           </span>
         </div>
       </div>

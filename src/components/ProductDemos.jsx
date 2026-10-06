@@ -198,7 +198,7 @@ export default function ProductDemos({ onOpenCreateModal }) {
 
               <div style={{ backgroundColor: 'var(--color-bg-surface)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-strong)' }}>
                 <div style={{ fontSize: '0.725rem', color: '#059669', fontWeight: '800', textTransform: 'uppercase' }}>
-                  HTTP 302 Edge Decision (&lt;12ms):
+                  Smart Destination Result:
                 </div>
                 <div style={{ fontSize: '1.05rem', fontWeight: '700', color: 'var(--color-text-primary)', marginTop: '0.35rem', wordBreak: 'break-all' }}>
                   {demoDevice === 'ios' && 'https://apps.apple.com/app/kissurl/id123456789'}
@@ -246,16 +246,16 @@ export default function ProductDemos({ onOpenCreateModal }) {
           </div>
         )}
 
-        {/* TAB 4: EDGE SPEED & PRIVACY */}
+        {/* TAB 4: SPEED & PRIVACY */}
         {activeTab === 'analytics' && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
             <div style={{ backgroundColor: 'var(--color-bg-subtle)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-subtle)' }}>
               <Zap size={28} color="#059669" style={{ marginBottom: '0.75rem' }} />
               <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--color-text-primary)', marginBottom: '0.35rem' }}>
-                Sub-15ms Global Edge Latency
+                Lightning-Fast Global Redirection
               </h4>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', lineHeight: '1.6' }}>
-                Redirects happen directly on Cloudflare’s 300+ global edge locations before touching a central server. Zero tracking delay, 0ms cold starts, and 100,000 requests/day 100% free.
+                Redirects execute instantly on high-speed global edge networks before touching a central server. Zero latency and fast redirection.
               </p>
             </div>
 

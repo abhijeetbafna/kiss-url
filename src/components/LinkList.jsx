@@ -241,8 +241,8 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
                     <button
                       onClick={() => onOpenSimulator(link)}
                       className="btn-icon"
-                      title="Test in Edge Routing Simulator"
-                      aria-label="Simulate Routing"
+                      title="Preview Link & Device Routing"
+                      aria-label="Preview Routing"
                     >
                       <Play size={16} color="var(--accent-primary)" />
                     </button>
