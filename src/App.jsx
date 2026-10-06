@@ -199,6 +199,7 @@ export default function App() {
         onOpenBulkModal={() => setIsBulkModalOpen(true)}
         onOpenSafetyModal={() => setIsSafetyModalOpen(true)}
         onOpenErrorBrandingModal={() => setIsErrorBrandingModalOpen(true)}
+        onOpenUserManual={() => setIsUserManualOpen(true)}
         onWorkspaceChanged={async (wsId) => {
           setActiveWsId(wsId);
           await setActiveWorkspaceId(wsId);

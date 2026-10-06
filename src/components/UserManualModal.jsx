@@ -99,7 +99,7 @@ const MANUAL_SECTIONS = [
     badge: 'Audience Builder',
     summary: 'Fire Meta, GA4, TikTok, LinkedIn, and custom tracking pixels when visitors click your short links.',
     howItWorks: [
-      'Open the "Pixels" tab in the navigation bar to configure workspace-level tracking tags.',
+      'Open Tools ➔ Retargeting Pixels to configure workspace-level tracking tags.',
       'Enter your Meta Pixel ID, Google Tag Manager / GA4 Measurement ID, TikTok Pixel ID, or LinkedIn Partner ID.',
       'Inject Custom Scripts for advanced tools like Hotjar, Segment, or Plausible.',
       'When any link in your workspace is clicked, the tag firing simulator triggers and registers the PageView event for retargeting audiences.'
@@ -123,7 +123,7 @@ const MANUAL_SECTIONS = [
     badge: 'Real-Time Data',
     summary: 'Deliver instant JSON payloads to your team channels or APIs when links get clicked.',
     howItWorks: [
-      'Open the "Webhooks" modal from the navigation bar.',
+      'Open Tools ➔ Webhooks & Automations from the navigation bar.',
       'Pick a preset (Slack Incoming Webhook, Discord Webhook, Zapier, or Custom POST URL).',
       'Choose trigger events: Every Click (Live), Click Milestones (100th, 1,000th clicks), or 404 Health Alerts.',
       'Each webhook payload includes SHA-256 HMAC signature verification via the X-KissURL-Signature header.'
@@ -147,7 +147,7 @@ const MANUAL_SECTIONS = [
     badge: 'Security & Trust',
     summary: 'Evaluate link safety, phishing probability, and destination reputation before sharing.',
     howItWorks: [
-      'Click "Safety" in the navigation bar or use the scanner in the Link Hub.',
+      'Click Tools ➔ URL Safety Auditor in the navigation bar.',
       'The scanner runs heuristic inspections across SSL encryption, suspicious TLDs, domain age, canonical structure, and known blocklists.',
       'Outputs a 0-100 Trust Score with clean breakdown: 🟢 Clean / Verified, 🟡 Moderate Risk, or 🔴 Critical Threat.'
     ],
@@ -166,7 +166,7 @@ const MANUAL_SECTIONS = [
     badge: 'Creator Suite',
     summary: 'Build customized link-in-bio landing pages with blocks, avatars, social icons, and newsletter capture.',
     howItWorks: [
-      'Click "Bio" in the navigation bar to launch the visual Bio Studio.',
+      'Click Tools ➔ Bio Link Tree Studio to launch the visual studio.',
       'Choose a unique handle (e.g., kiss.url/bio/alex).',
       'Add multi-format blocks: clickable buttons, text highlights, social media icons, and email subscription forms.',
       'Choose between sleek Dark, Minimalist, Glassmorphism, and Cyber Neon themes.'
@@ -298,49 +298,49 @@ export default function UserManualModal({ isOpen, onClose, onOpenCreateModal, on
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div 
-        className="modal-panel max-w-4xl" 
-        style={{ height: '88vh', display: 'flex', flexDirection: 'column' }}
+        className="modal-panel" 
+        style={{ maxWidth: '880px', height: '86vh', display: 'flex', flexDirection: 'column' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="modal-header flex items-center justify-between border-b border-border/40 p-5 bg-card/40 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-              <BookOpen size={20} />
+        <div className="modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-bg)' }}>
+              <BookOpen size={18} />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-foreground">KissURL Interactive User Manual & Feature Guide</h2>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  v2.0 Complete
-                </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)' }}>KissURL Interactive User Manual</h2>
+                <span className="badge" style={{ borderColor: 'rgba(16, 185, 129, 0.3)', color: '#10b981' }}>v2.0 Complete</span>
               </div>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.1rem' }}>
                 Complete walkthrough of every capability, best practices, and interactive working examples.
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors">
-            <X size={18} />
+          <button onClick={onClose} className="btn-icon" aria-label="Close modal">
+            <X size={16} />
           </button>
         </div>
 
         {/* Search Bar */}
-        <div className="p-3.5 border-b border-border/40 bg-card/20 shrink-0 flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <div style={{ padding: '0.6rem 1.4rem', borderBottom: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-subtle)', display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search features (e.g., A/B Split, UTM tags, Webhooks, Pixels, QR, Passcode)..."
-              className="w-full text-xs bg-card/60 border border-border/60 rounded-lg pl-9 pr-3 py-2 text-foreground focus:outline-none focus:border-primary"
+              className="input"
+              style={{ width: '100%', paddingLeft: '2.2rem', fontSize: '0.825rem' }}
             />
           </div>
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="text-xs text-muted-foreground hover:text-foreground px-2"
+              className="btn btn-ghost"
+              style={{ fontSize: '0.75rem', padding: '0.35rem 0.55rem' }}
             >
               Clear
             </button>
@@ -348,10 +348,10 @@ export default function UserManualModal({ isOpen, onClose, onOpenCreateModal, on
         </div>
 
         {/* Content Split Pane */}
-        <div className="flex-1 flex overflow-hidden">
+        <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
           {/* Left Navigation Index */}
-          <div className="w-72 border-r border-border/40 bg-card/10 overflow-y-auto p-3 space-y-1 shrink-0">
-            <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-2 py-1">
+          <div style={{ width: '260px', borderRight: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-subtle)', overflowY: 'auto', padding: '0.65rem', display: 'flex', flexDirection: 'column', gap: '0.2rem', flexShrink: 0 }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', padding: '0.25rem 0.5rem' }}>
               Chapters ({filteredSections.length})
             </div>
             {filteredSections.map(s => {
@@ -364,97 +364,108 @@ export default function UserManualModal({ isOpen, onClose, onOpenCreateModal, on
                     setActiveSectionId(s.id);
                     setSandboxResult(null);
                   }}
-                  className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-xs transition-all ${
-                    isActive 
-                      ? 'bg-primary text-primary-foreground font-semibold shadow-sm' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-card/60'
-                  }`}
+                  className={`btn ${isActive ? 'btn-primary' : 'btn-ghost'}`}
+                  style={{
+                    width: '100%',
+                    justifyContent: 'flex-start',
+                    fontSize: '0.8rem',
+                    padding: '0.45rem 0.65rem',
+                    borderRadius: 'var(--radius-sm)',
+                    gap: '0.45rem',
+                    textAlign: 'left'
+                  }}
                 >
-                  <Icon size={14} className={isActive ? 'text-primary-foreground' : 'text-muted-foreground'} />
-                  <span className="truncate flex-1">{s.title.replace(/^\d+\.\s*/, '')}</span>
+                  <Icon size={13} style={{ flexShrink: 0 }} />
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {s.title.replace(/^\d+\.\s*/, '')}
+                  </span>
                 </button>
               );
             })}
           </div>
 
           {/* Right Chapter Content & Interactive Example */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div style={{ flex: 1, overflowY: 'auto', padding: '1.4rem 1.6rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {/* Chapter Title & Header */}
             <div>
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-xs font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.35rem' }}>
+                <span className="badge" style={{ borderColor: 'rgba(99, 102, 241, 0.3)', color: 'var(--primary-bg)', backgroundColor: 'rgba(99, 102, 241, 0.08)' }}>
                   {currentSection.badge}
                 </span>
-                <span className="text-xs font-mono text-muted-foreground">Chapter {currentSection.title.split('.')[0]}</span>
+                <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+                  Chapter {currentSection.title.split('.')[0]}
+                </span>
               </div>
-              <h3 className="text-xl font-bold text-foreground tracking-tight flex items-center gap-2">
-                <CurrentIcon size={22} className="text-primary" />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-primary)', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <CurrentIcon size={20} style={{ color: 'var(--primary-bg)' }} />
                 {currentSection.title}
               </h3>
-              <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem', lineHeight: 1.5 }}>
                 {currentSection.summary}
               </p>
             </div>
 
             {/* Step-by-Step Walkthrough */}
-            <div className="p-4 rounded-xl border border-border/50 bg-card/40 space-y-3">
-              <h4 className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
-                <CheckCircle2 size={13} className="text-emerald-400" /> How It Works & Setup Steps
-              </h4>
-              <div className="space-y-2">
+            <div style={{ padding: '1rem 1.15rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-default)', backgroundColor: 'var(--bg-surface)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div style={{ fontSize: '0.775rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <CheckCircle2 size={13} style={{ color: '#10b981' }} /> How It Works & Setup Steps
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {currentSection.howItWorks.map((step, idx) => (
-                  <div key={idx} className="flex items-start gap-2.5 text-xs text-muted-foreground leading-relaxed">
-                    <span className="w-5 h-5 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center shrink-0 text-[10px] mt-0.5 border border-primary/20">
+                  <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                    <span style={{ width: '18px', height: '18px', borderRadius: '50%', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-default)', color: 'var(--primary-bg)', fontSize: '0.7rem', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '2px' }}>
                       {idx + 1}
                     </span>
-                    <span className="flex-1 text-foreground/90">{step}</span>
+                    <span style={{ flex: 1 }}>{step}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Pro Tip Alert */}
-            <div className="p-3.5 rounded-xl border border-primary/30 bg-primary/5 text-xs text-foreground/90 flex items-start gap-3">
-              <span className="text-base select-none">💡</span>
-              <div className="flex-1 leading-relaxed">
-                <strong className="text-primary font-semibold">Pro Tip: </strong>
+            <div style={{ padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', border: '1px solid rgba(99, 102, 241, 0.3)', backgroundColor: 'rgba(99, 102, 241, 0.05)', fontSize: '0.8rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'flex-start', gap: '0.65rem', lineHeight: 1.5 }}>
+              <span style={{ fontSize: '1rem', lineHeight: 1 }}>💡</span>
+              <div>
+                <strong style={{ color: 'var(--primary-bg)' }}>Pro Tip: </strong>
                 {currentSection.proTip}
               </div>
             </div>
 
             {/* Interactive Working Example Box */}
-            <div className="p-4 rounded-xl border border-border/60 bg-card/60 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                  <Play size={13} className="text-emerald-400" /> {currentSection.example.title}
+            <div style={{ padding: '1.1rem 1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-default)', backgroundColor: 'var(--bg-surface)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.825rem', fontWeight: '700', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <Play size={13} style={{ color: '#10b981' }} /> {currentSection.example.title}
                 </span>
                 <button
                   type="button"
                   onClick={() => handleRunWorkingExample(currentSection)}
-                  className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-sm transition-all"
+                  className="btn btn-primary"
+                  style={{ fontSize: '0.775rem', padding: '0.35rem 0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                 >
                   <Sparkles size={12} /> {currentSection.example.actionLabel || 'Try Working Example'}
                 </button>
               </div>
 
               {/* Working Example Details */}
-              <div className="p-3 rounded-lg bg-background/80 border border-border/40 text-xs font-mono space-y-2">
+              <div style={{ padding: '0.85rem 1rem', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-subtle)', fontSize: '0.8rem', fontFamily: 'var(--font-mono)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {currentSection.example.inputUrl && (
                   <div>
-                    <span className="text-muted-foreground text-[10px] block font-sans">Source Destination:</span>
-                    <div className="text-foreground truncate">{currentSection.example.inputUrl}</div>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-sans)', display: 'block' }}>Source Destination:</span>
+                    <div style={{ color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{currentSection.example.inputUrl}</div>
                   </div>
                 )}
                 {currentSection.example.shortUrl && (
                   <div>
-                    <span className="text-muted-foreground text-[10px] block font-sans">Resulting Branded Link:</span>
-                    <div className="text-primary font-bold flex items-center justify-between">
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-sans)', display: 'block' }}>Resulting Branded Link:</span>
+                    <div style={{ color: 'var(--primary-bg)', fontWeight: '700', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span>{currentSection.example.shortUrl}</span>
                       <button
                         onClick={() => handleCopy(currentSection.example.shortUrl, 'short')}
-                        className="text-[10px] text-muted-foreground hover:text-foreground font-sans flex items-center gap-1"
+                        className="btn-ghost"
+                        style={{ fontSize: '0.7rem', padding: '1px 6px', fontFamily: 'var(--font-sans)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
                       >
-                        {copiedKey === 'short' ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
+                        {copiedKey === 'short' ? <Check size={11} style={{ color: '#10b981' }} /> : <Copy size={11} />}
                         {copiedKey === 'short' ? 'Copied' : 'Copy'}
                       </button>
                     </div>
@@ -462,39 +473,39 @@ export default function UserManualModal({ isOpen, onClose, onOpenCreateModal, on
                 )}
                 {currentSection.example.generatedUrl && (
                   <div>
-                    <span className="text-muted-foreground text-[10px] block font-sans">Campaign Appended URL:</span>
-                    <div className="text-primary break-all">{currentSection.example.generatedUrl}</div>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-sans)', display: 'block' }}>Campaign Appended URL:</span>
+                    <div style={{ color: 'var(--primary-bg)', wordBreak: 'break-all' }}>{currentSection.example.generatedUrl}</div>
                   </div>
                 )}
                 {currentSection.example.rules && (
-                  <div className="space-y-1 pt-1">
-                    <span className="text-muted-foreground text-[10px] block font-sans">Dynamic Routing Condition Matrix:</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', paddingTop: '0.2rem' }}>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-sans)', display: 'block' }}>Dynamic Routing Condition Matrix:</span>
                     {currentSection.example.rules.map((r, i) => (
-                      <div key={i} className="flex items-center justify-between text-[11px] bg-card/40 p-1.5 rounded">
-                        <span className="text-primary font-semibold">{r.condition}</span>
-                        <span className="text-muted-foreground truncate max-w-[240px]">{r.target}</span>
+                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', backgroundColor: 'var(--bg-surface)', padding: '0.35rem 0.5rem', borderRadius: 'var(--radius-xs)', border: '1px solid var(--border-subtle)' }}>
+                        <span style={{ color: 'var(--primary-bg)', fontWeight: '600' }}>{r.condition}</span>
+                        <span style={{ color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '240px' }}>{r.target}</span>
                       </div>
                     ))}
                   </div>
                 )}
                 {currentSection.example.payload && (
                   <div>
-                    <span className="text-muted-foreground text-[10px] block font-sans">Sample JSON Payload:</span>
-                    <pre className="p-2 rounded bg-black/40 text-[10px] text-emerald-300 overflow-x-auto">
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-sans)', display: 'block', marginBottom: '0.25rem' }}>Sample JSON Payload:</span>
+                    <pre style={{ margin: 0, padding: '0.5rem', borderRadius: 'var(--radius-xs)', backgroundColor: '#09090b', color: '#34d399', fontSize: '0.725rem', overflowX: 'auto' }}>
                       {JSON.stringify(currentSection.example.payload, null, 2)}
                     </pre>
                   </div>
                 )}
                 {currentSection.example.metrics && (
-                  <div className="text-emerald-400 font-bold">
+                  <div style={{ color: '#10b981', fontWeight: '700' }}>
                     {currentSection.example.metrics}
                   </div>
                 )}
               </div>
 
               {sandboxResult && sandboxResult.sectionId === currentSection.id && (
-                <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 flex items-center gap-2">
-                  <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
+                <div style={{ padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-sm)', backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.25)', fontSize: '0.8rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                  <CheckCircle2 size={14} style={{ color: '#10b981', flexShrink: 0 }} />
                   <span>{sandboxResult.message} ({sandboxResult.timestamp})</span>
                 </div>
               )}
@@ -503,14 +514,15 @@ export default function UserManualModal({ isOpen, onClose, onOpenCreateModal, on
         </div>
 
         {/* Footer */}
-        <div className="modal-footer p-4 border-t border-border/40 bg-card/40 flex items-center justify-between shrink-0">
-          <div className="text-xs text-muted-foreground flex items-center gap-2">
-            <span>📖 Press <kbd className="font-mono text-[10px] bg-muted/40 px-1.5 py-0.5 rounded border border-border/40">ESC</kbd> to exit manual</span>
+        <div className="modal-footer" style={{ justifyContent: 'space-between' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            📖 Press <kbd style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', backgroundColor: 'var(--bg-subtle)', padding: '1px 5px', borderRadius: 'var(--radius-xs)', border: '1px solid var(--border-default)' }}>ESC</kbd> to exit manual
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-1.5 text-xs font-semibold rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-colors"
+            className="btn btn-secondary"
+            style={{ fontSize: '0.8rem' }}
           >
             Close Guide
           </button>

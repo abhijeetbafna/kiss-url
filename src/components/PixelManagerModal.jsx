@@ -10,7 +10,8 @@ import {
   Code2,
   RefreshCw,
   Sliders,
-  CheckCircle2
+  CheckCircle2,
+  Layers
 } from 'lucide-react';
 import { getWorkspacePixelsSettings, saveWorkspacePixelsSettings } from '../services/storageService';
 import confetti from 'canvas-confetti';
@@ -83,6 +84,14 @@ export default function PixelManagerModal({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleSave = async (e) => {
@@ -100,23 +109,22 @@ export default function PixelManagerModal({ isOpen, onClose }) {
     const logs = [];
     const timestamp = new Date().toLocaleTimeString();
 
-    logs.push(`[${timestamp}] 🚀 Initializing KissURL Tracking & Retargeting Engine...`);
+    logs.push(`[${timestamp}] 🚀 Initializing KissURL Pixel Dispatcher for event: "${simulatedEvent}"`);
 
     let activeCount = 0;
-
     if (settings.metaPixelId?.trim()) {
       activeCount++;
-      logs.push(`[${timestamp}] ✅ Meta Pixel (${settings.metaPixelId}): fbq('track', '${simulatedEvent}', { source: 'kiss_url', url: window.location.href })`);
+      logs.push(`[${timestamp}] ✅ Meta Pixel (${settings.metaPixelId}): fbq('track', '${simulatedEvent}') fired`);
     }
 
     if (settings.gaMeasurementId?.trim()) {
       activeCount++;
-      logs.push(`[${timestamp}] ✅ Google Analytics 4 (${settings.gaMeasurementId}): gtag('event', '${simulatedEvent.toLowerCase()}', { send_to: '${settings.gaMeasurementId}' })`);
+      logs.push(`[${timestamp}] ✅ Google Analytics 4 (${settings.gaMeasurementId}): gtag('event', '${simulatedEvent}') fired`);
     }
 
     if (settings.tiktokPixelId?.trim()) {
       activeCount++;
-      logs.push(`[${timestamp}] ✅ TikTok Pixel (${settings.tiktokPixelId}): ttq.track('${simulatedEvent}')`);
+      logs.push(`[${timestamp}] ✅ TikTok Ads Pixel (${settings.tiktokPixelId}): ttq.track('${simulatedEvent}')`);
     }
 
     if (settings.linkedinPartnerId?.trim()) {
@@ -161,10 +169,12 @@ export default function PixelManagerModal({ isOpen, onClose }) {
         {/* Header */}
         <div className="modal-header">
           <div>
-            <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <Target size={18} /> Retargeting Pixels & Tracking Tags
-            </h2>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+              <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <Target size={18} /> Retargeting Pixels & Tracking Tags
+              </h2>
+            </div>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
               Manage ad retargeting pixels and conversion tags across all workspace links.
             </p>
           </div>
@@ -173,106 +183,97 @@ export default function PixelManagerModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Tab Navigation */}
-        <div style={{ display: 'flex', borderBottom: '1px solid var(--border-subtle)', padding: '0 1.4rem', backgroundColor: 'var(--bg-subtle)', flexShrink: 0 }}>
+        {/* Clean Pill Segment Switcher */}
+        <div style={{ 
+          display: 'flex', 
+          gap: '0.35rem', 
+          padding: '0.55rem 1.4rem', 
+          borderBottom: '1px solid var(--border-subtle)', 
+          backgroundColor: 'var(--bg-subtle)',
+          flexShrink: 0
+        }}>
           <button
+            type="button"
             onClick={() => setActiveTab('pixels')}
-            className="tab-btn"
-            style={{
-              padding: '0.75rem 1rem',
-              fontSize: '0.825rem',
-              fontWeight: '600',
-              borderBottom: activeTab === 'pixels' ? '2px solid var(--primary-bg)' : '2px solid transparent',
-              color: activeTab === 'pixels' ? 'var(--text-primary)' : 'var(--text-muted)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem'
-            }}
+            className={`btn ${activeTab === 'pixels' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
           >
-            <Target size={13} /> Tracking Pixels <span className="badge" style={{ fontSize: '0.7rem', padding: '1px 5px' }}>{configuredCount}</span>
+            <Target size={13} /> Tracking Pixels <span className="badge" style={{ fontSize: '0.7rem', padding: '1px 5px', marginLeft: '3px' }}>{configuredCount}</span>
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('custom')}
-            className="tab-btn"
-            style={{
-              padding: '0.75rem 1rem',
-              fontSize: '0.825rem',
-              fontWeight: '600',
-              borderBottom: activeTab === 'custom' ? '2px solid var(--primary-bg)' : '2px solid transparent',
-              color: activeTab === 'custom' ? 'var(--text-primary)' : 'var(--text-muted)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem'
-            }}
+            className={`btn ${activeTab === 'custom' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
           >
             <Code2 size={13} /> Custom Script Tag
           </button>
           <button
+            type="button"
             onClick={() => {
               setActiveTab('simulator');
               if (simulatorLogs.length === 0) handleRunSimulation();
             }}
-            className="tab-btn"
-            style={{
-              padding: '0.75rem 1rem',
-              fontSize: '0.825rem',
-              fontWeight: '600',
-              borderBottom: activeTab === 'simulator' ? '2px solid var(--primary-bg)' : '2px solid transparent',
-              color: activeTab === 'simulator' ? 'var(--text-primary)' : 'var(--text-muted)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem'
-            }}
+            className={`btn ${activeTab === 'simulator' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
           >
             <Play size={13} /> Event Simulator
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div className="modal-body">
+        {/* Body */}
+        <div className="modal-body" style={{ maxHeight: '68vh', overflowY: 'auto' }}>
+          {/* TAB 1: PRESET TRACKING PIXELS */}
           {activeTab === 'pixels' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5, padding: '0.75rem 0.9rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
-                💡 <strong>Global Workspace Defaults</strong>: Pixels configured here will automatically be injected into all shortened links in this workspace, enabling instant retargeting on ad platforms.
+              <div style={{ padding: '0.75rem 1rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
+                💡 <strong>Global Workspace Defaults:</strong> Pixels configured here will automatically be injected into all shortened links in this workspace, enabling instant retargeting on ad platforms.
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.85rem' }}>
-                {PIXEL_PRESETS.map((p) => {
-                  const isConfigured = !!settings[p.field]?.trim();
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                {PIXEL_PRESETS.map((preset) => {
+                  const val = settings[preset.field] || '';
+                  const isFilled = Boolean(val.trim());
+
                   return (
                     <div 
-                      key={p.id}
-                      style={{
-                        padding: '0.85rem 1rem',
+                      key={preset.id}
+                      style={{ 
+                        padding: '0.85rem 1rem', 
+                        backgroundColor: 'var(--bg-surface)', 
+                        border: isFilled ? '1px solid var(--border-default)' : '1px solid var(--border-subtle)', 
                         borderRadius: 'var(--radius-md)',
-                        backgroundColor: 'var(--bg-surface)',
-                        border: `1px solid ${isConfigured ? 'var(--border-strong)' : 'var(--border-default)'}`,
-                        transition: 'border-color var(--duration-fast) var(--ease-out)'
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.4rem',
+                        transition: 'border-color 0.15s ease'
                       }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                          <span style={{ fontSize: '1rem' }}>{p.icon}</span>
+                          <span style={{ fontSize: '1.1rem' }}>{preset.icon}</span>
                           <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-primary)' }}>
-                            {p.name}
+                            {preset.name}
                           </span>
                         </div>
-                        {isConfigured && (
-                          <span className="badge badge-green" style={{ fontSize: '0.7rem', padding: '2px 6px' }}>
-                            <CheckCircle2 size={11} /> Active
+                        {isFilled && (
+                          <span className="badge" style={{ borderColor: 'rgba(16, 185, 129, 0.3)', color: '#10b981' }}>
+                            <Check size={10} /> Active
                           </span>
                         )}
                       </div>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                        {p.description}
+
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        {preset.description}
                       </p>
+
                       <input
                         type="text"
-                        placeholder={p.placeholder}
-                        value={settings[p.field] || ''}
-                        onChange={(e) => setSettings({ ...settings, [p.field]: e.target.value })}
-                        className="input input-mono"
-                        style={{ fontSize: '0.8rem', padding: '0.4rem 0.6rem' }}
+                        value={val}
+                        onChange={(e) => setSettings({ ...settings, [preset.field]: e.target.value })}
+                        placeholder={preset.placeholder}
+                        className="input"
+                        style={{ fontSize: '0.825rem', fontFamily: 'var(--font-mono)', padding: '0.45rem 0.65rem' }}
                       />
                     </div>
                   );
@@ -281,80 +282,68 @@ export default function PixelManagerModal({ isOpen, onClose }) {
             </div>
           )}
 
+          {/* TAB 2: CUSTOM HEAD SCRIPT TAG */}
           {activeTab === 'custom' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5, padding: '0.75rem 0.9rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
-                ⚡ <strong>Custom Analytics Script</strong>: Inject raw tracking scripts (e.g. PostHog, Plausible, Mixpanel, Segment, or Hotjar) directly before redirection.
+              <div style={{ padding: '0.75rem 1rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
+                ⚡ <strong>Custom Tracking Scripts:</strong> Paste any JavaScript tag (Google Tag Manager snippet, Hotjar, Segment, Plausible, or custom web tracking code).
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
-                  Raw &lt;script&gt; Tag or JavaScript Snippet
+                <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
+                  Raw HTML / &lt;script&gt; Injection Block
                 </label>
                 <textarea
-                  rows={8}
-                  placeholder={`<script>\n  // Example: PostHog / Plausible custom event\n  window.analytics && window.analytics.track('Link Clicked');\n</script>`}
                   value={settings.customHeadScript || ''}
                   onChange={(e) => setSettings({ ...settings, customHeadScript: e.target.value })}
-                  className="input input-mono"
-                  style={{ fontSize: '0.8rem', lineHeight: 1.5 }}
+                  placeholder={`<!-- Global site tag or custom script -->\n<script>\n  window.dataLayer = window.dataLayer || [];\n  // your tracking code here\n</script>`}
+                  rows={8}
+                  className="input"
+                  style={{ width: '100%', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', resize: 'vertical', padding: '0.65rem' }}
                 />
               </div>
             </div>
           )}
 
+          {/* TAB 3: EVENT SIMULATOR */}
           {activeTab === 'simulator' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-primary)' }}>
-                    Test Event:
-                  </label>
-                  <select 
-                    value={simulatedEvent} 
-                    onChange={(e) => setSimulatedEvent(e.target.value)}
-                    className="input"
-                    style={{ width: '140px', padding: '0.3rem 0.5rem', fontSize: '0.8rem' }}
-                  >
-                    <option value="PageView">PageView</option>
-                    <option value="Lead">Lead</option>
-                    <option value="ViewContent">ViewContent</option>
-                    <option value="InitiateCheckout">InitiateCheckout</option>
-                    <option value="Purchase">Purchase</option>
-                  </select>
-                </div>
+              <div style={{ padding: '0.75rem 1rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
+                🧪 <strong>Live Tag Dispatcher:</strong> Simulate how tracking tags and retargeting pixels fire when a visitor visits your short links.
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <select
+                  value={simulatedEvent}
+                  onChange={(e) => setSimulatedEvent(e.target.value)}
+                  className="input"
+                  style={{ flex: 1, fontSize: '0.8rem', padding: '0.45rem' }}
+                >
+                  <option value="PageView">Event: PageView (Standard Visit)</option>
+                  <option value="Lead">Event: Lead (Sign-up / Conversion)</option>
+                  <option value="ViewContent">Event: ViewContent (Catalog / Product View)</option>
+                  <option value="Purchase">Event: Purchase (Checkout / Payment)</option>
+                </select>
 
                 <button
+                  type="button"
                   onClick={handleRunSimulation}
+                  disabled={simulating}
                   className="btn btn-primary"
-                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
+                  style={{ fontSize: '0.8rem', padding: '0.45rem 0.85rem' }}
                 >
-                  <RefreshCw size={13} className={simulating ? 'pulse-indicator' : ''} /> Fire Test Event
+                  <Play size={13} /> Fire Event
                 </button>
               </div>
 
-              {/* Console Output Window */}
-              <div style={{
-                backgroundColor: '#09090b',
-                color: '#22c55e',
-                borderRadius: 'var(--radius-md)',
-                padding: '1rem',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.785rem',
-                minHeight: '220px',
-                maxHeight: '300px',
-                overflowY: 'auto',
-                border: '1px solid #27272a'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', borderBottom: '1px solid #27272a', paddingBottom: '0.4rem', marginBottom: '0.65rem', color: '#a1a1aa' }}>
-                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#ef4444' }} />
-                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#f59e0b' }} />
-                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e' }} />
-                  <span style={{ marginLeft: '0.4rem', fontSize: '0.7rem' }}>Console Dispatcher Debugger</span>
+              {/* Console Logs */}
+              <div style={{ backgroundColor: '#09090b', borderRadius: 'var(--radius-md)', padding: '1rem', border: '1px solid var(--border-default)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', minHeight: '160px', color: '#a1a1aa' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #27272a', paddingBottom: '0.4rem', marginBottom: '0.65rem', color: '#71717a', fontSize: '0.7rem' }}>
+                  <span>PIXEL CONSOLE DISPATCHER</span>
+                  <span>{simulatorLogs.length} events logged</span>
                 </div>
-
                 {simulatorLogs.map((log, i) => (
-                  <div key={i} style={{ marginBottom: '0.35rem', lineHeight: 1.4 }}>
+                  <div key={i} style={{ marginBottom: '0.35rem', lineHeight: 1.4, color: log.includes('✅') ? '#34d399' : (log.includes('⚠️') ? '#fbbf24' : '#e4e4e7') }}>
                     {log}
                   </div>
                 ))}
@@ -364,25 +353,33 @@ export default function PixelManagerModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="modal-footer">
-          <button type="button" onClick={onClose} className="btn btn-secondary" style={{ fontSize: '0.825rem' }}>
-            Close
-          </button>
-          <button 
-            type="button" 
-            onClick={handleSave} 
-            disabled={isSaving}
-            className="btn btn-primary" 
-            style={{ fontSize: '0.825rem', padding: '0.4rem 0.9rem' }}
-          >
-            {saved ? (
-              <>
-                <Check size={14} /> Pixels Saved!
-              </>
-            ) : (
-              isSaving ? 'Saving...' : 'Save Workspace Pixels'
+        <div className="modal-footer" style={{ justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            {saved && (
+              <span style={{ color: '#10b981', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: '600' }}>
+                <CheckCircle2 size={13} /> Saved to workspace!
+              </span>
             )}
-          </button>
+          </div>
+          <div style={{ display: 'flex', gap: '0.45rem' }}>
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn btn-ghost"
+              style={{ fontSize: '0.8rem' }}
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={isSaving}
+              className="btn btn-primary"
+              style={{ fontSize: '0.8rem', padding: '0.45rem 1rem' }}
+            >
+              {isSaving ? 'Saving...' : 'Save Workspace Pixels'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
