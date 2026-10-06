@@ -1,13 +1,13 @@
 // Local Storage Service for 100% Free / Zero-Cost Client-Side Database & Cloudflare Sync
 
-const STORAGE_KEY = 'linkpulse_links_v1';
-const SETTINGS_KEY = 'linkpulse_settings_v1';
+const STORAGE_KEY = 'kissurl_links_v1';
+const SETTINGS_KEY = 'kissurl_settings_v1';
 
 const INITIAL_SAMPLE_LINKS = [
   {
     id: 'lp_sample_1',
     slug: 'launch-app',
-    domain: 'pulse.link',
+    domain: 'kiss.url',
     targetUrl: 'https://github.com/topics/modern-web',
     title: 'Mobile App Launch Campaign',
     createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
@@ -17,7 +17,7 @@ const INITIAL_SAMPLE_LINKS = [
     // Feature 1: Social OpenGraph Override
     socialOg: {
       enabled: true,
-      title: 'Get 50% Off Lifetime Pro Access | LinkPulse',
+      title: 'Get 50% Off Lifetime Pro Access | KissURL',
       description: 'The ultra-fast, modern link management platform built for creators & developers.',
       imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80',
     },
@@ -110,7 +110,7 @@ const INITIAL_SAMPLE_LINKS = [
   {
     id: 'lp_sample_3',
     slug: 'dev-summit-qr',
-    domain: 'pulse.link',
+    domain: 'kiss.url',
     targetUrl: 'https://youtube.com',
     title: 'Conference Keynote QR Pass',
     createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
@@ -245,7 +245,7 @@ export const exportLinksAsJSON = () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `linkpulse_backup_${new Date().toISOString().split('T')[0]}.json`;
+  a.download = `kissurl_backup_${new Date().toISOString().split('T')[0]}.json`;
   a.click();
   URL.revokeObjectURL(url);
 };
@@ -268,7 +268,7 @@ export const exportLinksAsCSV = () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `linkpulse_export_${new Date().toISOString().split('T')[0]}.csv`;
+  a.download = `kissurl_export_${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 };

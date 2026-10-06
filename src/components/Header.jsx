@@ -23,7 +23,7 @@ export default function Header({ onOpenCreateModal, onOpenDeployModal, totalLink
           width: '40px',
           height: '40px',
           borderRadius: 'var(--radius-md)',
-          backgroundColor: 'var(--accent-primary)',
+          backgroundColor: 'var(--color-accent)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -34,15 +34,15 @@ export default function Header({ onOpenCreateModal, onOpenDeployModal, totalLink
         </div>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <h1 style={{ fontSize: '1.35rem', fontWeight: '800', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
-              LinkPulse
+            <h1 style={{ fontSize: '1.35rem', fontWeight: '800', letterSpacing: '-0.02em', color: 'var(--color-text-primary)' }}>
+              KissURL
             </h1>
             <span className="badge badge-emerald">
               <span className="pulse-indicator" /> Live v1
             </span>
           </div>
-          <p style={{ fontSize: '0.775rem', color: 'var(--text-muted)' }}>
-            High-Performance Link Management • $0/mo Edge Architecture
+          <p style={{ fontSize: '0.775rem', color: 'var(--color-text-muted)' }}>
+            Keep It Simple Short URL & Intelligence • $0/mo Edge Architecture
           </p>
         </div>
       </div>
@@ -52,25 +52,25 @@ export default function Header({ onOpenCreateModal, onOpenDeployModal, totalLink
         display: 'flex', 
         gap: '1.25rem', 
         alignItems: 'center', 
-        backgroundColor: 'var(--bg-surface-muted)', 
+        backgroundColor: 'var(--color-bg-subtle)', 
         padding: '0.45rem 1.15rem', 
         borderRadius: 'var(--radius-md)',
         border: '1px solid var(--border-subtle)'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '0.675rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.04em' }}>
+          <div style={{ fontSize: '0.675rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.04em' }}>
             Active Links
           </div>
-          <div className="tabular-nums" style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--text-primary)' }}>
+          <div className="tabular-nums" style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>
             {totalLinks}
           </div>
         </div>
         <div style={{ width: '1px', height: '24px', backgroundColor: 'var(--border-strong)' }} />
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '0.675rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.04em' }}>
+          <div style={{ fontSize: '0.675rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.04em' }}>
             Total Clicks
           </div>
-          <div className="tabular-nums" style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--accent-primary)' }}>
+          <div className="tabular-nums" style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--color-accent)' }}>
             {totalClicks.toLocaleString()}
           </div>
         </div>
@@ -91,10 +91,10 @@ export default function Header({ onOpenCreateModal, onOpenDeployModal, totalLink
         <button
           onClick={onOpenDeployModal}
           className="btn-secondary"
-          style={{ fontSize: '0.825rem', color: 'var(--text-secondary)' }}
+          style={{ fontSize: '0.825rem', color: 'var(--color-text-secondary)' }}
           title="100% Free Production Deployment Blueprint"
         >
-          <Server size={14} color="#10b981" /> $0 Production Stack
+          <Server size={14} color="#059669" /> $0 Production Stack
         </button>
 
         <button

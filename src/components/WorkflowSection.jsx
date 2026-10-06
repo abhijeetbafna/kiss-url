@@ -7,7 +7,7 @@ export default function WorkflowSection({ onOpenCreateModal }) {
       num: '01',
       title: 'Paste & Shorten Instantly',
       badge: 'Speed',
-      desc: 'Enter any long campaign URL, choose your branded domain (pulse.link, go.bio, or custom CNAME), and generate a clean, memorable alias.',
+      desc: 'Enter any long campaign URL, choose your branded domain (kiss.url, go.bio, or custom CNAME), and generate a clean, memorable alias.',
       icon: <Layers size={22} color="var(--color-accent)" />
     },
     {
@@ -44,7 +44,7 @@ export default function WorkflowSection({ onOpenCreateModal }) {
             <Layers size={12} /> The Complete Workflow
           </span>
           <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: '800', letterSpacing: '-0.025em', color: 'var(--color-text-primary)', marginBottom: '0.5rem' }}>
-            How Modern Teams Manage Links with LinkPulse
+            How Modern Teams Manage Links with KissURL
           </h2>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.95rem', maxWidth: '560px', marginInline: 'auto' }}>
             From one-off links to high-scale global marketing campaigns in three seamless steps.

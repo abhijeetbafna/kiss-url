@@ -1,4 +1,4 @@
-# LinkPulse Design System (DESIGN.md)
+# KissURL Design System (DESIGN.md)
 
 > Grounded in **Kigen Design** token systems, **Typographer** hierarchy, **Inclusive Design Principles**, **Unicorn Studio** purposeful micro-interactions, **Inspo.page** UI patterns, and **Impeccable.style** visual authority.
 
@@ -6,7 +6,7 @@
 
 ## 1. Core Visual Principles & 60 / 30 / 10 Balance
 
-LinkPulse applies the **60 / 30 / 10** color rule to ensure visual calm, clarity, and deliberate emphasis:
+KissURL applies the **60 / 30 / 10** color rule to ensure visual calm, clarity, and deliberate emphasis:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Zap, Plus, Sun, Moon, Server, Layers, HelpCircle } from 'lucide-react';
+import { Zap, Plus, Sun, Moon, Server } from 'lucide-react';
 
 export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, onOpenDeployModal, totalLinks }) {
   const scrollToSection = (id) => {
@@ -48,7 +48,7 @@ export default function Navbar({ theme, onToggleTheme, onOpenCreateModal, onOpen
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.03em', color: 'var(--color-text-primary)' }}>
-              LinkPulse
+              KissURL
             </span>
             <span className="badge badge-emerald" style={{ fontSize: '0.65rem', padding: '0.15rem 0.5rem' }}>
               <span className="pulse-indicator" /> v1.0

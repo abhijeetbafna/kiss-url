@@ -10,7 +10,7 @@ const SAMPLE_SLUGS = ['pulse', 'launch', 'drop', 'vip-pass', 'beta-access', 'gro
 export default function LandingHero({ onLinkCreated, onOpenQR, onOpenSimulator, onOpenStudioModal }) {
   // Input states
   const [urlInput, setUrlInput] = useState('');
-  const [domain, setDomain] = useState('pulse.link');
+  const [domain, setDomain] = useState('kiss.url');
   const [customSlug, setCustomSlug] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
   
@@ -229,7 +229,7 @@ export default function LandingHero({ onLinkCreated, onOpenQR, onOpenSimulator, 
                     className="input-field"
                     style={{ padding: '0.45rem 0.75rem', fontSize: '0.85rem', cursor: 'pointer' }}
                   >
-                    <option value="pulse.link">pulse.link (Fast Edge)</option>
+                    <option value="kiss.url">kiss.url (Fast Edge)</option>
                     <option value="go.bio">go.bio (Creator Bio)</option>
                     <option value="click.to">click.to (Instant)</option>
                     <option value="custom.domain">custom.domain (CNAME)</option>

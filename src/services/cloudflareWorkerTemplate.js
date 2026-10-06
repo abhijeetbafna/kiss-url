@@ -2,12 +2,12 @@
 // Free Tier: 100,000 requests/day, sub-15ms edge redirects globally
 
 export const CLOUDFLARE_WORKER_CODE = `/**
- * LinkPulse Global Edge Redirector (Cloudflare Worker)
+ * KissURL Global Edge Redirector (Cloudflare Worker)
  * 100% Free Tier (100,000 requests/day, 0ms cold starts)
  * 
  * Instructions:
  * 1. Create a free Cloudflare account at https://dash.cloudflare.com
- * 2. Create a KV Namespace named 'LINKPULSE_KV'
+ * 2. Create a KV Namespace named 'KISSURL_KV'
  * 3. Deploy this Worker to your custom domain or *.workers.dev subdomain!
  */
 
@@ -22,9 +22,9 @@ export default {
     }
 
     // 2. Fetch link configuration from Cloudflare KV (Edge Cached)
-    const rawLinkData = await env.LINKPULSE_KV.get(slug);
+    const rawLinkData = await env.KISSURL_KV.get(slug);
     if (!rawLinkData) {
-      return new Response('404 - LinkPulse Short Link Not Found', {
+      return new Response('404 - KissURL Short Link Not Found', {
         status: 404,
         headers: { 'content-type': 'text/html; charset=utf-8' }
       });
@@ -63,7 +63,7 @@ export default {
 <html>
 <head>
   <meta charset="utf-8">
-  <title>\${link.socialOg.title || link.title || 'LinkPulse'}</title>
+  <title>\${link.socialOg.title || link.title || 'KissURL'}</title>
   <meta property="og:title" content="\${link.socialOg.title || link.title || ''}">
   <meta property="og:description" content="\${link.socialOg.description || ''}">
   <meta property="og:image" content="\${link.socialOg.imageUrl || ''}">

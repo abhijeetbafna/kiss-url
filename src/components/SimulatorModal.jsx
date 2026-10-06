@@ -150,9 +150,9 @@ export default function SimulatorModal({ link, onClose }) {
                 overflowX: 'auto',
                 lineHeight: '1.5'
               }}>
-{`<meta property="og:title" content="${link.socialOg?.title || link.title || 'LinkPulse'}" />
-<meta property="og:description" content="${link.socialOg?.description || 'Smart link powered by LinkPulse'}" />
-<meta property="og:image" content="${link.socialOg?.imageUrl || 'https://linkpulse.dev/og-default.png'}" />
+{`<meta property="og:title" content="${link.socialOg?.title || link.title || 'KissURL'}" />
+<meta property="og:description" content="${link.socialOg?.description || 'Smart link powered by KissURL'}" />
+<meta property="og:image" content="${link.socialOg?.imageUrl || 'https://kissurl.dev/og-default.png'}" />
 <meta property="og:url" content="${fullShortUrl}" />
 <meta name="twitter:card" content="summary_large_image" />`}
               </pre>

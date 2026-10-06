@@ -1,7 +1,7 @@
-# LinkPulse Product Architecture & Requirements (PRODUCT.md)
+# KissURL Product Architecture & Requirements (PRODUCT.md)
 
 ## 1. Product Purpose & Value Proposition
-LinkPulse is an intelligent, high-performance link management platform designed for content creators, growth marketers, engineering teams, and modern developers. It replaces legacy bloated tools (Bitly/TinyURL) with a fast, privacy-first, zero-monthly-cost edge architecture ($0/mo).
+KissURL (Keep It Simple Short URL) is an intelligent, high-performance link management platform designed for content creators, growth marketers, engineering teams, and modern developers. It replaces legacy bloated tools (Bitly/TinyURL) with a fast, privacy-first, zero-monthly-cost edge architecture ($0/mo).
 
 ---
 
@@ -9,7 +9,7 @@ LinkPulse is an intelligent, high-performance link management platform designed 
 
 ```mermaid
 graph TD
-    App[LinkPulse Web Application]
+    App[KissURL Web Application]
     App --> Nav[Top Navigation Bar]
     App --> Landing[Landing Page & Hero Shortener]
     App --> Features[Capabilities Showcase & Live Demos]

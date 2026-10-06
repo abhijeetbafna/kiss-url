@@ -1,10 +1,10 @@
-# LinkPulse ⚡ — Next-Gen Smart Link Intelligence Platform
+# KissURL ⚡ — Keep It Simple Short URL & Intelligence Platform
 
 > A 100% Free / Zero-Cost modern alternative to Bitly & TinyURL, engineered with **dynamic social cards**, **device-aware smart routing**, **studio QR generator**, and **sub-15ms edge redirects**.
 
 ---
 
-## 🌟 Why LinkPulse Beats Legacy Shorteners
+## 🌟 Why KissURL Beats Legacy Shorteners
 
 1. **Zero Monthly Cost ($0/month forever)**: Designed to deploy completely on 100% free-tier services (Cloudflare Pages + Cloudflare Workers + Supabase/Upstash).
 2. **Social Card Studio (OG Meta Tags Override)**: Directly edit how Twitter/X, LinkedIn, Discord, and Slack unfurl your link with live previews and custom card titles/images.
@@ -21,14 +21,11 @@
 # Navigate to the project directory
 cd link-pulse
 
-# Install dependencies (already installed)
-npm install
-
 # Start development server
 npm run dev
 ```
 
-Visit `http://localhost:5173` in your browser.
+Visit `http://localhost:5188` in your browser.
 
 ---
 
@@ -41,7 +38,7 @@ Visit `http://localhost:5173` in your browser.
 
 ### 2. Edge Redirect Engine (Cloudflare Workers)
 - Create a Cloudflare Worker using the code in `src/services/cloudflareWorkerTemplate.js`.
-- Bind a free Cloudflare KV namespace (`LINKPULSE_KV`).
+- Bind a free Cloudflare KV namespace (`KISSURL_KV`).
 - **Cost**: $0/month (100,000 requests/day, sub-15ms global redirects).
 
 ### 3. Database & Auth (Optional Supabase Free Tier)

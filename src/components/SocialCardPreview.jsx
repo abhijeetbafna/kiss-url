@@ -19,7 +19,7 @@ export default function SocialCardPreview({ title, description, imageUrl, destin
   const displayTitle = title || 'Your Engaging Page Title Here';
   const displayDesc = description || 'A short, persuasive summary that maximizes social media click-through rates.';
   const displayImage = imageUrl || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80';
-  const displayUrl = `${domain || 'pulse.link'}/${slug || 'custom-alias'}`;
+  const displayUrl = `${domain || 'kiss.url'}/${slug || 'custom-alias'}`;
 
   return (
     <div style={{ marginTop: '1rem' }}>
@@ -96,11 +96,11 @@ export default function SocialCardPreview({ title, description, imageUrl, destin
                 color: '#ffffff',
                 fontWeight: '600'
               }}>
-                {domain || 'pulse.link'}
+                {domain || 'kiss.url'}
               </div>
             </div>
             <div style={{ padding: '12px' }}>
-              <div style={{ fontSize: '13px', color: '#536471', marginBottom: '2px' }}>{domain || 'pulse.link'}</div>
+              <div style={{ fontSize: '13px', color: '#536471', marginBottom: '2px' }}>{domain || 'kiss.url'}</div>
               <div style={{ fontSize: '15px', fontWeight: '700', color: '#0f1419', lineHeight: '1.3' }}>{displayTitle}</div>
               <div style={{ fontSize: '13px', color: '#536471', marginTop: '4px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {displayDesc}
@@ -169,7 +169,7 @@ export default function SocialCardPreview({ title, description, imageUrl, destin
             borderLeftColor: '#2563eb',
             fontFamily: 'system-ui, sans-serif'
           }}>
-            <div style={{ fontSize: '12px', color: '#616061', fontWeight: 'bold' }}>LinkPulse • {domain || 'pulse.link'}</div>
+            <div style={{ fontSize: '12px', color: '#616061', fontWeight: 'bold' }}>KissURL • {domain || 'kiss.url'}</div>
             <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#1264a3', marginTop: '2px' }}>{displayTitle}</div>
             <div style={{ fontSize: '13px', color: '#1d1c1d', marginTop: '4px' }}>{displayDesc}</div>
             <div style={{ marginTop: '8px', borderRadius: '4px', overflow: 'hidden', maxWidth: '320px' }}>

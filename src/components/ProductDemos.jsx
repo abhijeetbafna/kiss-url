@@ -86,7 +86,7 @@ export default function ProductDemos({ onOpenCreateModal }) {
                 Total Control Over Social Link Previews
               </h3>
               <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', marginBottom: '1.25rem' }}>
-                Stop settling for broken or generic social thumbnails. LinkPulse intercepts crawler bots (TwitterBot, SlackBot, LinkedInBot) and renders custom OpenGraph meta tags on the fly.
+                Stop settling for broken or generic social thumbnails. KissURL intercepts crawler bots (TwitterBot, SlackBot, LinkedInBot) and renders custom OpenGraph meta tags on the fly.
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
@@ -129,7 +129,7 @@ export default function ProductDemos({ onOpenCreateModal }) {
                 imageUrl={demoImage}
                 destinationUrl="https://github.com/topics/modern-web"
                 slug="launch-pass"
-                domain="pulse.link"
+                domain="kiss.url"
               />
             </div>
           </div>
@@ -201,9 +201,9 @@ export default function ProductDemos({ onOpenCreateModal }) {
                   HTTP 302 Edge Decision (&lt;12ms):
                 </div>
                 <div style={{ fontSize: '1.05rem', fontWeight: '700', color: 'var(--color-text-primary)', marginTop: '0.35rem', wordBreak: 'break-all' }}>
-                  {demoDevice === 'ios' && 'https://apps.apple.com/app/linkpulse/id123456789'}
-                  {demoDevice === 'android' && 'https://play.google.com/store/apps/details?id=dev.linkpulse'}
-                  {demoDevice === 'desktop' && 'https://linkpulse.dev/download'}
+                  {demoDevice === 'ios' && 'https://apps.apple.com/app/kissurl/id123456789'}
+                  {demoDevice === 'android' && 'https://play.google.com/store/apps/details?id=dev.kissurl'}
+                  {demoDevice === 'desktop' && 'https://kissurl.dev/download'}
                 </div>
               </div>
             </div>

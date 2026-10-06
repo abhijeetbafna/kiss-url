@@ -25,7 +25,7 @@ export default function Footer({ onOpenDeployModal, totalLinks, totalClicks }) {
               <div style={{ width: '28px', height: '28px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
                 <Zap size={16} fill="currentColor" />
               </div>
-              <span style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>LinkPulse</span>
+              <span style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>KissURL</span>
             </div>
             <p style={{ fontSize: '0.825rem', color: 'var(--color-text-muted)', lineHeight: '1.6' }}>
               The modern, privacy-first alternative to Bitly & TinyURL with dynamic social previews, device routing, and $0/mo edge deployment.
@@ -63,7 +63,7 @@ export default function Footer({ onOpenDeployModal, totalLinks, totalClicks }) {
         {/* Bottom copyright line */}
         <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', fontSize: '0.775rem', color: 'var(--color-text-muted)' }}>
           <div>
-            © {new Date().getFullYear()} LinkPulse Engine • Built with Kigen tokens & Typographer scales
+            © {new Date().getFullYear()} KissURL Engine • Built with Kigen tokens & Typographer scales
           </div>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>

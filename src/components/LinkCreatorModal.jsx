@@ -11,7 +11,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
   // Form states
   const [targetUrl, setTargetUrl] = useState(initialData?.targetUrl || '');
   const [slug, setSlug] = useState(initialData?.slug || '');
-  const [domain, setDomain] = useState(initialData?.domain || 'pulse.link');
+  const [domain, setDomain] = useState(initialData?.domain || 'kiss.url');
   const [title, setTitle] = useState(initialData?.title || '');
   const [tags, setTags] = useState(initialData?.tags ? initialData.tags.join(', ') : '');
 
@@ -206,7 +206,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                     className="input-field"
                     style={{ cursor: 'pointer' }}
                   >
-                    <option value="pulse.link">pulse.link (Default)</option>
+                    <option value="kiss.url">kiss.url (Default)</option>
                     <option value="go.bio">go.bio (Creator bio)</option>
                     <option value="click.to">click.to (Speed shortener)</option>
                     <option value="app.custom.io">app.custom.io (Custom CNAME)</option>

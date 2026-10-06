@@ -38,7 +38,7 @@ export default function ZeroCostDeployModal({ isOpen, onClose }) {
           Zero-Cost Production Deployment
         </h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
-          Deploy your LinkPulse instance globally with 0 ongoing server bills.
+          Deploy your KissURL instance globally with 0 ongoing server bills.
         </p>
 
         {/* 3 Pillars of $0 Stack */}
