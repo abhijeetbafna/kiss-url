@@ -23,7 +23,9 @@ const INITIAL_DB = {
   bio_pages: [],
   bio_leads: [],
   custom_domains: [],
-  error_branding: []
+  error_branding: [],
+  pixels: [],
+  webhooks: []
 };
 
 class PersistentDB {
@@ -462,6 +464,148 @@ class PersistentDB {
     }
     this.save();
     return this.getErrorBranding(workspaceId);
+  }
+
+  // ==================== PIXELS & TRACKING TAGS ====================
+
+  getWorkspacePixels(workspaceId) {
+    if (!this.db.pixels) this.db.pixels = [];
+    const found = this.db.pixels.find(p => p.workspaceId === workspaceId);
+    if (found) return found;
+    return {
+      workspaceId,
+      metaPixelId: '',
+      gaMeasurementId: '',
+      gtmId: '',
+      tiktokPixelId: '',
+      linkedinPartnerId: '',
+      twitterPixelId: '',
+      pinterestTagId: '',
+      customHeadScript: '',
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  saveWorkspacePixels(workspaceId, settings) {
+    if (!this.db.pixels) this.db.pixels = [];
+    const index = this.db.pixels.findIndex(p => p.workspaceId === workspaceId);
+    const updated = {
+      workspaceId,
+      ...settings,
+      updatedAt: new Date().toISOString()
+    };
+    if (index >= 0) {
+      this.db.pixels[index] = { ...this.db.pixels[index], ...updated };
+    } else {
+      this.db.pixels.push(updated);
+    }
+    this.save();
+    return updated;
+  }
+
+  // ==================== WEBHOOKS & AUTOMATIONS ====================
+
+  getWorkspaceWebhooks(workspaceId) {
+    if (!this.db.webhooks) this.db.webhooks = [];
+    return this.db.webhooks.filter(w => w.workspaceId === workspaceId);
+  }
+
+  createWorkspaceWebhook({ workspaceId, name, url, events = ['click.created', 'milestone.reached'], secret = '' }) {
+    if (!this.db.webhooks) this.db.webhooks = [];
+    const newHook = {
+      id: 'wh_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+      workspaceId,
+      name: name || 'Custom Webhook',
+      url: url.trim(),
+      events: Array.isArray(events) ? events : ['click.created'],
+      secret: secret || 'whsec_' + Math.random().toString(36).substring(2, 12),
+      active: true,
+      deliveriesCount: 0,
+      lastDeliveryStatus: 'pending',
+      lastDeliveryAt: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    this.db.webhooks.push(newHook);
+    this.save();
+    return newHook;
+  }
+
+  updateWorkspaceWebhook(webhookId, data) {
+    if (!this.db.webhooks) this.db.webhooks = [];
+    const index = this.db.webhooks.findIndex(w => w.id === webhookId);
+    if (index === -1) return null;
+    this.db.webhooks[index] = {
+      ...this.db.webhooks[index],
+      ...data,
+      updatedAt: new Date().toISOString()
+    };
+    this.save();
+    return this.db.webhooks[index];
+  }
+
+  deleteWorkspaceWebhook(webhookId) {
+    if (!this.db.webhooks) this.db.webhooks = [];
+    this.db.webhooks = this.db.webhooks.filter(w => w.id !== webhookId);
+    this.save();
+    return true;
+  }
+
+  recordWebhookDelivery(webhookId, success = true) {
+    if (!this.db.webhooks) this.db.webhooks = [];
+    const hook = this.db.webhooks.find(w => w.id === webhookId);
+    if (hook) {
+      hook.deliveriesCount = (hook.deliveriesCount || 0) + 1;
+      hook.lastDeliveryStatus = success ? 'success' : 'failed';
+      hook.lastDeliveryAt = new Date().toISOString();
+      this.save();
+    }
+  }
+
+  // ==================== DYNAMIC SMART ROUTING RESOLVER ====================
+
+  resolveDynamicDestination(link, { device = 'Desktop', country = 'US' } = {}) {
+    if (!link) return { targetUrl: '', ruleApplied: 'none' };
+
+    // 1. Device Conditional Routing
+    if (link.routing && link.routing.enabled) {
+      if ((device === 'iOS' || device === 'iPhone' || device === 'iPad') && link.routing.iosUrl) {
+        return { targetUrl: link.routing.iosUrl, ruleApplied: `Device: iOS (${device})` };
+      }
+      if (device === 'Android' && link.routing.androidUrl) {
+        return { targetUrl: link.routing.androidUrl, ruleApplied: `Device: Android` };
+      }
+      if ((device === 'Desktop' || device === 'Windows' || device === 'macOS' || device === 'Linux') && link.routing.desktopUrl) {
+        return { targetUrl: link.routing.desktopUrl, ruleApplied: `Device: Desktop (${device})` };
+      }
+    }
+
+    // 2. Geo-Location Conditional Routing
+    if (link.geoRouting && link.geoRouting.enabled && Array.isArray(link.geoRouting.rules)) {
+      const matchedRule = link.geoRouting.rules.find(r => r.country && r.country.toUpperCase() === country.toUpperCase() && r.url);
+      if (matchedRule) {
+        return { targetUrl: matchedRule.url, ruleApplied: `Geo: ${country.toUpperCase()}` };
+      }
+    }
+
+    // 3. A/B Split Testing
+    if (link.splitTesting && link.splitTesting.enabled && Array.isArray(link.splitTesting.variants) && link.splitTesting.variants.length > 0) {
+      const activeVariants = link.splitTesting.variants.filter(v => v.url && Number(v.weight) > 0);
+      if (activeVariants.length > 0) {
+        const totalWeight = activeVariants.reduce((sum, v) => sum + Number(v.weight), 0);
+        let random = Math.random() * totalWeight;
+        for (const variant of activeVariants) {
+          if (random <= Number(variant.weight)) {
+            return { targetUrl: variant.url, ruleApplied: `Split A/B: ${variant.name || 'Variant'} (${variant.weight}%)` };
+          }
+          random -= Number(variant.weight);
+        }
+        return { targetUrl: activeVariants[0].url, ruleApplied: `Split A/B: ${activeVariants[0].name || 'Variant'}` };
+      }
+    }
+
+    // 4. Default Base Destination
+    return { targetUrl: link.targetUrl, ruleApplied: 'Default Target' };
   }
 }
 

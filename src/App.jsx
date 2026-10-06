@@ -19,6 +19,8 @@ import SafetyAuditModal from './components/SafetyAuditModal';
 import ErrorBrandingModal from './components/ErrorBrandingModal';
 import BulkShortenerModal from './components/BulkShortenerModal';
 import AuthModal from './components/AuthModal';
+import PixelManagerModal from './components/PixelManagerModal';
+import WebhookManagerModal from './components/WebhookManagerModal';
 
 import { 
   getStoredLinks, 
@@ -44,6 +46,9 @@ export default function App() {
   // Modal states
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isPixelModalOpen, setIsPixelModalOpen] = useState(false);
+  const [isWebhookModalOpen, setIsWebhookModalOpen] = useState(false);
+  const [isWorkspaceAnalyticsOpen, setIsWorkspaceAnalyticsOpen] = useState(false);
   const [isBioStudioOpen, setIsBioStudioOpen] = useState(false);
   const [isDomainModalOpen, setIsDomainModalOpen] = useState(false);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
@@ -184,6 +189,9 @@ export default function App() {
           setCreateInitialData(null);
           setIsCreateModalOpen(true);
         }}
+        onOpenPixelModal={() => setIsPixelModalOpen(true)}
+        onOpenWebhookModal={() => setIsWebhookModalOpen(true)}
+        onOpenWorkspaceAnalytics={() => setIsWorkspaceAnalyticsOpen(true)}
         onOpenBioStudio={() => setIsBioStudioOpen(true)}
         onOpenDomainModal={() => setIsDomainModalOpen(true)}
         onOpenBulkModal={() => setIsBulkModalOpen(true)}
@@ -291,12 +299,30 @@ export default function App() {
         />
       )}
 
+      {isWorkspaceAnalyticsOpen && (
+        <AnalyticsModal
+          isWorkspaceMode={true}
+          onClose={() => setIsWorkspaceAnalyticsOpen(false)}
+          onRefreshData={loadData}
+        />
+      )}
+
       {activeSimulatorLink && (
         <SimulatorModal
           link={activeSimulatorLink}
           onClose={() => setActiveSimulatorLink(null)}
         />
       )}
+
+      <PixelManagerModal
+        isOpen={isPixelModalOpen}
+        onClose={() => setIsPixelModalOpen(false)}
+      />
+
+      <WebhookManagerModal
+        isOpen={isWebhookModalOpen}
+        onClose={() => setIsWebhookModalOpen(false)}
+      />
 
       <BioPageStudioModal
         isOpen={isBioStudioOpen}

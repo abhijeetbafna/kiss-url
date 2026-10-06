@@ -572,6 +572,97 @@ export const saveErrorBrandingSettings = async (settings) => {
 };
 
 // ==========================================
+// 6.5. PIXELS & RETARGETING TAGS STORAGE
+// ==========================================
+
+const PIXELS_STORAGE_KEY = 'kissurl_workspace_pixels_v1';
+
+const DEFAULT_PIXELS = {
+  metaPixelId: '',
+  gaMeasurementId: '',
+  gtmId: '',
+  tiktokPixelId: '',
+  linkedinPartnerId: '',
+  twitterPixelId: '',
+  pinterestTagId: '',
+  customHeadScript: '',
+};
+
+export const getWorkspacePixelsSettings = () => {
+  try {
+    const raw = localStorage.getItem(PIXELS_STORAGE_KEY);
+    if (raw) return { ...DEFAULT_PIXELS, ...JSON.parse(raw) };
+  } catch {}
+  return DEFAULT_PIXELS;
+};
+
+export const saveWorkspacePixelsSettings = async (settings) => {
+  const activeWsId = getActiveWorkspaceId();
+  if (getAuthToken()) {
+    try {
+      await apiSaveWorkspacePixels(activeWsId, settings);
+    } catch (e) {
+      console.warn('Backend save pixels error:', e);
+    }
+  }
+  localStorage.setItem(PIXELS_STORAGE_KEY, JSON.stringify(settings));
+};
+
+// ==========================================
+// 6.6. AGGREGATED WORKSPACE ANALYTICS
+// ==========================================
+
+export const getAggregatedWorkspaceAnalytics = () => {
+  const links = getStoredLinks();
+  const totalClicks = links.reduce((sum, l) => sum + (l.clicks || 0), 0);
+  
+  const referrers = {};
+  const devices = {};
+  const countries = {};
+  const clickHistoryMap = {};
+
+  links.forEach(link => {
+    if (link.analytics) {
+      if (link.analytics.referrers) {
+        Object.entries(link.analytics.referrers).forEach(([k, v]) => {
+          referrers[k] = (referrers[k] || 0) + Number(v);
+        });
+      }
+      if (link.analytics.devices) {
+        Object.entries(link.analytics.devices).forEach(([k, v]) => {
+          devices[k] = (devices[k] || 0) + Number(v);
+        });
+      }
+      if (link.analytics.countries) {
+        Object.entries(link.analytics.countries).forEach(([k, v]) => {
+          countries[k] = (countries[k] || 0) + Number(v);
+        });
+      }
+      if (link.analytics.clickHistory && Array.isArray(link.analytics.clickHistory)) {
+        link.analytics.clickHistory.forEach(h => {
+          clickHistoryMap[h.date] = (clickHistoryMap[h.date] || 0) + Number(h.clicks || 0);
+        });
+      }
+    }
+  });
+
+  const clickHistory = Object.entries(clickHistoryMap)
+    .map(([date, clicks]) => ({ date, clicks }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  return {
+    totalClicks,
+    totalLinks: links.length,
+    referrers,
+    devices,
+    countries,
+    clickHistory: clickHistory.length > 0 ? clickHistory : [
+      { date: new Date().toISOString().split('T')[0], clicks: totalClicks }
+    ]
+  };
+};
+
+// ==========================================
 // 7. URL SAFETY & MALWARE SCANNER
 // ==========================================
 

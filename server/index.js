@@ -387,8 +387,155 @@ app.post('/api/workspaces/:workspaceId/error-branding', requireAuth, requireWork
   return res.json(branding);
 });
 
+// Workspace Pixels & Retargeting Tags
+app.get('/api/workspaces/:workspaceId/pixels', requireAuth, requireWorkspaceAccess, (req, res) => {
+  const pixels = db.getWorkspacePixels(req.params.workspaceId);
+  return res.json(pixels);
+});
+
+app.post('/api/workspaces/:workspaceId/pixels', requireAuth, requireWorkspaceAccess, (req, res) => {
+  const pixels = db.saveWorkspacePixels(req.params.workspaceId, req.body);
+  return res.json(pixels);
+});
+
 // ==========================================
-// 5. PUBLIC REDIRECT & RESOLUTION ROUTES
+// 4. WEBHOOKS & AUTOMATIONS
+// ==========================================
+
+app.get('/api/workspaces/:workspaceId/webhooks', requireAuth, requireWorkspaceAccess, (req, res) => {
+  const webhooks = db.getWorkspaceWebhooks(req.params.workspaceId);
+  return res.json(webhooks);
+});
+
+app.post('/api/workspaces/:workspaceId/webhooks', requireAuth, requireWorkspaceAccess, (req, res) => {
+  const { name, url, events, secret } = req.body;
+  if (!url) return res.status(400).json({ error: 'Webhook URL is required' });
+  const hook = db.createWorkspaceWebhook({
+    workspaceId: req.params.workspaceId,
+    name,
+    url,
+    events,
+    secret
+  });
+  return res.status(201).json(hook);
+});
+
+app.patch('/api/workspaces/:workspaceId/webhooks/:webhookId', requireAuth, requireWorkspaceAccess, (req, res) => {
+  const updated = db.updateWorkspaceWebhook(req.params.webhookId, req.body);
+  if (!updated) return res.status(404).json({ error: 'Webhook not found' });
+  return res.json(updated);
+});
+
+app.delete('/api/workspaces/:workspaceId/webhooks/:webhookId', requireAuth, requireWorkspaceAccess, (req, res) => {
+  db.deleteWorkspaceWebhook(req.params.webhookId);
+  return res.json({ success: true });
+});
+
+// Test webhook dispatch
+app.post('/api/workspaces/:workspaceId/webhooks/:webhookId/test', requireAuth, requireWorkspaceAccess, async (req, res) => {
+  const webhooks = db.getWorkspaceWebhooks(req.params.workspaceId);
+  const hook = webhooks.find(w => w.id === req.params.webhookId);
+  if (!hook) return res.status(404).json({ error: 'Webhook not found' });
+
+  const testPayload = {
+    event: 'test.ping',
+    timestamp: new Date().toISOString(),
+    workspaceId: req.params.workspaceId,
+    data: {
+      message: '⚡ KissURL Webhook Delivery Test Successful',
+      webhookId: hook.id,
+      webhookName: hook.name,
+      sampleClick: {
+        slug: 'demo-launch',
+        device: 'Desktop',
+        country: 'US',
+        timestamp: new Date().toISOString()
+      }
+    }
+  };
+
+  try {
+    // Attempt real HTTP POST if valid URL
+    const response = await fetch(hook.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'KissURL-Webhook-Agent/2.0',
+        'X-KissURL-Event': 'test.ping'
+      },
+      body: JSON.stringify(testPayload),
+      signal: AbortSignal.timeout(4000)
+    }).catch(err => ({ ok: false, status: 500, statusText: err.message }));
+
+    const success = response.ok || (response.status >= 200 && response.status < 300);
+    db.recordWebhookDelivery(hook.id, success);
+    return res.json({
+      success,
+      status: response.status || 200,
+      payload: testPayload
+    });
+  } catch (err) {
+    db.recordWebhookDelivery(hook.id, false);
+    return res.json({
+      success: false,
+      error: err.message,
+      payload: testPayload
+    });
+  }
+});
+
+// ==========================================
+// 5. DESTINATION HEALTH SENTINEL
+// ==========================================
+
+app.post('/api/links/health-check', async (req, res) => {
+  const { url } = req.body;
+  if (!url) return res.status(400).json({ error: 'URL is required' });
+
+  const start = Date.now();
+  try {
+    const target = url.startsWith('http') ? url : `https://${url}`;
+    const response = await fetch(target, {
+      method: 'HEAD',
+      headers: { 'User-Agent': 'KissURL-Sentinel/2.0' },
+      signal: AbortSignal.timeout(5000)
+    }).catch(async () => {
+      // Fallback to GET with limit
+      return await fetch(target, {
+        method: 'GET',
+        headers: { 'User-Agent': 'KissURL-Sentinel/2.0' },
+        signal: AbortSignal.timeout(5000)
+      });
+    });
+
+    const latencyMs = Date.now() - start;
+    const isHealthy = response.status >= 200 && response.status < 400;
+
+    return res.json({
+      url: target,
+      status: response.status,
+      statusText: response.statusText,
+      latencyMs,
+      isHealthy,
+      isHttps: target.startsWith('https://'),
+      checkedAt: new Date().toISOString()
+    });
+  } catch (err) {
+    const latencyMs = Date.now() - start;
+    return res.json({
+      url,
+      status: 0,
+      statusText: err.message || 'Connection failed / unreachable',
+      latencyMs,
+      isHealthy: false,
+      isHttps: url.startsWith('https://'),
+      checkedAt: new Date().toISOString()
+    });
+  }
+});
+
+// ==========================================
+// 6. PUBLIC REDIRECT & RESOLUTION ROUTES
 // ==========================================
 
 // Public link resolution
@@ -400,7 +547,7 @@ app.get('/api/public/resolve/:slug', (req, res) => {
     return res.status(404).json({ error: 'not_found', branding: defaultBranding });
   }
 
-  // Record click
+  // Parse client properties
   const userAgent = req.headers['user-agent'] || '';
   const referrer = req.headers['referer'] || req.headers['referrer'] || 'direct';
 
@@ -410,17 +557,65 @@ app.get('/api/public/resolve/:slug', (req, res) => {
   else if (/Macintosh|Mac OS X/i.test(userAgent)) device = 'macOS';
   else if (/Windows/i.test(userAgent)) device = 'Windows';
 
-  db.recordClick({
+  const country = req.headers['cf-ipcountry'] || req.headers['x-country-code'] || 'US';
+
+  // Smart dynamic destination resolution
+  const { targetUrl: resolvedTargetUrl, ruleApplied } = db.resolveDynamicDestination(link, { device, country });
+
+  // Record click
+  const clickEvent = db.recordClick({
     linkId: link.id,
     workspaceId: link.workspaceId,
     referrer,
     device,
-    country: 'US',
+    country,
     userAgent
   });
 
+  // Async Webhook Dispatch (non-blocking)
+  const webhooks = db.getWorkspaceWebhooks(link.workspaceId).filter(w => w.active);
+  if (webhooks.length > 0) {
+    const payload = {
+      event: 'click.created',
+      timestamp: new Date().toISOString(),
+      workspaceId: link.workspaceId,
+      link: {
+        id: link.id,
+        slug: link.slug,
+        targetUrl: link.targetUrl,
+        resolvedUrl: resolvedTargetUrl,
+        ruleApplied
+      },
+      click: clickEvent
+    };
+
+    webhooks.forEach(hook => {
+      fetch(hook.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'KissURL-Webhook-Agent/2.0',
+          'X-KissURL-Event': 'click.created'
+        },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(3000)
+      }).then(r => {
+        db.recordWebhookDelivery(hook.id, r.ok);
+      }).catch(() => {
+        db.recordWebhookDelivery(hook.id, false);
+      });
+    });
+  }
+
   const errorBranding = db.getErrorBranding(link.workspaceId);
-  return res.json({ link, errorBranding });
+  const workspacePixels = db.getWorkspacePixels(link.workspaceId);
+  return res.json({
+    link,
+    resolvedTargetUrl: resolvedTargetUrl || link.targetUrl,
+    ruleApplied,
+    errorBranding,
+    workspacePixels
+  });
 });
 
 // Public Bio page

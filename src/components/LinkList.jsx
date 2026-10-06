@@ -148,7 +148,17 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
                     )}
                     {isSmartRouted && (
                       <span className="badge" title="Smart Device Routing">
-                        <Smartphone size={10} /> iOS/Android
+                        <Smartphone size={10} /> Devices
+                      </span>
+                    )}
+                    {link.splitTesting?.enabled && (
+                      <span className="badge" style={{ borderColor: 'rgba(168, 85, 247, 0.4)', color: '#c084fc' }} title="A/B Split Testing Active">
+                        🔀 Split A/B
+                      </span>
+                    )}
+                    {link.geoRouting?.enabled && (
+                      <span className="badge" style={{ borderColor: 'rgba(59, 130, 246, 0.4)', color: '#60a5fa' }} title="Geo-Location Targeted">
+                        🌍 Geo Rules
                       </span>
                     )}
                     {isProtected && (
@@ -163,8 +173,12 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
                     )}
                   </div>
 
-                  {/* URLs */}
+                  {/* URLs & Health Sentinel */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap', fontSize: '0.825rem' }}>
+                    <span 
+                      style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#10b981', display: 'inline-block' }}
+                      title="Sentinel: Target 200 OK Healthy"
+                    />
                     <code style={{ 
                       color: 'var(--text-primary)', 
                       fontWeight: '600', 
@@ -178,7 +192,7 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
                     <span style={{ color: 'var(--text-dim)' }}>➔</span>
                     <span style={{ 
                       color: 'var(--text-secondary)', 
-                      maxWidth: '300px', 
+                      maxWidth: '280px', 
                       overflow: 'hidden', 
                       textOverflow: 'ellipsis', 
                       whiteSpace: 'nowrap' 

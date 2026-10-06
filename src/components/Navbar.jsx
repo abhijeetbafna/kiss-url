@@ -8,6 +8,9 @@ export default function Navbar({
   user,
   onOpenAuthModal,
   onOpenCreateModal, 
+  onOpenPixelModal,
+  onOpenWebhookModal,
+  onOpenWorkspaceAnalytics,
   onOpenBioStudio, 
   onOpenDomainModal, 
   onOpenBulkModal,
@@ -97,6 +100,30 @@ export default function Navbar({
             style={{ fontSize: '0.825rem', padding: '0.35rem 0.65rem' }}
           >
             Links <span className="tabular-nums" style={{ color: 'var(--text-muted)', marginLeft: '2px' }}>({totalLinks})</span>
+          </button>
+          <button 
+            onClick={onOpenPixelModal} 
+            className="btn btn-ghost" 
+            style={{ fontSize: '0.825rem', padding: '0.35rem 0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+            title="Meta & Google Retargeting Pixels"
+          >
+            Pixels
+          </button>
+          <button 
+            onClick={onOpenWebhookModal} 
+            className="btn btn-ghost" 
+            style={{ fontSize: '0.825rem', padding: '0.35rem 0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+            title="Slack, Discord & Zapier Webhook Automations"
+          >
+            Webhooks
+          </button>
+          <button 
+            onClick={onOpenWorkspaceAnalytics} 
+            className="btn btn-ghost" 
+            style={{ fontSize: '0.825rem', padding: '0.35rem 0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+            title="Visual Heatmap & Geo-Analytics Suite"
+          >
+            Analytics
           </button>
           <button 
             onClick={onOpenBioStudio} 
