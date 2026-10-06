@@ -1,0 +1,357 @@
+{
+  "users": [
+    {
+      "id": "usr_1791275872127_p731u",
+      "email": "alice_1791275871673@test.com",
+      "passwordHash": "$2b$10$Y52XuZWOL3OZl0CPeJZF0O7.1UEvbWoRX7JnKJMdKq9Wpdn50hkYe",
+      "name": "Alice Tester",
+      "createdAt": "2026-10-06T08:37:52.134Z",
+      "updatedAt": "2026-10-06T08:37:52.137Z"
+    },
+    {
+      "id": "usr_1791275872549_7nquz",
+      "email": "bob_1791275872141@test.com",
+      "passwordHash": "$2b$10$Y52XuZWOL3OZl0CPeJZF0O7.1UEvbWoRX7JnKJMdKq9Wpdn50hkYe",
+      "name": "Bob Tester",
+      "createdAt": "2026-10-06T08:37:52.549Z",
+      "updatedAt": "2026-10-06T08:37:52.549Z"
+    },
+    {
+      "id": "usr_1791275890648_6kyxa",
+      "email": "alice_1791275890424@test.com",
+      "passwordHash": "$2b$10$CH/VyvvmC0FMmLpVTISNk.3oF.ua/Fs.GrdMWFyNdzB0zF4PMFacS",
+      "name": "Alice Tester",
+      "createdAt": "2026-10-06T08:38:10.649Z",
+      "updatedAt": "2026-10-06T08:38:10.651Z"
+    },
+    {
+      "id": "usr_1791275890817_tuuh7",
+      "email": "bob_1791275890654@test.com",
+      "passwordHash": "$2b$10$CH/VyvvmC0FMmLpVTISNk.3oF.ua/Fs.GrdMWFyNdzB0zF4PMFacS",
+      "name": "Bob Tester",
+      "createdAt": "2026-10-06T08:38:10.817Z",
+      "updatedAt": "2026-10-06T08:38:10.817Z"
+    },
+    {
+      "id": "usr_1791275933231_elp54",
+      "email": "alice_1791275933067@test.com",
+      "passwordHash": "$2b$10$lQB1cF0kyFVbNlWm.ZIJJOVXNyoGdmHgfzqgcA5sEBWbomMRn9dpu",
+      "name": "Alice Tester",
+      "createdAt": "2026-10-06T08:38:53.231Z",
+      "updatedAt": "2026-10-06T08:38:53.233Z"
+    },
+    {
+      "id": "usr_1791275933360_g7vp3",
+      "email": "bob_1791275933234@test.com",
+      "passwordHash": "$2b$10$lQB1cF0kyFVbNlWm.ZIJJOVXNyoGdmHgfzqgcA5sEBWbomMRn9dpu",
+      "name": "Bob Tester",
+      "createdAt": "2026-10-06T08:38:53.360Z",
+      "updatedAt": "2026-10-06T08:38:53.360Z"
+    }
+  ],
+  "workspaces": [
+    {
+      "id": "ws_1791275872560_s54cr",
+      "name": "Alice Workspace",
+      "slug": "alice-workspace",
+      "icon": "🚀",
+      "color": "#6366f1",
+      "description": "",
+      "ownerId": "usr_1791275872127_p731u",
+      "createdAt": "2026-10-06T08:37:52.560Z",
+      "updatedAt": "2026-10-06T08:37:52.560Z"
+    },
+    {
+      "id": "ws_1791275872571_yo47e",
+      "name": "Bob Workspace",
+      "slug": "bob-workspace",
+      "icon": "⚡",
+      "color": "#6366f1",
+      "description": "",
+      "ownerId": "usr_1791275872549_7nquz",
+      "createdAt": "2026-10-06T08:37:52.571Z",
+      "updatedAt": "2026-10-06T08:37:52.571Z"
+    },
+    {
+      "id": "ws_1791275890821_zb193",
+      "name": "Alice Workspace",
+      "slug": "alice-workspace",
+      "icon": "🚀",
+      "color": "#6366f1",
+      "description": "",
+      "ownerId": "usr_1791275890648_6kyxa",
+      "createdAt": "2026-10-06T08:38:10.821Z",
+      "updatedAt": "2026-10-06T08:38:10.821Z"
+    },
+    {
+      "id": "ws_1791275890822_j2jen",
+      "name": "Bob Workspace",
+      "slug": "bob-workspace",
+      "icon": "⚡",
+      "color": "#6366f1",
+      "description": "",
+      "ownerId": "usr_1791275890817_tuuh7",
+      "createdAt": "2026-10-06T08:38:10.822Z",
+      "updatedAt": "2026-10-06T08:38:10.822Z"
+    },
+    {
+      "id": "ws_1791275933365_toqsd",
+      "name": "Alice Workspace",
+      "slug": "alice-workspace",
+      "icon": "🚀",
+      "color": "#6366f1",
+      "description": "",
+      "ownerId": "usr_1791275933231_elp54",
+      "createdAt": "2026-10-06T08:38:53.365Z",
+      "updatedAt": "2026-10-06T08:38:53.365Z"
+    },
+    {
+      "id": "ws_1791275933366_hrlqa",
+      "name": "Bob Workspace",
+      "slug": "bob-workspace",
+      "icon": "⚡",
+      "color": "#6366f1",
+      "description": "",
+      "ownerId": "usr_1791275933360_g7vp3",
+      "createdAt": "2026-10-06T08:38:53.366Z",
+      "updatedAt": "2026-10-06T08:38:53.366Z"
+    }
+  ],
+  "workspace_members": [
+    {
+      "id": "mem_1791275872560",
+      "workspaceId": "ws_1791275872560_s54cr",
+      "userId": "usr_1791275872127_p731u",
+      "role": "owner",
+      "createdAt": "2026-10-06T08:37:52.560Z"
+    },
+    {
+      "id": "mem_1791275872571",
+      "workspaceId": "ws_1791275872571_yo47e",
+      "userId": "usr_1791275872549_7nquz",
+      "role": "owner",
+      "createdAt": "2026-10-06T08:37:52.571Z"
+    },
+    {
+      "id": "mem_1791275890822",
+      "workspaceId": "ws_1791275890821_zb193",
+      "userId": "usr_1791275890648_6kyxa",
+      "role": "owner",
+      "createdAt": "2026-10-06T08:38:10.822Z"
+    },
+    {
+      "id": "mem_1791275890822",
+      "workspaceId": "ws_1791275890822_j2jen",
+      "userId": "usr_1791275890817_tuuh7",
+      "role": "owner",
+      "createdAt": "2026-10-06T08:38:10.822Z"
+    },
+    {
+      "id": "mem_1791275933365",
+      "workspaceId": "ws_1791275933365_toqsd",
+      "userId": "usr_1791275933231_elp54",
+      "role": "owner",
+      "createdAt": "2026-10-06T08:38:53.365Z"
+    },
+    {
+      "id": "mem_1791275933366",
+      "workspaceId": "ws_1791275933366_hrlqa",
+      "userId": "usr_1791275933360_g7vp3",
+      "role": "owner",
+      "createdAt": "2026-10-06T08:38:53.366Z"
+    }
+  ],
+  "links": [
+    {
+      "id": "lp_1791275933368_veyh1",
+      "workspaceId": "ws_1791275933366_hrlqa",
+      "creatorId": "usr_1791275933360_g7vp3",
+      "targetUrl": "https://bob.example.com",
+      "slug": "bob-link-1791275933368",
+      "domain": "kiss.url",
+      "title": "Bob Secret Project",
+      "tags": [],
+      "clicks": 0,
+      "socialOg": {
+        "enabled": false
+      },
+      "routing": {
+        "enabled": false
+      },
+      "protection": {
+        "isPasswordProtected": false
+      },
+      "splitTesting": {
+        "enabled": false,
+        "variants": []
+      },
+      "geoRouting": {
+        "enabled": false,
+        "rules": []
+      },
+      "pixels": {},
+      "createdAt": "2026-10-06T08:38:53.368Z",
+      "updatedAt": "2026-10-06T08:38:53.368Z"
+    },
+    {
+      "id": "lp_1791275933367_tf5t3",
+      "workspaceId": "ws_1791275933365_toqsd",
+      "creatorId": "usr_1791275933231_elp54",
+      "targetUrl": "https://alice.example.com",
+      "slug": "alice-link-1791275933367",
+      "domain": "kiss.url",
+      "title": "Alice Secret Project",
+      "tags": [],
+      "clicks": 0,
+      "socialOg": {
+        "enabled": false
+      },
+      "routing": {
+        "enabled": false
+      },
+      "protection": {
+        "isPasswordProtected": false
+      },
+      "splitTesting": {
+        "enabled": false,
+        "variants": []
+      },
+      "geoRouting": {
+        "enabled": false,
+        "rules": []
+      },
+      "pixels": {},
+      "createdAt": "2026-10-06T08:38:53.367Z",
+      "updatedAt": "2026-10-06T08:38:53.367Z"
+    },
+    {
+      "id": "lp_1791275890824_xfjfn",
+      "workspaceId": "ws_1791275890822_j2jen",
+      "creatorId": "usr_1791275890817_tuuh7",
+      "targetUrl": "https://bob.example.com",
+      "slug": "bob-link-1791275890824",
+      "domain": "kiss.url",
+      "title": "Bob Secret Project",
+      "tags": [],
+      "clicks": 0,
+      "socialOg": {
+        "enabled": false
+      },
+      "routing": {
+        "enabled": false
+      },
+      "protection": {
+        "isPasswordProtected": false
+      },
+      "splitTesting": {
+        "enabled": false,
+        "variants": []
+      },
+      "geoRouting": {
+        "enabled": false,
+        "rules": []
+      },
+      "pixels": {},
+      "createdAt": "2026-10-06T08:38:10.824Z",
+      "updatedAt": "2026-10-06T08:38:10.824Z"
+    },
+    {
+      "id": "lp_1791275890824_ebiq6",
+      "workspaceId": "ws_1791275890821_zb193",
+      "creatorId": "usr_1791275890648_6kyxa",
+      "targetUrl": "https://alice.example.com",
+      "slug": "alice-link-1791275890824",
+      "domain": "kiss.url",
+      "title": "Alice Secret Project",
+      "tags": [],
+      "clicks": 0,
+      "socialOg": {
+        "enabled": false
+      },
+      "routing": {
+        "enabled": false
+      },
+      "protection": {
+        "isPasswordProtected": false
+      },
+      "splitTesting": {
+        "enabled": false,
+        "variants": []
+      },
+      "geoRouting": {
+        "enabled": false,
+        "rules": []
+      },
+      "pixels": {},
+      "createdAt": "2026-10-06T08:38:10.824Z",
+      "updatedAt": "2026-10-06T08:38:10.824Z"
+    },
+    {
+      "id": "lp_1791275872591_vs9qo",
+      "workspaceId": "ws_1791275872571_yo47e",
+      "creatorId": "usr_1791275872549_7nquz",
+      "targetUrl": "https://bob.example.com",
+      "slug": "bob-link-1791275872591",
+      "domain": "kiss.url",
+      "title": "Bob Secret Project",
+      "tags": [],
+      "clicks": 0,
+      "socialOg": {
+        "enabled": false
+      },
+      "routing": {
+        "enabled": false
+      },
+      "protection": {
+        "isPasswordProtected": false
+      },
+      "splitTesting": {
+        "enabled": false,
+        "variants": []
+      },
+      "geoRouting": {
+        "enabled": false,
+        "rules": []
+      },
+      "pixels": {},
+      "createdAt": "2026-10-06T08:37:52.591Z",
+      "updatedAt": "2026-10-06T08:37:52.591Z"
+    },
+    {
+      "id": "lp_1791275872580_ad2xf",
+      "workspaceId": "ws_1791275872560_s54cr",
+      "creatorId": "usr_1791275872127_p731u",
+      "targetUrl": "https://alice.example.com",
+      "slug": "alice-link-1791275872579",
+      "domain": "kiss.url",
+      "title": "Alice Secret Project",
+      "tags": [],
+      "clicks": 0,
+      "socialOg": {
+        "enabled": false
+      },
+      "routing": {
+        "enabled": false
+      },
+      "protection": {
+        "isPasswordProtected": false
+      },
+      "splitTesting": {
+        "enabled": false,
+        "variants": []
+      },
+      "geoRouting": {
+        "enabled": false,
+        "rules": []
+      },
+      "pixels": {},
+      "createdAt": "2026-10-06T08:37:52.580Z",
+      "updatedAt": "2026-10-06T08:37:52.580Z"
+    }
+  ],
+  "clicks": [],
+  "bio_pages": [],
+  "bio_leads": [],
+  "custom_domains": [],
+  "error_branding": []
+}

@@ -18,12 +18,23 @@ import CustomDomainModal from './components/CustomDomainModal';
 import SafetyAuditModal from './components/SafetyAuditModal';
 import ErrorBrandingModal from './components/ErrorBrandingModal';
 import BulkShortenerModal from './components/BulkShortenerModal';
+import AuthModal from './components/AuthModal';
 
-import { getStoredLinks, createLink, deleteLink, getActiveWorkspaceId } from './services/storageService';
+import { 
+  getStoredLinks, 
+  createLink, 
+  deleteLink, 
+  getActiveWorkspaceId, 
+  setActiveWorkspaceId,
+  syncFromBackend,
+  subscribeToStore
+} from './services/storageService';
+import { apiGetMe, getAuthToken, apiGetWorkspaceLinks } from './services/api';
 
 export default function App() {
-  const [links, setLinks] = useState([]);
+  const [links, setLinks] = useState(getStoredLinks());
   const [activeWsId, setActiveWsId] = useState(getActiveWorkspaceId());
+  const [user, setUser] = useState(null);
   
   // Theme state: default 'light'
   const [theme, setTheme] = useState(() => {
@@ -31,6 +42,7 @@ export default function App() {
   });
 
   // Modal states
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isBioStudioOpen, setIsBioStudioOpen] = useState(false);
   const [isDomainModalOpen, setIsDomainModalOpen] = useState(false);
@@ -77,28 +89,77 @@ export default function App() {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  const loadData = () => {
+  // Re-fetch current workspace links
+  const loadData = async (wsId = null) => {
+    const currentId = wsId || getActiveWorkspaceId();
+    if (getAuthToken()) {
+      try {
+        const backendLinks = await apiGetWorkspaceLinks(currentId);
+        if (Array.isArray(backendLinks)) {
+          setLinks(backendLinks);
+          return;
+        }
+      } catch (err) {
+        console.warn('Could not load workspace links from backend:', err.message);
+      }
+    }
     const data = getStoredLinks();
     setLinks(data);
   };
 
+  // Initial mount: check auth session & subscribe to store changes
   useEffect(() => {
-    loadData();
+    const checkAuth = async () => {
+      if (getAuthToken()) {
+        try {
+          const res = await apiGetMe();
+          if (res.user) {
+            setUser(res.user);
+            await syncFromBackend();
+          }
+        } catch {
+          console.warn('Session expired or unauthorized');
+        }
+      } else {
+        // Run initial sync for unauthenticated/demo
+        await syncFromBackend();
+      }
+      loadData();
+    };
+
+    checkAuth();
+
+    const unsubscribe = subscribeToStore(() => {
+      setLinks(getStoredLinks());
+      setActiveWsId(getActiveWorkspaceId());
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const totalClicks = links.reduce((sum, l) => sum + (l.clicks || 0), 0);
 
-  const handleLinkCreated = (newLinkData) => {
-    const created = createLink(newLinkData);
-    loadData();
+  const handleLinkCreated = async (newLinkData) => {
+    const created = await createLink(newLinkData);
+    await loadData();
     return created;
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Delete this short link?')) {
-      deleteLink(id);
-      loadData();
+      await deleteLink(id);
+      await loadData();
     }
+  };
+
+  const handleAuthSuccess = async (authUser, workspaces, activeWsId) => {
+    setUser(authUser);
+    if (activeWsId) {
+      setActiveWsId(activeWsId);
+      await setActiveWorkspaceId(activeWsId);
+    }
+    await syncFromBackend();
+    await loadData(activeWsId);
   };
 
   // If visiting a Link-in-Bio profile route, render the BioPageRenderer
@@ -117,6 +178,8 @@ export default function App() {
       <Navbar
         theme={theme}
         onToggleTheme={toggleTheme}
+        user={user}
+        onOpenAuthModal={() => setIsAuthModalOpen(true)}
         onOpenCreateModal={() => {
           setCreateInitialData(null);
           setIsCreateModalOpen(true);
@@ -126,9 +189,10 @@ export default function App() {
         onOpenBulkModal={() => setIsBulkModalOpen(true)}
         onOpenSafetyModal={() => setIsSafetyModalOpen(true)}
         onOpenErrorBrandingModal={() => setIsErrorBrandingModalOpen(true)}
-        onWorkspaceChanged={(wsId) => {
+        onWorkspaceChanged={async (wsId) => {
           setActiveWsId(wsId);
-          loadData();
+          await setActiveWorkspaceId(wsId);
+          await loadData(wsId);
         }}
         totalLinks={links.length}
       />
@@ -198,6 +262,13 @@ export default function App() {
       />
 
       {/* 8. Specialized Modals */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        user={user}
+        onAuthSuccess={handleAuthSuccess}
+      />
+
       <LinkCreatorModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
@@ -255,3 +326,4 @@ export default function App() {
     </div>
   );
 }
+

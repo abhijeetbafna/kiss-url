@@ -5,14 +5,16 @@ import {
   Check, 
   Settings, 
   Trash2, 
-  X
+  X,
+  Loader2
 } from 'lucide-react';
 import { 
   getStoredWorkspaces, 
   getActiveWorkspace, 
   setActiveWorkspaceId, 
   createWorkspace, 
-  deleteWorkspace 
+  deleteWorkspace,
+  subscribeToStore 
 } from '../services/storageService';
 
 const PRESET_ICONS = ['👤', '🚀', '💼', '⚡', '🌟', '🎯', '🔥', '🌐', '📊', '🛠️'];
@@ -22,6 +24,7 @@ export default function WorkspaceSwitcher({ onWorkspaceChanged, onOpenSettings }
   const [workspaces, setWorkspaces] = useState(getStoredWorkspaces());
   const [activeWs, setActiveWs] = useState(getActiveWorkspace());
   const [isCreating, setIsCreating] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // New workspace form
   const [newName, setNewName] = useState('');
@@ -29,6 +32,15 @@ export default function WorkspaceSwitcher({ onWorkspaceChanged, onOpenSettings }
   const [newDesc, setNewDesc] = useState('');
 
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToStore(() => {
+      const wsList = getStoredWorkspaces();
+      setWorkspaces(wsList);
+      setActiveWs(getActiveWorkspace());
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -41,19 +53,22 @@ export default function WorkspaceSwitcher({ onWorkspaceChanged, onOpenSettings }
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSelect = (wsId) => {
-    setActiveWorkspaceId(wsId);
+  const handleSelect = async (wsId) => {
+    setLoading(true);
+    await setActiveWorkspaceId(wsId);
     const selected = workspaces.find(w => w.id === wsId) || workspaces[0];
     setActiveWs(selected);
     setIsOpen(false);
+    setLoading(false);
     if (onWorkspaceChanged) onWorkspaceChanged(wsId);
   };
 
-  const handleCreate = (e) => {
+  const handleCreate = async (e) => {
     e.preventDefault();
     if (!newName.trim()) return;
 
-    const created = createWorkspace({
+    setLoading(true);
+    const created = await createWorkspace({
       name: newName,
       icon: newIcon,
       color: '#3b82f6',
@@ -66,21 +81,24 @@ export default function WorkspaceSwitcher({ onWorkspaceChanged, onOpenSettings }
     setIsCreating(false);
     setNewName('');
     setIsOpen(false);
+    setLoading(false);
     if (onWorkspaceChanged) onWorkspaceChanged(created.id);
   };
 
-  const handleDelete = (e, wsId) => {
+  const handleDelete = async (e, wsId) => {
     e.stopPropagation();
-    if (wsId === 'ws_personal') {
-      alert('Default personal workspace cannot be deleted.');
+    if (workspaces.length <= 1) {
+      alert('You cannot delete your only workspace.');
       return;
     }
-    if (window.confirm('Delete this workspace? Existing links will be preserved in your Personal Space.')) {
-      deleteWorkspace(wsId);
+    if (window.confirm('Delete this workspace and all its associated links?')) {
+      setLoading(true);
+      await deleteWorkspace(wsId);
       const refreshed = getStoredWorkspaces();
       setWorkspaces(refreshed);
       const active = getActiveWorkspace();
       setActiveWs(active);
+      setLoading(false);
       if (onWorkspaceChanged) onWorkspaceChanged(active.id);
     }
   };
@@ -174,7 +192,7 @@ export default function WorkspaceSwitcher({ onWorkspaceChanged, onOpenSettings }
 
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', flexShrink: 0 }}>
                         {isSelected && <Check size={14} style={{ color: 'var(--primary-bg)' }} />}
-                        {ws.id !== 'ws_personal' && (
+                        {workspaces.length > 1 && (
                           <button
                             onClick={(e) => handleDelete(e, ws.id)}
                             className="btn-icon"
@@ -309,3 +327,4 @@ export default function WorkspaceSwitcher({ onWorkspaceChanged, onOpenSettings }
     </div>
   );
 }
+

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getStoredLinks, recordRealClick, getErrorBrandingSettings } from '../services/storageService';
+import { apiResolvePublicLink } from '../services/api';
 import { Shield, AlertCircle, ArrowLeft, ExternalLink, HelpCircle } from 'lucide-react';
 
 export default function RedirectHandler({ slug }) {
@@ -16,42 +17,68 @@ export default function RedirectHandler({ slug }) {
       return;
     }
 
-    const links = getStoredLinks();
-    const cleanSlug = slug.toLowerCase().trim();
-    const matched = links.find(l => l.slug.toLowerCase() === cleanSlug);
+    const resolveLink = async () => {
+      let matched = null;
+      let branding = getErrorBrandingSettings();
 
-    if (!matched) {
-      setStatus('not_found');
-      return;
-    }
-
-    setLink(matched);
-
-    // Check expiration and max clicks
-    const isTimeExpired = matched.protection?.expiresAt && new Date(matched.protection.expiresAt) < new Date();
-    const isClicksExceeded = matched.protection?.maxClicks > 0 && (matched.clicks || 0) >= matched.protection.maxClicks;
-
-    if (isTimeExpired || isClicksExceeded) {
-      if (matched.protection?.fallbackUrl) {
-        let fallback = matched.protection.fallbackUrl;
-        if (!fallback.startsWith('http://') && !fallback.startsWith('https://')) {
-          fallback = 'https://' + fallback;
+      // 1. Try server-authoritative public resolution first
+      try {
+        const res = await apiResolvePublicLink(slug);
+        if (res && res.link) {
+          matched = res.link;
+          if (res.errorBranding) {
+            branding = res.errorBranding;
+            setErrorBranding(res.errorBranding);
+          }
         }
-        window.location.replace(fallback);
+      } catch (err) {
+        if (err.data?.branding) {
+          setErrorBranding(err.data.branding);
+        }
+      }
+
+      // 2. Fallback to client cache if offline or standalone
+      if (!matched) {
+        const links = getStoredLinks();
+        const cleanSlug = slug.toLowerCase().trim();
+        matched = links.find(l => l.slug?.toLowerCase() === cleanSlug);
+      }
+
+      if (!matched) {
+        setStatus('not_found');
         return;
       }
-      setStatus('expired');
-      return;
-    }
 
-    // Check password protection
-    if (matched.protection?.isPasswordProtected && matched.protection.password) {
-      setStatus('password_required');
-      return;
-    }
+      setLink(matched);
 
-    // Proceed to redirect
-    executeRedirect(matched);
+      // Check expiration and max clicks
+      const isTimeExpired = matched.protection?.expiresAt && new Date(matched.protection.expiresAt) < new Date();
+      const isClicksExceeded = matched.protection?.maxClicks > 0 && (matched.clicks || 0) >= matched.protection.maxClicks;
+
+      if (isTimeExpired || isClicksExceeded) {
+        if (matched.protection?.fallbackUrl) {
+          let fallback = matched.protection.fallbackUrl;
+          if (!fallback.startsWith('http://') && !fallback.startsWith('https://')) {
+            fallback = 'https://' + fallback;
+          }
+          window.location.replace(fallback);
+          return;
+        }
+        setStatus('expired');
+        return;
+      }
+
+      // Check password protection
+      if (matched.protection?.isPasswordProtected && matched.protection.password) {
+        setStatus('password_required');
+        return;
+      }
+
+      // Proceed to redirect
+      executeRedirect(matched);
+    };
+
+    resolveLink();
   }, [slug]);
 
   const executeRedirect = (targetLink) => {
@@ -98,7 +125,12 @@ export default function RedirectHandler({ slug }) {
       }
     }
 
-    // Record real analytics click
+    // Ensure protocol
+    if (!destination.startsWith('http://') && !destination.startsWith('https://')) {
+      destination = 'https://' + destination;
+    }
+
+    // Record local click cache
     recordRealClick(targetLink.id, {
       referrer: document.referrer || 'direct',
       userAgent: ua,
@@ -295,3 +327,4 @@ export default function RedirectHandler({ slug }) {
     </div>
   );
 }
+

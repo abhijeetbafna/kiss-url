@@ -1,10 +1,12 @@
 import React from 'react';
-import { Plus, Sun, Moon, Globe, User, ShieldCheck, Layers } from 'lucide-react';
+import { Plus, Sun, Moon, Globe, User, ShieldCheck, Layers, LogIn } from 'lucide-react';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
 
 export default function Navbar({ 
   theme, 
   onToggleTheme, 
+  user,
+  onOpenAuthModal,
   onOpenCreateModal, 
   onOpenBioStudio, 
   onOpenDomainModal, 
@@ -130,7 +132,7 @@ export default function Navbar({
           </button>
         </nav>
 
-        {/* Actions & Theme */}
+        {/* Actions & Theme & Account */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <button
             onClick={onToggleTheme}
@@ -139,6 +141,47 @@ export default function Navbar({
             aria-label="Toggle Theme"
           >
             {theme === 'light' ? <Moon size={15} /> : <Sun size={15} />}
+          </button>
+
+          {/* Account Profile / Login Button */}
+          <button
+            onClick={onOpenAuthModal}
+            className="btn btn-secondary"
+            style={{ 
+              fontSize: '0.8rem', 
+              padding: '0.35rem 0.65rem', 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '0.35rem',
+              borderRadius: 'var(--radius-md)'
+            }}
+            title={user ? `Signed in as ${user.email}` : 'Sign In or Sign Up'}
+          >
+            {user ? (
+              <>
+                <span style={{ 
+                  width: '16px', 
+                  height: '16px', 
+                  borderRadius: '50%', 
+                  backgroundColor: 'var(--primary-bg)', 
+                  color: '#fff', 
+                  fontSize: '0.65rem', 
+                  fontWeight: '700', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center' 
+                }}>
+                  {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                </span>
+                <span style={{ maxWidth: '85px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {user.name || 'Account'}
+                </span>
+              </>
+            ) : (
+              <>
+                <LogIn size={13} /> Sign In
+              </>
+            )}
           </button>
 
           <button
@@ -153,3 +196,4 @@ export default function Navbar({
     </header>
   );
 }
+
