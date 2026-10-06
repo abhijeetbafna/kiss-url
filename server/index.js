@@ -11,13 +11,14 @@ const PORT = process.env.PORT || 5189;
 app.use(cors());
 app.use(express.json());
 
-// Seed initial default demo data if database is empty
+// Seed initial default demo data if needed
 const seedInitialDataIfNeeded = () => {
-  const existingUsers = db.db.users;
-  if (existingUsers.length === 0) {
-    const salt = bcrypt.genSaltSync(10);
-    const demoPasswordHash = bcrypt.hashSync('demo1234', salt);
-    const user = db.createUser({
+  let demoUser = db.getUserByEmail('demo@kissurl.dev');
+  const salt = bcrypt.genSaltSync(10);
+  const demoPasswordHash = bcrypt.hashSync('demo1234', salt);
+
+  if (!demoUser) {
+    demoUser = db.createUser({
       email: 'demo@kissurl.dev',
       passwordHash: demoPasswordHash,
       name: 'Alex Rivera'
@@ -25,7 +26,7 @@ const seedInitialDataIfNeeded = () => {
 
     const wsPersonal = db.createWorkspace({
       name: 'Personal Space',
-      ownerId: user.id,
+      ownerId: demoUser.id,
       icon: '👤',
       color: '#6366f1',
       description: 'Default personal projects and short links'
@@ -33,7 +34,7 @@ const seedInitialDataIfNeeded = () => {
 
     const wsMarketing = db.createWorkspace({
       name: 'Growth & Marketing',
-      ownerId: user.id,
+      ownerId: demoUser.id,
       icon: '🚀',
       color: '#10b981',
       description: 'Campaign, social media, and ad tracking links'
@@ -42,7 +43,7 @@ const seedInitialDataIfNeeded = () => {
     // Add initial links
     db.createLink({
       workspaceId: wsPersonal.id,
-      creatorId: user.id,
+      creatorId: demoUser.id,
       slug: 'launch',
       domain: 'kiss.url',
       targetUrl: 'https://github.com/topics/modern-web',
@@ -52,7 +53,7 @@ const seedInitialDataIfNeeded = () => {
 
     db.createLink({
       workspaceId: wsMarketing.id,
-      creatorId: user.id,
+      creatorId: demoUser.id,
       slug: 'promo-2026',
       domain: 'kiss.url',
       targetUrl: 'https://kissurl.dev',
@@ -81,6 +82,10 @@ const seedInitialDataIfNeeded = () => {
         { id: 'bl_2', type: 'newsletter', title: '🎙️ Weekly Design Engineering Newsletter', subtitle: 'Read by 12,000+ front-end developers', url: '' }
       ]
     });
+  } else {
+    // Ensure password hash matches
+    demoUser.passwordHash = demoPasswordHash;
+    db.save();
   }
 };
 
