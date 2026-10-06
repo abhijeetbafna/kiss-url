@@ -451,7 +451,7 @@ class PersistentDB {
       customMessage: 'The link you are looking for has been moved, deleted, or is temporarily offline.',
       brandName: 'KissURL',
       logoEmoji: '⚡',
-      supportUrl: 'https://github.com/abhijeetbafna/kiss-url'
+      supportUrl: 'https://kiss.url/support'
     };
   }
 

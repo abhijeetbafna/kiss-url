@@ -1,5 +1,21 @@
 import React from 'react';
-import { Download, BookOpen, Sparkles, ShieldCheck, User, QrCode, Webhook, Target, Shuffle, Globe } from 'lucide-react';
+import { 
+  Download, 
+  BookOpen, 
+  Sparkles, 
+  ShieldCheck, 
+  User, 
+  QrCode, 
+  Webhook, 
+  Target, 
+  Shuffle, 
+  Globe, 
+  Zap, 
+  Layers, 
+  BarChart3,
+  Lock,
+  FileText
+} from 'lucide-react';
 import { exportLinksAsCSV, exportLinksAsJSON } from '../services/storageService';
 
 export default function Footer({ 
@@ -16,16 +32,16 @@ export default function Footer({
   return (
     <footer 
       style={{ 
-        maxWidth: '1020px', 
+        maxWidth: '1060px', 
         margin: '0 auto', 
         borderTop: '1px solid var(--border-subtle)',
-        padding: '3rem 1.25rem 4rem'
+        padding: '3rem 1.25rem 4.5rem'
       }}
     >
-      {/* Interactive User Manual Highlight Card */}
+      {/* 1. Featured Interactive User Manual Highlight Card */}
       <div 
         style={{
-          padding: '1.25rem 1.5rem',
+          padding: '1.4rem 1.6rem',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid var(--border-default)',
           backgroundColor: 'var(--bg-subtle)',
@@ -33,35 +49,37 @@ export default function Footer({
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '1rem',
-          marginBottom: '2.5rem'
+          gap: '1.25rem',
+          marginBottom: '3rem',
+          boxShadow: 'var(--shadow-sm)'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{ 
-            width: '42px', 
-            height: '42px', 
+            width: '44px', 
+            height: '44px', 
             borderRadius: 'var(--radius-md)', 
             backgroundColor: 'var(--bg-surface)', 
             border: '1px solid var(--border-default)', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
-            color: 'var(--primary-bg)'
+            color: 'var(--primary-bg)',
+            boxShadow: 'var(--shadow-xs)'
           }}>
             <BookOpen size={22} />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-primary)' }}>
+              <span style={{ fontSize: '1rem', fontWeight: '800', color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
                 Interactive User Manual & Feature Guide
               </span>
               <span className="badge" style={{ borderColor: 'rgba(16, 185, 129, 0.3)', color: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)' }}>
-                10 Interactive Guides
+                10 Working Examples
               </span>
             </div>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
-              Learn how to configure A/B Split Testing, UTM Builder, Tracking Pixels, Webhooks, QR codes, and Passcode gates with working examples.
+            <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+              Step-by-step documentation for A/B Split Testing, UTM Matrix, Retargeting Pixels, Webhooks, QR Codes, and Passcode Protection.
             </p>
           </div>
         </div>
@@ -69,38 +87,54 @@ export default function Footer({
         <button 
           onClick={onOpenUserManual}
           className="btn btn-primary"
-          style={{ fontSize: '0.825rem', padding: '0.45rem 1rem', display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
+          style={{ fontSize: '0.825rem', padding: '0.5rem 1.15rem', display: 'inline-flex', alignItems: 'center', gap: '0.45rem', fontWeight: '600' }}
         >
           <BookOpen size={14} /> Open User Manual
         </button>
       </div>
 
-      {/* Feature Links & Resources Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '2rem', marginBottom: '2.5rem' }}>
+      {/* 2. Structured Sitemap & Directory */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '2.5rem', marginBottom: '3rem' }}>
         {/* Brand Column */}
-        <div>
-          <div style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
-            KissURL
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+            <div style={{
+              width: '24px',
+              height: '24px',
+              borderRadius: '6px',
+              backgroundColor: 'var(--primary-bg)',
+              color: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Zap size={13} style={{ fill: '#ffffff' }} />
+            </div>
+            <span style={{ fontSize: '1.05rem', fontWeight: '800', letterSpacing: '-0.03em', color: 'var(--text-primary)' }}>
+              KissURL
+            </span>
           </div>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: '1rem' }}>
-            Enterprise-grade URL shortener with smart dynamic routing, retargeting pixels, webhooks, and bio pages.
+
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.5, margin: 0 }}>
+            Modern URL management engine with dynamic smart routing, retargeting tags, webhooks, and bio pages.
           </p>
-          <div style={{ display: 'flex', gap: '0.4rem' }}>
-            <button onClick={exportLinksAsCSV} className="btn btn-ghost" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>
+
+          <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.35rem' }}>
+            <button onClick={exportLinksAsCSV} className="btn btn-secondary" style={{ fontSize: '0.75rem', padding: '0.3rem 0.55rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
               <Download size={12} /> CSV
             </button>
-            <button onClick={exportLinksAsJSON} className="btn btn-ghost" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>
+            <button onClick={exportLinksAsJSON} className="btn btn-secondary" style={{ fontSize: '0.75rem', padding: '0.3rem 0.55rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
               <Download size={12} /> JSON
             </button>
           </div>
         </div>
 
-        {/* Growth & Routing */}
+        {/* Column 1: Routing & Growth */}
         <div>
-          <div style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.75rem' }}>
-            Smart Routing & Ads
+          <div style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-primary)', marginBottom: '0.85rem' }}>
+            Routing & Growth
           </div>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.55rem', fontSize: '0.825rem' }}>
             <li>
               <button onClick={onOpenUserManual} className="btn-ghost" style={{ padding: 0, textAlign: 'left', color: 'var(--text-secondary)' }}>
                 🔀 A/B Split Testing
@@ -108,7 +142,7 @@ export default function Footer({
             </li>
             <li>
               <button onClick={onOpenUserManual} className="btn-ghost" style={{ padding: 0, textAlign: 'left', color: 'var(--text-secondary)' }}>
-                🏷️ UTM Campaign Builder
+                📱 Device-Aware Redirects
               </button>
             </li>
             <li>
@@ -124,12 +158,12 @@ export default function Footer({
           </ul>
         </div>
 
-        {/* Products & Creator Suite */}
+        {/* Column 2: Creator & Brand */}
         <div>
-          <div style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.75rem' }}>
-            Creator & Domains
+          <div style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-primary)', marginBottom: '0.85rem' }}>
+            Creator & Branding
           </div>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.55rem', fontSize: '0.825rem' }}>
             <li>
               <button onClick={onOpenBioStudio} className="btn-ghost" style={{ padding: 0, textAlign: 'left', color: 'var(--text-secondary)' }}>
                 👤 Bio Link Tree Studio
@@ -142,7 +176,7 @@ export default function Footer({
             </li>
             <li>
               <button onClick={onOpenSafetyModal} className="btn-ghost" style={{ padding: 0, textAlign: 'left', color: 'var(--text-secondary)' }}>
-                🛡️ URL Safety & Malware Audit
+                🛡️ Link Safety Auditor
               </button>
             </li>
             <li>
@@ -153,52 +187,59 @@ export default function Footer({
           </ul>
         </div>
 
-        {/* Documentation & Help */}
+        {/* Column 3: Platform & Docs */}
         <div>
-          <div style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.75rem' }}>
-            Documentation
+          <div style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-primary)', marginBottom: '0.85rem' }}>
+            Platform & Support
           </div>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.55rem', fontSize: '0.825rem' }}>
             <li>
               <button onClick={onOpenUserManual} className="btn-ghost" style={{ padding: 0, textAlign: 'left', color: 'var(--primary-bg)', fontWeight: '600' }}>
-                📖 Interactive User Manual
+                📖 Interactive Manual
               </button>
             </li>
             <li>
-              <a href="https://github.com/abhijeetbafna/kiss-url" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>
-                GitHub Repository ↗
-              </a>
+              <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Lock size={12} /> GDPR Compliant
+              </span>
             </li>
             <li>
-              <span style={{ color: 'var(--text-muted)' }}>API Version: 2.0 (REST)</span>
+              <span style={{ color: 'var(--text-muted)' }}>
+                REST API v2.0
+              </span>
+            </li>
+            <li>
+              <span style={{ color: 'var(--text-muted)' }}>
+                SSL Edge Encryption
+              </span>
             </li>
           </ul>
         </div>
       </div>
 
-      {/* Bottom status & copyright */}
+      {/* 3. Bottom Status Bar */}
       <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
         flexWrap: 'wrap', 
-        gap: '0.75rem', 
+        gap: '0.85rem', 
         fontSize: '0.775rem', 
         color: 'var(--text-muted)',
         borderTop: '1px solid var(--border-subtle)',
-        paddingTop: '1.25rem'
+        paddingTop: '1.4rem'
       }}>
         <div>
-          © {new Date().getFullYear()} KissURL. All rights reserved.
+          © {new Date().getFullYear()} KissURL. Enterprise link infrastructure.
         </div>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '1.15rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            <span className="status-dot" /> All Systems Operational
+            <span className="status-dot" /> 99.99% Systems Operational
           </span>
           <span>•</span>
-          <span>{totalLinks} links</span>
+          <span className="tabular-nums font-mono">{totalLinks} links configured</span>
           <span>•</span>
-          <span>{totalClicks.toLocaleString()} total clicks</span>
+          <span className="tabular-nums font-mono">{totalClicks.toLocaleString()} total impressions</span>
         </div>
       </div>
     </footer>
