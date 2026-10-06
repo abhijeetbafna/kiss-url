@@ -31,22 +31,6 @@
       "name": "Bob Tester",
       "createdAt": "2026-10-06T08:38:10.817Z",
       "updatedAt": "2026-10-06T08:38:10.817Z"
-    },
-    {
-      "id": "usr_1791275933231_elp54",
-      "email": "alice_1791275933067@test.com",
-      "passwordHash": "$2b$10$lQB1cF0kyFVbNlWm.ZIJJOVXNyoGdmHgfzqgcA5sEBWbomMRn9dpu",
-      "name": "Alice Tester",
-      "createdAt": "2026-10-06T08:38:53.231Z",
-      "updatedAt": "2026-10-06T08:38:53.233Z"
-    },
-    {
-      "id": "usr_1791275933360_g7vp3",
-      "email": "bob_1791275933234@test.com",
-      "passwordHash": "$2b$10$lQB1cF0kyFVbNlWm.ZIJJOVXNyoGdmHgfzqgcA5sEBWbomMRn9dpu",
-      "name": "Bob Tester",
-      "createdAt": "2026-10-06T08:38:53.360Z",
-      "updatedAt": "2026-10-06T08:38:53.360Z"
     }
   ],
   "workspaces": [
@@ -93,28 +77,6 @@
       "ownerId": "usr_1791275890817_tuuh7",
       "createdAt": "2026-10-06T08:38:10.822Z",
       "updatedAt": "2026-10-06T08:38:10.822Z"
-    },
-    {
-      "id": "ws_1791275933365_toqsd",
-      "name": "Alice Workspace",
-      "slug": "alice-workspace",
-      "icon": "🚀",
-      "color": "#6366f1",
-      "description": "",
-      "ownerId": "usr_1791275933231_elp54",
-      "createdAt": "2026-10-06T08:38:53.365Z",
-      "updatedAt": "2026-10-06T08:38:53.365Z"
-    },
-    {
-      "id": "ws_1791275933366_hrlqa",
-      "name": "Bob Workspace",
-      "slug": "bob-workspace",
-      "icon": "⚡",
-      "color": "#6366f1",
-      "description": "",
-      "ownerId": "usr_1791275933360_g7vp3",
-      "createdAt": "2026-10-06T08:38:53.366Z",
-      "updatedAt": "2026-10-06T08:38:53.366Z"
     }
   ],
   "workspace_members": [
@@ -145,85 +107,9 @@
       "userId": "usr_1791275890817_tuuh7",
       "role": "owner",
       "createdAt": "2026-10-06T08:38:10.822Z"
-    },
-    {
-      "id": "mem_1791275933365",
-      "workspaceId": "ws_1791275933365_toqsd",
-      "userId": "usr_1791275933231_elp54",
-      "role": "owner",
-      "createdAt": "2026-10-06T08:38:53.365Z"
-    },
-    {
-      "id": "mem_1791275933366",
-      "workspaceId": "ws_1791275933366_hrlqa",
-      "userId": "usr_1791275933360_g7vp3",
-      "role": "owner",
-      "createdAt": "2026-10-06T08:38:53.366Z"
     }
   ],
   "links": [
-    {
-      "id": "lp_1791275933368_veyh1",
-      "workspaceId": "ws_1791275933366_hrlqa",
-      "creatorId": "usr_1791275933360_g7vp3",
-      "targetUrl": "https://bob.example.com",
-      "slug": "bob-link-1791275933368",
-      "domain": "kiss.url",
-      "title": "Bob Secret Project",
-      "tags": [],
-      "clicks": 0,
-      "socialOg": {
-        "enabled": false
-      },
-      "routing": {
-        "enabled": false
-      },
-      "protection": {
-        "isPasswordProtected": false
-      },
-      "splitTesting": {
-        "enabled": false,
-        "variants": []
-      },
-      "geoRouting": {
-        "enabled": false,
-        "rules": []
-      },
-      "pixels": {},
-      "createdAt": "2026-10-06T08:38:53.368Z",
-      "updatedAt": "2026-10-06T08:38:53.368Z"
-    },
-    {
-      "id": "lp_1791275933367_tf5t3",
-      "workspaceId": "ws_1791275933365_toqsd",
-      "creatorId": "usr_1791275933231_elp54",
-      "targetUrl": "https://alice.example.com",
-      "slug": "alice-link-1791275933367",
-      "domain": "kiss.url",
-      "title": "Alice Secret Project",
-      "tags": [],
-      "clicks": 0,
-      "socialOg": {
-        "enabled": false
-      },
-      "routing": {
-        "enabled": false
-      },
-      "protection": {
-        "isPasswordProtected": false
-      },
-      "splitTesting": {
-        "enabled": false,
-        "variants": []
-      },
-      "geoRouting": {
-        "enabled": false,
-        "rules": []
-      },
-      "pixels": {},
-      "createdAt": "2026-10-06T08:38:53.367Z",
-      "updatedAt": "2026-10-06T08:38:53.367Z"
-    },
     {
       "id": "lp_1791275890824_xfjfn",
       "workspaceId": "ws_1791275890822_j2jen",
