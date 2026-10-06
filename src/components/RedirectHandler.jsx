@@ -55,10 +55,36 @@ export default function RedirectHandler({ slug }) {
   }, [slug]);
 
   const executeRedirect = (targetLink) => {
-    // Determine destination by device
     let destination = targetLink.targetUrl;
     const ua = navigator.userAgent || '';
+    const lang = (navigator.language || navigator.userLanguage || '').toUpperCase();
 
+    // 1. Check Geo Routing rules
+    if (targetLink.geoRouting?.enabled && targetLink.geoRouting.rules?.length > 0) {
+      const matchedRule = targetLink.geoRouting.rules.find(r => lang.includes(r.country));
+      if (matchedRule && matchedRule.url) {
+        destination = matchedRule.url;
+      }
+    }
+
+    // 2. Check A/B Split Testing
+    if (targetLink.splitTesting?.enabled && targetLink.splitTesting.variants?.length > 0) {
+      const validVariants = targetLink.splitTesting.variants.filter(v => v.url);
+      if (validVariants.length > 0) {
+        const totalWeight = validVariants.reduce((sum, v) => sum + (Number(v.weight) || 1), 0);
+        let randomRoll = Math.random() * totalWeight;
+        for (const variant of validVariants) {
+          const w = Number(variant.weight) || 1;
+          if (randomRoll <= w) {
+            destination = variant.url;
+            break;
+          }
+          randomRoll -= w;
+        }
+      }
+    }
+
+    // 3. Check Device Routing overrides
     if (targetLink.routing?.enabled) {
       const isIOS = /iPhone|iPad|iPod/i.test(ua);
       const isAndroid = /Android/i.test(ua);

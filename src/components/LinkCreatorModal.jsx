@@ -1,13 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { X, Sparkles, Smartphone, Shield, Link as LinkIcon, Wand2, BarChart2, ShieldCheck, AlertTriangle, ShieldAlert } from 'lucide-react';
+import { 
+  X, 
+  Sparkles, 
+  Smartphone, 
+  Shield, 
+  Link as LinkIcon, 
+  Wand2, 
+  BarChart2, 
+  ShieldCheck, 
+  AlertTriangle, 
+  ShieldAlert, 
+  Shuffle, 
+  Globe, 
+  Target, 
+  Plus, 
+  Trash2 
+} from 'lucide-react';
 import SocialCardPreview from './SocialCardPreview';
 import confetti from 'canvas-confetti';
 import { auditUrlSafety } from '../services/storageService';
 
 const SAMPLE_SLUGS = ['launch', 'special', 'early-access', 'promo', 'newsletter', 'event'];
 
+const COUNTRY_OPTIONS = [
+  { code: 'US', name: 'United States (US)' },
+  { code: 'GB', name: 'United Kingdom (UK)' },
+  { code: 'DE', name: 'Germany (DE)' },
+  { code: 'IN', name: 'India (IN)' },
+  { code: 'CA', name: 'Canada (CA)' },
+  { code: 'AU', name: 'Australia (AU)' },
+  { code: 'FR', name: 'France (FR)' },
+  { code: 'JP', name: 'Japan (JP)' },
+  { code: 'BR', name: 'Brazil (BR)' },
+  { code: 'SG', name: 'Singapore (SG)' }
+];
+
 export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initialData }) {
-  const [activeTab, setActiveTab] = useState('general'); // general | social | routing | protection | utm
+  const [activeTab, setActiveTab] = useState('general'); // general | social | routing | split | geo | pixels | protection | utm
 
   // Form states
   const [targetUrl, setTargetUrl] = useState(initialData?.targetUrl || '');
@@ -27,6 +56,25 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
   const [iosUrl, setIosUrl] = useState(initialData?.routing?.iosUrl || '');
   const [androidUrl, setAndroidUrl] = useState(initialData?.routing?.androidUrl || '');
   const [desktopUrl, setDesktopUrl] = useState(initialData?.routing?.desktopUrl || '');
+
+  // Phase 2: A/B Split Testing
+  const [splitEnabled, setSplitEnabled] = useState(initialData?.splitTesting?.enabled ?? false);
+  const [variants, setVariants] = useState(initialData?.splitTesting?.variants || [
+    { id: 'v_1', name: 'Variant A', url: '', weight: 50 },
+    { id: 'v_2', name: 'Variant B', url: '', weight: 50 },
+  ]);
+
+  // Phase 2: Geo Routing
+  const [geoEnabled, setGeoEnabled] = useState(initialData?.geoRouting?.enabled ?? false);
+  const [geoRules, setGeoRules] = useState(initialData?.geoRouting?.rules || [
+    { id: 'g_1', country: 'US', url: '' }
+  ]);
+
+  // Phase 2: Retargeting Pixels
+  const [metaPixelId, setMetaPixelId] = useState(initialData?.pixels?.metaPixelId || '');
+  const [gaMeasurementId, setGaMeasurementId] = useState(initialData?.pixels?.gaMeasurementId || '');
+  const [tiktokPixelId, setTiktokPixelId] = useState(initialData?.pixels?.tiktokPixelId || '');
+  const [linkedinTagId, setLinkedinTagId] = useState(initialData?.pixels?.linkedinTagId || '');
 
   // Protection & Expiration
   const [isPasswordProtected, setIsPasswordProtected] = useState(initialData?.protection?.isPasswordProtected ?? false);
@@ -96,6 +144,28 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
         iosUrl: iosUrl.trim(),
         androidUrl: androidUrl.trim(),
         desktopUrl: desktopUrl.trim(),
+      },
+      splitTesting: {
+        enabled: splitEnabled,
+        variants: variants.map(v => ({
+          ...v,
+          url: v.url.trim().startsWith('http') ? v.url.trim() : (v.url.trim() ? `https://${v.url.trim()}` : ''),
+          weight: Number(v.weight) || 0,
+          clicks: v.clicks || 0
+        })).filter(v => v.url)
+      },
+      geoRouting: {
+        enabled: geoEnabled,
+        rules: geoRules.map(r => ({
+          ...r,
+          url: r.url.trim().startsWith('http') ? r.url.trim() : (r.url.trim() ? `https://${r.url.trim()}` : '')
+        })).filter(r => r.url)
+      },
+      pixels: {
+        metaPixelId: metaPixelId.trim(),
+        gaMeasurementId: gaMeasurementId.trim(),
+        tiktokPixelId: tiktokPixelId.trim(),
+        linkedinTagId: linkedinTagId.trim(),
       },
       protection: {
         isPasswordProtected,
@@ -168,7 +238,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
             className={`btn ${activeTab === 'social' ? 'btn-primary' : 'btn-ghost'}`}
             style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
           >
-            <Sparkles size={13} /> Social Preview
+            <Sparkles size={13} /> Social
           </button>
           <button
             type="button"
@@ -176,7 +246,31 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
             className={`btn ${activeTab === 'routing' ? 'btn-primary' : 'btn-ghost'}`}
             style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
           >
-            <Smartphone size={13} /> Device Routing
+            <Smartphone size={13} /> Devices
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('split')}
+            className={`btn ${activeTab === 'split' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
+          >
+            <Shuffle size={13} /> A/B Split
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('geo')}
+            className={`btn ${activeTab === 'geo' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
+          >
+            <Globe size={13} /> Geo
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('pixels')}
+            className={`btn ${activeTab === 'pixels' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
+          >
+            <Target size={13} /> Pixels
           </button>
           <button
             type="button"
@@ -192,7 +286,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
             className={`btn ${activeTab === 'utm' ? 'btn-primary' : 'btn-ghost'}`}
             style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
           >
-            <BarChart2 size={13} /> UTM Builder
+            <BarChart2 size={13} /> UTM
           </button>
         </div>
 
@@ -429,6 +523,231 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                     </div>
                   </>
                 )}
+              </div>
+            )}
+
+            {/* A/B SPLIT TESTING TAB */}
+            {activeTab === 'split' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', fontWeight: '500', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={splitEnabled}
+                    onChange={(e) => setSplitEnabled(e.target.checked)}
+                  />
+                  <span>Enable A/B Split Traffic Testing</span>
+                </label>
+
+                {splitEnabled && (
+                  <>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                      Distribute visitor traffic across multiple landing page variants based on weight percentages.
+                    </p>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      {variants.map((v, index) => (
+                        <div key={v.id} style={{ display: 'grid', gridTemplateColumns: '1.2fr 2fr 80px 32px', gap: '0.5rem', alignItems: 'center', backgroundColor: 'var(--bg-subtle)', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                          <input
+                            type="text"
+                            placeholder="Variant Name"
+                            value={v.name}
+                            onChange={(e) => {
+                              const updated = [...variants];
+                              updated[index].name = e.target.value;
+                              setVariants(updated);
+                            }}
+                            className="input"
+                            style={{ fontSize: '0.8rem' }}
+                          />
+                          <input
+                            type="url"
+                            placeholder="https://variant-destination.com"
+                            value={v.url}
+                            onChange={(e) => {
+                              const updated = [...variants];
+                              updated[index].url = e.target.value;
+                              setVariants(updated);
+                            }}
+                            className="input"
+                            style={{ fontSize: '0.8rem' }}
+                          />
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                            <input
+                              type="number"
+                              min="1"
+                              max="100"
+                              value={v.weight}
+                              onChange={(e) => {
+                                const updated = [...variants];
+                                updated[index].weight = Number(e.target.value);
+                                setVariants(updated);
+                              }}
+                              className="input tabular-nums"
+                              style={{ fontSize: '0.8rem', textAlign: 'center', padding: '0.35rem 0.2rem' }}
+                            />
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>%</span>
+                          </div>
+                          {variants.length > 2 && (
+                            <button
+                              type="button"
+                              onClick={() => setVariants(variants.filter((_, i) => i !== index))}
+                              className="btn-icon"
+                              style={{ width: '28px', height: '28px' }}
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {variants.length < 5 && (
+                      <button
+                        type="button"
+                        onClick={() => setVariants([...variants, { id: 'v_' + Date.now(), name: `Variant ${String.fromCharCode(65 + variants.length)}`, url: '', weight: 25 }])}
+                        className="btn btn-secondary"
+                        style={{ alignSelf: 'flex-start', fontSize: '0.785rem' }}
+                      >
+                        <Plus size={13} /> Add Variant
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* GEO ROUTING TAB */}
+            {activeTab === 'geo' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', fontWeight: '500', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={geoEnabled}
+                    onChange={(e) => setGeoEnabled(e.target.checked)}
+                  />
+                  <span>Enable Location (Geo-Targeted) Redirects</span>
+                </label>
+
+                {geoEnabled && (
+                  <>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                      Route visitors to dedicated country URLs based on their geographic region.
+                    </p>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      {geoRules.map((rule, idx) => (
+                        <div key={rule.id} style={{ display: 'grid', gridTemplateColumns: '150px 1fr 32px', gap: '0.5rem', alignItems: 'center', backgroundColor: 'var(--bg-subtle)', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                          <select
+                            value={rule.country}
+                            onChange={(e) => {
+                              const updated = [...geoRules];
+                              updated[idx].country = e.target.value;
+                              setGeoRules(updated);
+                            }}
+                            className="input"
+                            style={{ fontSize: '0.8rem' }}
+                          >
+                            {COUNTRY_OPTIONS.map(c => (
+                              <option key={c.code} value={c.code}>{c.name}</option>
+                            ))}
+                          </select>
+
+                          <input
+                            type="url"
+                            placeholder="https://country-specific-page.com"
+                            value={rule.url}
+                            onChange={(e) => {
+                              const updated = [...geoRules];
+                              updated[idx].url = e.target.value;
+                              setGeoRules(updated);
+                            }}
+                            className="input"
+                            style={{ fontSize: '0.8rem' }}
+                          />
+
+                          <button
+                            type="button"
+                            onClick={() => setGeoRules(geoRules.filter((_, i) => i !== idx))}
+                            className="btn-icon"
+                            style={{ width: '28px', height: '28px' }}
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setGeoRules([...geoRules, { id: 'g_' + Date.now(), country: 'GB', url: '' }])}
+                      className="btn btn-secondary"
+                      style={{ alignSelf: 'flex-start', fontSize: '0.785rem' }}
+                    >
+                      <Plus size={13} /> Add Country Rule
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* RETARGETING PIXELS TAB */}
+            {activeTab === 'pixels' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)' }}>
+                  Attach advertising tracking pixels to fire retargeting events when visitors click this short link.
+                </p>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                    Meta (Facebook & Instagram) Pixel ID
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 123456789012345"
+                    value={metaPixelId}
+                    onChange={(e) => setMetaPixelId(e.target.value)}
+                    className="input input-mono"
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                    Google Analytics 4 Measurement ID
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. G-XXXXXXXXXX"
+                    value={gaMeasurementId}
+                    onChange={(e) => setGaMeasurementId(e.target.value)}
+                    className="input input-mono"
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                    TikTok Pixel ID
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. C5XXXXXXXXXXXX"
+                    value={tiktokPixelId}
+                    onChange={(e) => setTiktokPixelId(e.target.value)}
+                    className="input input-mono"
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                    LinkedIn Insight Tag Partner ID
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 1234567"
+                    value={linkedinTagId}
+                    onChange={(e) => setLinkedinTagId(e.target.value)}
+                    className="input input-mono"
+                  />
+                </div>
               </div>
             )}
 

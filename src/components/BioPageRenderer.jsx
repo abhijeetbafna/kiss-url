@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  getBioPageByHandle, recordBioClick, buildBioUrl 
+  getBioPageByHandle, recordBioClick, buildBioUrl,
+  getYouTubeEmbedUrl, getSpotifyEmbedUrl, recordBioLead 
 } from '../services/storageService';
 import { 
   Check, Share2, Globe, Mail, ExternalLink, ArrowLeft,
-  Sparkles, ShieldCheck
+  Sparkles, ShieldCheck, Play, Music, Send
 } from 'lucide-react';
 
 const TwitterIcon = ({ size = 16 }) => (
@@ -28,6 +29,8 @@ const LinkedInIcon = ({ size = 16 }) => (
 export default function BioPageRenderer({ handle, onBack }) {
   const [page, setPage] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [newsletterEmails, setNewsletterEmails] = useState({});
+  const [newsletterSuccess, setNewsletterSuccess] = useState({});
 
   useEffect(() => {
     if (!handle) return;
@@ -72,6 +75,16 @@ export default function BioPageRenderer({ handle, onBack }) {
   const handleLinkClick = (linkId, url) => {
     recordBioClick(page.handle, linkId);
     window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleNewsletterSubmit = (e, blockId) => {
+    e.preventDefault();
+    const email = newsletterEmails[blockId];
+    if (!email || !email.includes('@')) return;
+
+    recordBioLead(page.handle, email);
+    recordBioClick(page.handle, blockId);
+    setNewsletterSuccess({ ...newsletterSuccess, [blockId]: true });
   };
 
   const handleShare = () => {
@@ -119,77 +132,89 @@ export default function BioPageRenderer({ handle, onBack }) {
       transition: 'all 0.3s ease',
       ...bgStyle
     }}>
-      {/* Top Floating Share Button */}
-      <div style={{ maxWidth: '440px', width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        {onBack ? (
-          <button onClick={onBack} className="btn-icon" style={{ color: 'inherit' }} title="Back to dashboard">
-            <ArrowLeft size={16} />
-          </button>
-        ) : <div />}
-
-        <button 
-          onClick={handleShare} 
-          className="btn-secondary" 
-          style={{ 
-            fontSize: '0.75rem', 
-            padding: '0.35rem 0.75rem', 
-            borderRadius: 'var(--radius-full)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            backgroundColor: isDarkTheme || isCobaltTheme || isEmeraldTheme ? 'rgba(255,255,255,0.1)' : 'var(--bg-surface)',
-            color: 'inherit',
-            borderColor: isDarkTheme || isCobaltTheme || isEmeraldTheme ? 'rgba(255,255,255,0.15)' : 'var(--border-default)'
-          }}
-        >
-          {copied ? <><Check size={12} color="#15803d" /> Copied Profile Link</> : <><Share2 size={12} /> Share Profile</>}
-        </button>
-      </div>
-
-      {/* Main Container */}
-      <div style={{ maxWidth: '440px', width: '100%', textAlign: 'center' }}>
-        {/* Avatar */}
-        <div style={{
-          width: '84px',
-          height: '84px',
-          borderRadius: '50%',
-          overflow: 'hidden',
-          margin: '0 auto 1rem',
-          border: '2px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-        }}>
-          <img 
-            src={page.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'} 
-            alt={page.name}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            onError={(e) => {
-              e.target.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80';
+      {/* Container */}
+      <div style={{ maxWidth: '440px', width: '100%', position: 'relative' }}>
+        {/* Floating Share Button */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
+          <button
+            onClick={handleShare}
+            style={{
+              padding: '0.4rem 0.75rem',
+              borderRadius: '999px',
+              border: '1px solid',
+              fontSize: '0.785rem',
+              fontWeight: '500',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              cursor: 'pointer',
+              ...cardStyle
             }}
-          />
+          >
+            {copied ? <Check size={13} color="#10b981" /> : <Share2 size={13} />}
+            {copied ? 'Link Copied!' : 'Share Profile'}
+          </button>
         </div>
 
         {/* Profile Header */}
-        <h1 style={{ fontSize: '1.35rem', fontWeight: '700', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', marginBottom: '0.2rem' }}>
-          {page.name}
-          <ShieldCheck size={16} color="#0070f3" fill="#0070f3" style={{ color: '#ffffff' }} />
-        </h1>
+        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+          <div style={{ position: 'relative', display: 'inline-block', marginBottom: '1rem' }}>
+            <img 
+              src={page.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'} 
+              alt={page.name}
+              style={{
+                width: '88px',
+                height: '88px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: '2px solid',
+                borderColor: cardStyle.borderColor,
+                boxShadow: 'var(--shadow-subtle)'
+              }}
+            />
+          </div>
 
-        <div style={{ fontSize: '0.85rem', opacity: 0.8, fontWeight: '500', marginBottom: '0.5rem' }}>
-          @{page.handle} {page.tagline ? `• ${page.tagline}` : ''}
+          <h1 style={{ 
+            fontSize: '1.35rem', 
+            fontWeight: '700', 
+            letterSpacing: '-0.02em', 
+            marginBottom: '0.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.35rem'
+          }}>
+            {page.name}
+            <span title="Verified Profile" style={{ color: '#3b82f6', display: 'inline-flex' }}>
+              <ShieldCheck size={16} />
+            </span>
+          </h1>
+
+          {page.tagline && (
+            <div style={{ fontSize: '0.85rem', fontWeight: '500', opacity: 0.85, marginBottom: '0.4rem' }}>
+              {page.tagline}
+            </div>
+          )}
+
+          {page.bio && (
+            <p style={{ fontSize: '0.825rem', opacity: 0.75, lineHeight: 1.5, maxWidth: '340px', margin: '0 auto' }}>
+              {page.bio}
+            </p>
+          )}
         </div>
 
-        {page.bio && (
-          <p style={{ fontSize: '0.85rem', opacity: 0.85, lineHeight: '1.5', maxWidth: '380px', margin: '0 auto 1.25rem' }}>
-            {page.bio}
-          </p>
-        )}
-
-        {/* Social Icons Bar */}
+        {/* Social Accounts Bar */}
         {page.socials && Object.values(page.socials).some(Boolean) && (
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.65rem', marginBottom: '1.75rem', flexWrap: 'wrap' }}>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            gap: '0.75rem',
+            marginBottom: '2rem'
+          }}>
             {page.socials.twitter && (
               <a 
-                href={`https://twitter.com/${page.socials.twitter}`} 
+                href={`https://twitter.com/${page.socials.twitter.replace(/^@/, '')}`} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'rgba(128,128,128,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'inherit', textDecoration: 'none' }}
@@ -243,42 +268,155 @@ export default function BioPageRenderer({ handle, onBack }) {
           </div>
         )}
 
-        {/* Links Stack */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2.5rem' }}>
-          {page.links?.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleLinkClick(item.id, item.url)}
-              style={{
-                width: '100%',
-                padding: '0.85rem 1.15rem',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                cursor: 'pointer',
-                textAlign: 'left',
-                textDecoration: 'none',
-                transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-                boxShadow: item.highlight ? '0 0 0 2px var(--accent)' : 'none',
-                ...cardStyle
-              }}
-              className="btn-interactive"
-            >
-              <div>
-                <div style={{ fontSize: '0.925rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  {item.title}
+        {/* Links & Rich Media Stack */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '2.5rem' }}>
+          {page.links?.map((item) => {
+            // Block 1: YouTube Player Embed
+            if (item.type === 'youtube') {
+              const embedUrl = getYouTubeEmbedUrl(item.url);
+              return (
+                <div key={item.id} style={{ borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid', ...cardStyle }}>
+                  {item.title && (
+                    <div style={{ padding: '0.65rem 0.85rem', fontSize: '0.825rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <Play size={13} color="#ef4444" /> {item.title}
+                    </div>
+                  )}
+                  {embedUrl ? (
+                    <iframe
+                      src={embedUrl}
+                      title={item.title || 'YouTube Video'}
+                      style={{ width: '100%', height: '220px', border: 0 }}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <div style={{ padding: '1rem', fontSize: '0.8rem', opacity: 0.7 }}>Invalid YouTube URL</div>
+                  )}
                 </div>
-                {item.subtitle && (
-                  <div style={{ fontSize: '0.75rem', opacity: 0.75, marginTop: '2px' }}>
-                    {item.subtitle}
+              );
+            }
+
+            // Block 2: Spotify Player Embed
+            if (item.type === 'spotify') {
+              const embedUrl = getSpotifyEmbedUrl(item.url);
+              return (
+                <div key={item.id} style={{ borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid', ...cardStyle }}>
+                  {item.title && (
+                    <div style={{ padding: '0.65rem 0.85rem', fontSize: '0.825rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <Music size={13} color="#10b981" /> {item.title}
+                    </div>
+                  )}
+                  {embedUrl ? (
+                    <iframe
+                      src={embedUrl}
+                      title={item.title || 'Spotify Player'}
+                      style={{ width: '100%', height: '152px', border: 0 }}
+                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div style={{ padding: '1rem', fontSize: '0.8rem', opacity: 0.7 }}>Invalid Spotify URL</div>
+                  )}
+                </div>
+              );
+            }
+
+            // Block 3: Email Newsletter / Lead Capture Card
+            if (item.type === 'newsletter') {
+              const isSubscribed = newsletterSuccess[item.id];
+              return (
+                <div key={item.id} style={{ padding: '1.15rem', borderRadius: 'var(--radius-md)', border: '1px solid', ...cardStyle }}>
+                  <div style={{ fontSize: '0.925rem', fontWeight: '700', marginBottom: '0.2rem' }}>
+                    {item.title || 'Join the Newsletter'}
                   </div>
-                )}
-              </div>
-              <ExternalLink size={14} style={{ opacity: 0.6, flexShrink: 0 }} />
-            </button>
-          ))}
+                  {item.subtitle && (
+                    <div style={{ fontSize: '0.785rem', opacity: 0.75, marginBottom: '0.75rem', lineHeight: 1.4 }}>
+                      {item.subtitle}
+                    </div>
+                  )}
+
+                  {isSubscribed ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#10b981', fontSize: '0.825rem', fontWeight: '600', padding: '0.4rem 0' }}>
+                      <Check size={16} /> Thanks for subscribing! You're on the list.
+                    </div>
+                  ) : (
+                    <form onSubmit={(e) => handleNewsletterSubmit(e, item.id)} style={{ display: 'flex', gap: '0.35rem' }}>
+                      <input
+                        type="email"
+                        placeholder="Enter your email..."
+                        value={newsletterEmails[item.id] || ''}
+                        onChange={(e) => setNewsletterEmails({ ...newsletterEmails, [item.id]: e.target.value })}
+                        required
+                        style={{
+                          flex: 1,
+                          padding: '0.45rem 0.65rem',
+                          borderRadius: 'var(--radius-sm)',
+                          border: '1px solid rgba(128,128,128,0.3)',
+                          backgroundColor: 'rgba(128,128,128,0.08)',
+                          color: 'inherit',
+                          fontSize: '0.8rem'
+                        }}
+                      />
+                      <button
+                        type="submit"
+                        style={{
+                          padding: '0.45rem 0.85rem',
+                          borderRadius: 'var(--radius-sm)',
+                          backgroundColor: isEmeraldTheme ? '#10b981' : (isCobaltTheme ? '#3b82f6' : 'var(--primary-bg)'),
+                          color: '#ffffff',
+                          border: 0,
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.25rem'
+                        }}
+                      >
+                        <Send size={12} /> Join
+                      </button>
+                    </form>
+                  )}
+                </div>
+              );
+            }
+
+            // Block 4: Standard Custom Link Button
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleLinkClick(item.id, item.url)}
+                style={{
+                  width: '100%',
+                  padding: '0.85rem 1.15rem',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  textDecoration: 'none',
+                  transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                  boxShadow: item.highlight ? '0 0 0 2px var(--accent)' : 'none',
+                  ...cardStyle
+                }}
+                className="btn-interactive"
+              >
+                <div>
+                  <div style={{ fontSize: '0.925rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    {item.title}
+                  </div>
+                  {item.subtitle && (
+                    <div style={{ fontSize: '0.75rem', opacity: 0.75, marginTop: '2px' }}>
+                      {item.subtitle}
+                    </div>
+                  )}
+                </div>
+                <ExternalLink size={14} style={{ opacity: 0.6, flexShrink: 0 }} />
+              </button>
+            );
+          })}
         </div>
 
         {/* Footer */}

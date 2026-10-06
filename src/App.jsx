@@ -17,6 +17,7 @@ import BioPageStudioModal from './components/BioPageStudioModal';
 import CustomDomainModal from './components/CustomDomainModal';
 import SafetyAuditModal from './components/SafetyAuditModal';
 import ErrorBrandingModal from './components/ErrorBrandingModal';
+import BulkShortenerModal from './components/BulkShortenerModal';
 
 import { getStoredLinks, createLink, deleteLink, getActiveWorkspaceId } from './services/storageService';
 
@@ -33,6 +34,7 @@ export default function App() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isBioStudioOpen, setIsBioStudioOpen] = useState(false);
   const [isDomainModalOpen, setIsDomainModalOpen] = useState(false);
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [isSafetyModalOpen, setIsSafetyModalOpen] = useState(false);
   const [isErrorBrandingModalOpen, setIsErrorBrandingModalOpen] = useState(false);
   const [createInitialData, setCreateInitialData] = useState(null);
@@ -121,6 +123,7 @@ export default function App() {
         }}
         onOpenBioStudio={() => setIsBioStudioOpen(true)}
         onOpenDomainModal={() => setIsDomainModalOpen(true)}
+        onOpenBulkModal={() => setIsBulkModalOpen(true)}
         onOpenSafetyModal={() => setIsSafetyModalOpen(true)}
         onOpenErrorBrandingModal={() => setIsErrorBrandingModalOpen(true)}
         onWorkspaceChanged={(wsId) => {
@@ -232,6 +235,12 @@ export default function App() {
       <CustomDomainModal
         isOpen={isDomainModalOpen}
         onClose={() => setIsDomainModalOpen(false)}
+      />
+
+      <BulkShortenerModal
+        isOpen={isBulkModalOpen}
+        onClose={() => setIsBulkModalOpen(false)}
+        onLinksCreated={loadData}
       />
 
       <SafetyAuditModal

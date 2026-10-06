@@ -729,3 +729,196 @@ export const auditUrlSafety = (url) => {
   };
 };
 
+// ==========================================
+// 8. PHASE 2: BULK SHORTENER & CSV IMPORT
+// ==========================================
+
+export const createBulkLinks = (urlList, options = {}) => {
+  const domain = options.domain || 'kiss.url';
+  const tags = options.tags || ['Bulk'];
+  const activeWsId = getActiveWorkspaceId();
+  const links = getStoredLinks();
+
+  const createdLinks = [];
+  urlList.forEach((rawUrl) => {
+    const trimmed = rawUrl.trim();
+    if (!trimmed) return;
+    
+    let targetUrl = trimmed;
+    if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+      targetUrl = 'https://' + targetUrl;
+    }
+
+    const autoSlug = Math.random().toString(36).substring(2, 8);
+    const newLink = {
+      id: 'lp_' + Math.random().toString(36).substring(2, 9),
+      workspaceId: activeWsId,
+      targetUrl,
+      slug: autoSlug,
+      domain,
+      title: trimmed.replace(/^https?:\/\//, '').replace(/\/.*$/, '') || targetUrl,
+      tags,
+      createdAt: new Date().toISOString(),
+      clicks: 0,
+      analytics: {
+        referrers: { direct: 1 },
+        devices: { Desktop: 1 },
+        countries: { US: 1 },
+        clickHistory: [{ date: new Date().toISOString().split('T')[0], clicks: 1 }]
+      },
+      socialOg: { enabled: false },
+      routing: { enabled: false },
+      protection: { isPasswordProtected: false, maxClicks: 0 },
+      splitTesting: { enabled: false, variants: [] },
+      geoRouting: { enabled: false, rules: [] },
+      pixels: { metaPixelId: '', gaMeasurementId: '', tiktokPixelId: '', linkedinTagId: '' }
+    };
+
+    createdLinks.push(newLink);
+  });
+
+  const updated = [...createdLinks, ...links];
+  saveLinks(updated);
+  return createdLinks;
+};
+
+export const importLinksFromCSV = (csvText) => {
+  if (!csvText) return [];
+  const lines = csvText.split(/\r?\n/).filter(line => line.trim().length > 0);
+  if (lines.length < 2) return [];
+
+  // Parse header
+  const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
+  const urlIdx = headers.findIndex(h => h.includes('target') || h.includes('url') || h.includes('destination'));
+  const slugIdx = headers.findIndex(h => h.includes('slug') || h.includes('alias'));
+  const titleIdx = headers.findIndex(h => h.includes('title') || h.includes('name'));
+
+  if (urlIdx === -1) {
+    // Treat column 0 as URL if header not identified
+    return createBulkLinks(lines.slice(1).map(l => l.split(',')[0].replace(/^"|"$/g, '')));
+  }
+
+  const newLinks = [];
+  const activeWsId = getActiveWorkspaceId();
+  const existingLinks = getStoredLinks();
+
+  for (let i = 1; i < lines.length; i++) {
+    const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+    const rawUrl = cols[urlIdx];
+    if (!rawUrl) continue;
+
+    let targetUrl = rawUrl;
+    if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+      targetUrl = 'https://' + targetUrl;
+    }
+
+    const slug = (slugIdx !== -1 && cols[slugIdx]) ? cols[slugIdx].toLowerCase().replace(/[^a-z0-9-_]/g, '-') : Math.random().toString(36).substring(2, 8);
+    const title = (titleIdx !== -1 && cols[titleIdx]) ? cols[titleIdx] : targetUrl;
+
+    newLinks.push({
+      id: 'lp_' + Math.random().toString(36).substring(2, 9),
+      workspaceId: activeWsId,
+      targetUrl,
+      slug,
+      domain: 'kiss.url',
+      title,
+      tags: ['Imported'],
+      createdAt: new Date().toISOString(),
+      clicks: 0,
+      analytics: {
+        referrers: { direct: 1 },
+        devices: { Desktop: 1 },
+        countries: { US: 1 },
+        clickHistory: [{ date: new Date().toISOString().split('T')[0], clicks: 1 }]
+      }
+    });
+  }
+
+  const updated = [...newLinks, ...existingLinks];
+  saveLinks(updated);
+  return newLinks;
+};
+
+// ==========================================
+// 9. PHASE 4: BIO LEADS & EMBED EXTRACTORS
+// ==========================================
+
+const BIO_LEADS_STORAGE_KEY = 'kissurl_bio_leads_v1';
+
+export const getStoredBioLeads = (handle) => {
+  try {
+    const raw = localStorage.getItem(BIO_LEADS_STORAGE_KEY);
+    const allLeads = raw ? JSON.parse(raw) : [];
+    if (!handle) return allLeads;
+    return allLeads.filter(l => l.handle.toLowerCase() === handle.toLowerCase());
+  } catch (e) {
+    return [];
+  }
+};
+
+export const recordBioLead = (handle, email) => {
+  try {
+    const raw = localStorage.getItem(BIO_LEADS_STORAGE_KEY);
+    const allLeads = raw ? JSON.parse(raw) : [];
+    const newLead = {
+      id: 'lead_' + Math.random().toString(36).substring(2, 9),
+      handle: handle.toLowerCase(),
+      email: email.trim().toLowerCase(),
+      createdAt: new Date().toISOString()
+    };
+    allLeads.push(newLead);
+    localStorage.setItem(BIO_LEADS_STORAGE_KEY, JSON.stringify(allLeads));
+    return newLead;
+  } catch (e) {
+    console.error('Failed to record lead', e);
+    return null;
+  }
+};
+
+export const exportBioLeadsCSV = (handle) => {
+  const leads = getStoredBioLeads(handle);
+  const headers = ['Handle', 'Subscriber Email', 'Subscribed At'];
+  const rows = leads.map(l => [
+    `"${l.handle}"`,
+    `"${l.email}"`,
+    `"${l.createdAt}"`
+  ]);
+
+  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `kissurl_subscribers_${handle || 'all'}_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+export const getYouTubeEmbedUrl = (url) => {
+  if (!url) return null;
+  try {
+    const clean = url.trim();
+    // match youtu.be/ID or youtube.com/watch?v=ID or youtube.com/embed/ID
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = clean.match(regExp);
+    if (match && match[2].length === 11) {
+      return `https://www.youtube-nocookie.com/embed/${match[2]}`;
+    }
+  } catch (e) {}
+  return null;
+};
+
+export const getSpotifyEmbedUrl = (url) => {
+  if (!url) return null;
+  try {
+    const clean = url.trim();
+    // match open.spotify.com/(track|album|playlist|artist)/ID
+    const match = clean.match(/open\.spotify\.com\/(track|album|playlist|artist|episode)\/([a-zA-Z0-9]+)/);
+    if (match && match[1] && match[2]) {
+      return `https://open.spotify.com/embed/${match[1]}/${match[2]}?utm_source=generator&theme=0`;
+    }
+  } catch (e) {}
+  return null;
+};
+
+

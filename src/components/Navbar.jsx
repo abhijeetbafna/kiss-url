@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Sun, Moon, Globe, User, ShieldCheck } from 'lucide-react';
+import { Plus, Sun, Moon, Globe, User, ShieldCheck, Layers } from 'lucide-react';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
 
 export default function Navbar({ 
@@ -8,6 +8,7 @@ export default function Navbar({
   onOpenCreateModal, 
   onOpenBioStudio, 
   onOpenDomainModal, 
+  onOpenBulkModal,
   onOpenSafetyModal,
   onOpenErrorBrandingModal,
   onWorkspaceChanged,
@@ -110,6 +111,14 @@ export default function Navbar({
             title="Custom Domain & CNAME Manager"
           >
             <Globe size={13} /> Domains
+          </button>
+          <button 
+            onClick={onOpenBulkModal} 
+            className="btn btn-ghost" 
+            style={{ fontSize: '0.825rem', padding: '0.35rem 0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+            title="Bulk Shortener & Batch CSV Import"
+          >
+            <Layers size={13} /> Bulk
           </button>
           <button 
             onClick={onOpenSafetyModal} 
