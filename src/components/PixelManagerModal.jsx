@@ -11,7 +11,16 @@ import {
   RefreshCw,
   Sliders,
   CheckCircle2,
-  Layers
+  Layers,
+  BarChart2,
+  Music,
+  Briefcase,
+  Share2,
+  Pin,
+  Info,
+  Terminal,
+  Activity,
+  AlertTriangle
 } from 'lucide-react';
 import { getWorkspacePixelsSettings, saveWorkspacePixelsSettings } from '../services/storageService';
 import confetti from 'canvas-confetti';
@@ -20,7 +29,8 @@ const PIXEL_PRESETS = [
   {
     id: 'meta',
     name: 'Meta (Facebook) Pixel',
-    icon: '🔵',
+    Icon: Target,
+    iconColor: '#3b82f6',
     field: 'metaPixelId',
     placeholder: 'e.g. 123456789012345',
     description: 'Tracks pageviews, custom conversions, and builds custom audiences on Facebook & Instagram.'
@@ -28,7 +38,8 @@ const PIXEL_PRESETS = [
   {
     id: 'ga4',
     name: 'Google Analytics 4 / GTM',
-    icon: '📊',
+    Icon: BarChart2,
+    iconColor: '#f59e0b',
     field: 'gaMeasurementId',
     placeholder: 'e.g. G-ABC123XYZ or GTM-XXXXXX',
     description: 'Sends real-time measurement events and UTM campaign attribution to GA4.'
@@ -36,7 +47,8 @@ const PIXEL_PRESETS = [
   {
     id: 'tiktok',
     name: 'TikTok Ads Pixel',
-    icon: '🎵',
+    Icon: Music,
+    iconColor: '#ec4899',
     field: 'tiktokPixelId',
     placeholder: 'e.g. C5L90G3Q6XXXXX',
     description: 'Optimizes TikTok ad delivery and measures visitor engagement across campaigns.'
@@ -44,7 +56,8 @@ const PIXEL_PRESETS = [
   {
     id: 'linkedin',
     name: 'LinkedIn Insight Tag',
-    icon: '💼',
+    Icon: Briefcase,
+    iconColor: '#0ea5e9',
     field: 'linkedinPartnerId',
     placeholder: 'e.g. 9876543',
     description: 'Enables B2B website demographics and conversion tracking on LinkedIn.'
@@ -52,7 +65,8 @@ const PIXEL_PRESETS = [
   {
     id: 'twitter',
     name: 'Twitter / X Ads Pixel',
-    icon: '𝕏',
+    Icon: Share2,
+    iconColor: '#a855f7',
     field: 'twitterPixelId',
     placeholder: 'e.g. o7x9a',
     description: 'Tracks conversions and tailors audience segments on X Ads Manager.'
@@ -60,7 +74,8 @@ const PIXEL_PRESETS = [
   {
     id: 'pinterest',
     name: 'Pinterest Tag',
-    icon: '📌',
+    Icon: Pin,
+    iconColor: '#ef4444',
     field: 'pinterestTagId',
     placeholder: 'e.g. 2612345678901',
     description: 'Tracks conversions and builds high-intent audiences on Pinterest.'
@@ -109,48 +124,48 @@ export default function PixelManagerModal({ isOpen, onClose }) {
     const logs = [];
     const timestamp = new Date().toLocaleTimeString();
 
-    logs.push(`[${timestamp}] 🚀 Initializing KissURL Pixel Dispatcher for event: "${simulatedEvent}"`);
+    logs.push(`[${timestamp}] [INIT] Initializing KissURL Pixel Dispatcher for event: "${simulatedEvent}"`);
 
     let activeCount = 0;
     if (settings.metaPixelId?.trim()) {
       activeCount++;
-      logs.push(`[${timestamp}] ✅ Meta Pixel (${settings.metaPixelId}): fbq('track', '${simulatedEvent}') fired`);
+      logs.push(`[${timestamp}] [META] fbq('track', '${simulatedEvent}') fired (ID: ${settings.metaPixelId})`);
     }
 
     if (settings.gaMeasurementId?.trim()) {
       activeCount++;
-      logs.push(`[${timestamp}] ✅ Google Analytics 4 (${settings.gaMeasurementId}): gtag('event', '${simulatedEvent}') fired`);
+      logs.push(`[${timestamp}] [GA4] gtag('event', '${simulatedEvent}') fired (ID: ${settings.gaMeasurementId})`);
     }
 
     if (settings.tiktokPixelId?.trim()) {
       activeCount++;
-      logs.push(`[${timestamp}] ✅ TikTok Ads Pixel (${settings.tiktokPixelId}): ttq.track('${simulatedEvent}')`);
+      logs.push(`[${timestamp}] [TIKTOK] ttq.track('${simulatedEvent}') (ID: ${settings.tiktokPixelId})`);
     }
 
     if (settings.linkedinPartnerId?.trim()) {
       activeCount++;
-      logs.push(`[${timestamp}] ✅ LinkedIn Insight Tag (Partner ID: ${settings.linkedinPartnerId}): lintrk('track', { conversion_id: '${simulatedEvent}' })`);
+      logs.push(`[${timestamp}] [LINKEDIN] lintrk('track', { conversion_id: '${simulatedEvent}' }) (ID: ${settings.linkedinPartnerId})`);
     }
 
     if (settings.twitterPixelId?.trim()) {
       activeCount++;
-      logs.push(`[${timestamp}] ✅ X / Twitter Pixel (${settings.twitterPixelId}): twq('event', '${simulatedEvent}')`);
+      logs.push(`[${timestamp}] [X/TWITTER] twq('event', '${simulatedEvent}') (ID: ${settings.twitterPixelId})`);
     }
 
     if (settings.pinterestTagId?.trim()) {
       activeCount++;
-      logs.push(`[${timestamp}] ✅ Pinterest Tag (${settings.pinterestTagId}): pintrk('track', '${simulatedEvent}')`);
+      logs.push(`[${timestamp}] [PINTEREST] pintrk('track', '${simulatedEvent}') (ID: ${settings.pinterestTagId})`);
     }
 
     if (settings.customHeadScript?.trim()) {
       activeCount++;
-      logs.push(`[${timestamp}] ⚡ Custom Head Script injected into DOM context.`);
+      logs.push(`[${timestamp}] [CUSTOM] Head Script injected into DOM context.`);
     }
 
     if (activeCount === 0) {
-      logs.push(`[${timestamp}] ⚠️ No active pixels configured. Enter a Pixel ID in the 'Tracking Pixels' tab to begin.`);
+      logs.push(`[${timestamp}] [WARN] No active pixels configured. Enter a Pixel ID in Tracking Pixels tab to begin.`);
     } else {
-      logs.push(`[${timestamp}] 🎉 Fired ${activeCount} tracking tags successfully!`);
+      logs.push(`[${timestamp}] [SUCCESS] Fired ${activeCount} tracking tags successfully.`);
     }
 
     setSimulatorLogs(logs);
@@ -226,14 +241,16 @@ export default function PixelManagerModal({ isOpen, onClose }) {
           {/* TAB 1: PRESET TRACKING PIXELS */}
           {activeTab === 'pixels' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ padding: '0.75rem 1rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
-                💡 <strong>Global Workspace Defaults:</strong> Pixels configured here will automatically be injected into all shortened links in this workspace, enabling instant retargeting on ad platforms.
+              <div style={{ padding: '0.75rem 1rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.775rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <Info size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                <span><strong>Global Workspace Defaults:</strong> Pixels configured here will automatically be injected into all shortened links in this workspace, enabling instant retargeting on ad platforms.</span>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                 {PIXEL_PRESETS.map((preset) => {
                   const val = settings[preset.field] || '';
                   const isFilled = Boolean(val.trim());
+                  const IconComp = preset.Icon;
 
                   return (
                     <div 
@@ -250,8 +267,20 @@ export default function PixelManagerModal({ isOpen, onClose }) {
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                          <span style={{ fontSize: '1.1rem' }}>{preset.icon}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                          <div style={{ 
+                            width: '26px', 
+                            height: '26px', 
+                            borderRadius: 'var(--radius-sm)', 
+                            backgroundColor: 'var(--bg-subtle)', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center',
+                            color: preset.iconColor,
+                            border: '1px solid var(--border-subtle)'
+                          }}>
+                            <IconComp size={14} />
+                          </div>
                           <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-primary)' }}>
                             {preset.name}
                           </span>
@@ -285,8 +314,9 @@ export default function PixelManagerModal({ isOpen, onClose }) {
           {/* TAB 2: CUSTOM HEAD SCRIPT TAG */}
           {activeTab === 'custom' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ padding: '0.75rem 1rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
-                ⚡ <strong>Custom Tracking Scripts:</strong> Paste any JavaScript tag (Google Tag Manager snippet, Hotjar, Segment, Plausible, or custom web tracking code).
+              <div style={{ padding: '0.75rem 1rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.775rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <Code2 size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                <span><strong>Custom Tracking Scripts:</strong> Paste any JavaScript tag (Google Tag Manager snippet, Hotjar, Segment, Plausible, or custom web tracking code).</span>
               </div>
 
               <div>
@@ -308,8 +338,9 @@ export default function PixelManagerModal({ isOpen, onClose }) {
           {/* TAB 3: EVENT SIMULATOR */}
           {activeTab === 'simulator' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ padding: '0.75rem 1rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
-                🧪 <strong>Live Tag Dispatcher:</strong> Simulate how tracking tags and retargeting pixels fire when a visitor visits your short links.
+              <div style={{ padding: '0.75rem 1rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.775rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <Activity size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                <span><strong>Live Tag Dispatcher:</strong> Simulate how tracking tags and retargeting pixels fire when a visitor visits your short links.</span>
               </div>
 
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
@@ -339,11 +370,13 @@ export default function PixelManagerModal({ isOpen, onClose }) {
               {/* Console Logs */}
               <div style={{ backgroundColor: '#09090b', borderRadius: 'var(--radius-md)', padding: '1rem', border: '1px solid var(--border-default)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', minHeight: '160px', color: '#a1a1aa' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #27272a', paddingBottom: '0.4rem', marginBottom: '0.65rem', color: '#71717a', fontSize: '0.7rem' }}>
-                  <span>PIXEL CONSOLE DISPATCHER</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <Terminal size={11} /> PIXEL CONSOLE DISPATCHER
+                  </span>
                   <span>{simulatorLogs.length} events logged</span>
                 </div>
                 {simulatorLogs.map((log, i) => (
-                  <div key={i} style={{ marginBottom: '0.35rem', lineHeight: 1.4, color: log.includes('✅') ? '#34d399' : (log.includes('⚠️') ? '#fbbf24' : '#e4e4e7') }}>
+                  <div key={i} style={{ marginBottom: '0.35rem', lineHeight: 1.4, color: log.includes('[SUCCESS]') || log.includes('fired') ? '#34d399' : (log.includes('[WARN]') ? '#fbbf24' : '#e4e4e7') }}>
                     {log}
                   </div>
                 ))}

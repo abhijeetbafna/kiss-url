@@ -385,10 +385,10 @@ export default function LandingHero({ onLinkCreated, onOpenQR, onOpenSimulator, 
 
       {/* Trust guarantees in simple text */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', fontSize: '0.8rem', color: 'var(--text-muted)', flexWrap: 'wrap' }}>
-        <span>✓ Instant redirection</span>
-        <span>✓ Custom social previews</span>
-        <span>✓ Smart device routing</span>
-        <span>✓ 100% Free</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}><Check size={12} style={{ color: '#10b981' }} /> Instant redirection</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}><Check size={12} style={{ color: '#10b981' }} /> Custom social previews</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}><Check size={12} style={{ color: '#10b981' }} /> Smart device routing</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}><Check size={12} style={{ color: '#10b981' }} /> 100% Free</span>
       </div>
     </section>
   );

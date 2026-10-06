@@ -99,10 +99,10 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: '0 auto 1rem',
-                fontSize: '1.5rem',
-                border: '2px solid var(--border-default)'
+                border: '2px solid var(--border-default)',
+                color: 'var(--primary-bg)'
               }}>
-                👤
+                <User size={28} />
               </div>
 
               <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '0.2rem' }}>

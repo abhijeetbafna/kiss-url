@@ -12,7 +12,11 @@ import {
   Sparkles, 
   Copy, 
   Check, 
-  RotateCw 
+  RotateCw,
+  MessageSquare,
+  Gamepad2,
+  Zap,
+  Globe
 } from 'lucide-react';
 import { 
   apiGetWorkspaceWebhooks, 
@@ -26,28 +30,32 @@ import { getActiveWorkspace } from '../services/storageService';
 const WEBHOOK_PRESETS = [
   {
     name: 'Slack Incoming Webhook',
-    icon: '💬',
+    Icon: MessageSquare,
+    iconColor: '#ec4899',
     urlTemplate: 'https://hooks.slack.com/services/WORKSPACE/CHANNEL/TOKEN',
     events: ['click.created', 'milestone.reached'],
     description: 'Post click notifications & link milestones directly to your Slack channel.'
   },
   {
     name: 'Discord Webhook Channel',
-    icon: '🎮',
+    Icon: Gamepad2,
+    iconColor: '#6366f1',
     urlTemplate: 'https://discord.com/api/webhooks/CHANNEL_ID/WEBHOOK_TOKEN',
     events: ['click.created', 'milestone.reached'],
     description: 'Stream live click alerts and traffic spike announcements to Discord.'
   },
   {
     name: 'Zapier Automation',
-    icon: '⚡',
+    Icon: Zap,
+    iconColor: '#f59e0b',
     urlTemplate: 'https://hooks.zapier.com/hooks/catch/123456/webhook/',
     events: ['click.created', 'milestone.reached', 'lead.captured'],
     description: 'Trigger multi-app Zaps in Airtable, Google Sheets, HubSpot, or CRM.'
   },
   {
     name: 'Custom HTTP Endpoint (HMAC)',
-    icon: '🌐',
+    Icon: Globe,
+    iconColor: '#10b981',
     urlTemplate: 'https://api.yourdomain.com/v1/webhooks/kissurl',
     events: ['click.created', 'milestone.reached'],
     description: 'Receive signed JSON webhooks with SHA-256 header validation.'
@@ -229,39 +237,55 @@ export default function WebhookManagerModal({ isOpen, onClose }) {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.65rem' }}>
-                {WEBHOOK_PRESETS.map((p, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => handleApplyPreset(p)}
-                    style={{
-                      padding: '0.85rem 1rem',
-                      borderRadius: 'var(--radius-md)',
-                      border: '1px solid var(--border-default)',
-                      backgroundColor: 'var(--bg-surface)',
-                      textAlign: 'left',
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '0.75rem',
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.5)';
-                      e.currentTarget.style.backgroundColor = 'var(--bg-subtle)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--border-default)';
-                      e.currentTarget.style.backgroundColor = 'var(--bg-surface)';
-                    }}
-                  >
-                    <span style={{ fontSize: '1.3rem', lineHeight: 1 }}>{p.icon}</span>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '0.825rem', fontWeight: '600', color: 'var(--text-primary)' }}>{p.name}</div>
-                      <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginTop: '0.15rem', lineHeight: 1.4 }}>{p.description}</div>
-                    </div>
-                  </button>
-                ))}
+                {WEBHOOK_PRESETS.map((p, idx) => {
+                  const IconComp = p.Icon;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleApplyPreset(p)}
+                      style={{
+                        padding: '0.85rem 1rem',
+                        borderRadius: 'var(--radius-md)',
+                        border: '1px solid var(--border-default)',
+                        backgroundColor: 'var(--bg-surface)',
+                        textAlign: 'left',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '0.75rem',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.5)';
+                        e.currentTarget.style.backgroundColor = 'var(--bg-subtle)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = 'var(--border-default)';
+                        e.currentTarget.style.backgroundColor = 'var(--bg-surface)';
+                      }}
+                    >
+                      <div style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: 'var(--radius-sm)',
+                        backgroundColor: 'var(--bg-subtle)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: p.iconColor,
+                        border: '1px solid var(--border-subtle)',
+                        flexShrink: 0
+                      }}>
+                        <IconComp size={16} />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: '0.825rem', fontWeight: '600', color: 'var(--text-primary)' }}>{p.name}</div>
+                        <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginTop: '0.15rem', lineHeight: 1.4 }}>{p.description}</div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -355,9 +379,10 @@ export default function WebhookManagerModal({ isOpen, onClose }) {
                       key={e.key}
                       onClick={() => toggleEvent(e.key)}
                       className={`btn ${events.includes(e.key) ? 'btn-primary' : 'btn-ghost'}`}
-                      style={{ fontSize: '0.75rem', padding: '0.25rem 0.55rem' }}
+                      style={{ fontSize: '0.75rem', padding: '0.25rem 0.55rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
                     >
-                      {events.includes(e.key) ? '✓ ' : '+ '}{e.label}
+                      {events.includes(e.key) ? <Check size={11} /> : <Plus size={11} />}
+                      <span>{e.label}</span>
                     </button>
                   ))}
                 </div>

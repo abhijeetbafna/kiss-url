@@ -6,7 +6,19 @@ import {
   Settings, 
   Trash2, 
   X,
-  Loader2
+  Loader2,
+  User,
+  Rocket,
+  Briefcase,
+  Zap,
+  Sparkles,
+  Target,
+  Flame,
+  Globe,
+  BarChart3,
+  Wrench,
+  Folder,
+  Layers
 } from 'lucide-react';
 import { 
   getStoredWorkspaces, 
@@ -17,7 +29,49 @@ import {
   subscribeToStore 
 } from '../services/storageService';
 
-const PRESET_ICONS = ['👤', '🚀', '💼', '⚡', '🌟', '🎯', '🔥', '🌐', '📊', '🛠️'];
+const ICON_MAP = {
+  'user': User,
+  '👤': User,
+  'rocket': Rocket,
+  '🚀': Rocket,
+  'briefcase': Briefcase,
+  '💼': Briefcase,
+  'zap': Zap,
+  '⚡': Zap,
+  'sparkles': Sparkles,
+  '🌟': Sparkles,
+  'target': Target,
+  '🎯': Target,
+  'flame': Flame,
+  '🔥': Flame,
+  'globe': Globe,
+  '🌐': Globe,
+  'bar-chart': BarChart3,
+  '📊': BarChart3,
+  'wrench': Wrench,
+  '🛠️': Wrench,
+  'folder': Folder,
+  '📁': Folder,
+  'layers': Layers
+};
+
+export function WorkspaceIcon({ icon, size = 13, color }) {
+  const IconComponent = ICON_MAP[icon] || Folder;
+  return <IconComponent size={size} style={{ color: color || 'currentColor', flexShrink: 0 }} />;
+}
+
+const PRESET_ICONS = [
+  { id: 'user', name: 'User', icon: User },
+  { id: 'briefcase', name: 'Work', icon: Briefcase },
+  { id: 'rocket', name: 'Growth', icon: Rocket },
+  { id: 'zap', name: 'Speed', icon: Zap },
+  { id: 'target', name: 'Focus', icon: Target },
+  { id: 'globe', name: 'Global', icon: Globe },
+  { id: 'bar-chart', name: 'Analytics', icon: BarChart3 },
+  { id: 'folder', name: 'Project', icon: Folder },
+  { id: 'sparkles', name: 'Special', icon: Sparkles },
+  { id: 'layers', name: 'Stack', icon: Layers }
+];
 
 export default function WorkspaceSwitcher({ onWorkspaceChanged, onOpenSettings }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,7 +82,7 @@ export default function WorkspaceSwitcher({ onWorkspaceChanged, onOpenSettings }
 
   // New workspace form
   const [newName, setNewName] = useState('');
-  const [newIcon, setNewIcon] = useState('📁');
+  const [newIcon, setNewIcon] = useState('folder');
   const [newDesc, setNewDesc] = useState('');
 
   const dropdownRef = useRef(null);
@@ -121,7 +175,18 @@ export default function WorkspaceSwitcher({ onWorkspaceChanged, onOpenSettings }
           backgroundColor: 'var(--bg-surface)'
         }}
       >
-        <span style={{ fontSize: '1rem', lineHeight: 1 }}>{activeWs?.icon || '👤'}</span>
+        <div style={{ 
+          width: '20px', 
+          height: '20px', 
+          borderRadius: 'var(--radius-xs)', 
+          backgroundColor: 'var(--bg-subtle)', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          color: 'var(--primary-bg)'
+        }}>
+          <WorkspaceIcon icon={activeWs?.icon} size={12} />
+        </div>
         <span style={{ maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {activeWs?.name || 'Personal Space'}
         </span>
@@ -177,7 +242,19 @@ export default function WorkspaceSwitcher({ onWorkspaceChanged, onOpenSettings }
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', overflow: 'hidden' }}>
-                        <span style={{ fontSize: '1rem', flexShrink: 0 }}>{ws.icon || '📁'}</span>
+                        <div style={{ 
+                          width: '24px', 
+                          height: '24px', 
+                          borderRadius: 'var(--radius-xs)', 
+                          backgroundColor: 'var(--bg-subtle)', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center',
+                          color: isSelected ? 'var(--primary-bg)' : 'var(--text-secondary)',
+                          flexShrink: 0
+                        }}>
+                          <WorkspaceIcon icon={ws.icon} size={13} />
+                        </div>
                         <div style={{ overflow: 'hidden' }}>
                           <div style={{ fontWeight: isSelected ? '600' : '400', color: 'var(--text-primary)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
                             {ws.name}
@@ -267,7 +344,7 @@ export default function WorkspaceSwitcher({ onWorkspaceChanged, onOpenSettings }
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Q4 Growth Sprint"
+                  placeholder="e.g. Growth Marketing"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   className="input"
@@ -282,24 +359,33 @@ export default function WorkspaceSwitcher({ onWorkspaceChanged, onOpenSettings }
                 <label style={{ display: 'block', fontSize: '0.725rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
                   Icon Badge
                 </label>
-                <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
-                  {PRESET_ICONS.map((icon) => (
-                    <button
-                      key={icon}
-                      type="button"
-                      onClick={() => setNewIcon(icon)}
-                      style={{
-                        padding: '0.2rem 0.35rem',
-                        borderRadius: 'var(--radius-sm)',
-                        border: newIcon === icon ? '1px solid var(--border-strong)' : '1px solid transparent',
-                        backgroundColor: newIcon === icon ? 'var(--bg-muted)' : 'transparent',
-                        cursor: 'pointer',
-                        fontSize: '0.85rem'
-                      }}
-                    >
-                      {icon}
-                    </button>
-                  ))}
+                <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+                  {PRESET_ICONS.map((preset) => {
+                    const PresetIcon = preset.icon;
+                    const isSelected = newIcon === preset.id;
+                    return (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => setNewIcon(preset.id)}
+                        style={{
+                          width: '28px',
+                          height: '28px',
+                          borderRadius: 'var(--radius-sm)',
+                          border: isSelected ? '1px solid var(--border-strong)' : '1px solid var(--border-subtle)',
+                          backgroundColor: isSelected ? 'var(--bg-muted)' : 'var(--bg-surface)',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: isSelected ? 'var(--primary-bg)' : 'var(--text-secondary)'
+                        }}
+                        title={preset.name}
+                      >
+                        <PresetIcon size={13} />
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

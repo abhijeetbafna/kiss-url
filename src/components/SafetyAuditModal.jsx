@@ -15,8 +15,8 @@ import {
 import { auditUrlSafety } from '../services/storageService';
 
 export default function SafetyAuditModal({ isOpen, onClose, initialUrl = '' }) {
-  const [testUrl, setTestUrl] = useState(initialUrl || 'https://github.com');
-  const [auditResult, setAuditResult] = useState(() => auditUrlSafety(initialUrl || 'https://github.com'));
+  const [testUrl, setTestUrl] = useState(initialUrl || 'https://developer.mozilla.org');
+  const [auditResult, setAuditResult] = useState(() => auditUrlSafety(initialUrl || 'https://developer.mozilla.org'));
 
   if (!isOpen) return null;
 
@@ -165,12 +165,16 @@ export default function SafetyAuditModal({ isOpen, onClose, initialUrl = '' }) {
             fontSize: '0.75rem',
             color: 'var(--text-muted)',
             lineHeight: 1.5,
-            padding: '0.75rem',
+            padding: '0.75rem 0.85rem',
             borderRadius: 'var(--radius-sm)',
             backgroundColor: 'var(--bg-subtle)',
-            border: '1px solid var(--border-subtle)'
+            border: '1px solid var(--border-subtle)',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '0.45rem'
           }}>
-            🛡️ <strong>Safety Guarantee</strong>: KissURL applies heuristic threat models to verify domain reputational integrity, preventing deceptive links, credential phishing attempts, and non-HTTPS vulnerabilities.
+            <ShieldCheck size={14} style={{ color: '#10b981', flexShrink: 0, marginTop: '2px' }} />
+            <span><strong>Safety Guarantee:</strong> KissURL applies heuristic threat models to verify domain reputational integrity, preventing deceptive links, credential phishing attempts, and non-HTTPS vulnerabilities.</span>
           </div>
         </div>
 

@@ -99,7 +99,7 @@ const MANUAL_SECTIONS = [
     badge: 'Audience Builder',
     summary: 'Fire Meta, GA4, TikTok, LinkedIn, and custom tracking pixels when visitors click your short links.',
     howItWorks: [
-      'Open Tools ➔ Retargeting Pixels to configure workspace-level tracking tags.',
+      'Open Tools > Retargeting Pixels to configure workspace-level tracking tags.',
       'Enter your Meta Pixel ID, Google Tag Manager / GA4 Measurement ID, TikTok Pixel ID, or LinkedIn Partner ID.',
       'Inject Custom Scripts for advanced tools like Hotjar, Segment, or Plausible.',
       'When any link in your workspace is clicked, the tag firing simulator triggers and registers the PageView event for retargeting audiences.'
@@ -123,7 +123,7 @@ const MANUAL_SECTIONS = [
     badge: 'Real-Time Data',
     summary: 'Deliver instant JSON payloads to your team channels or APIs when links get clicked.',
     howItWorks: [
-      'Open Tools ➔ Webhooks & Automations from the navigation bar.',
+      'Open Tools > Webhooks & Automations from the navigation bar.',
       'Pick a preset (Slack Incoming Webhook, Discord Webhook, Zapier, or Custom POST URL).',
       'Choose trigger events: Every Click (Live), Click Milestones (100th, 1,000th clicks), or 404 Health Alerts.',
       'Each webhook payload includes SHA-256 HMAC signature verification via the X-KissURL-Signature header.'
@@ -147,9 +147,9 @@ const MANUAL_SECTIONS = [
     badge: 'Security & Trust',
     summary: 'Evaluate link safety, phishing probability, and destination reputation before sharing.',
     howItWorks: [
-      'Click Tools ➔ URL Safety Auditor in the navigation bar.',
+      'Click Tools > URL Safety Auditor in the navigation bar.',
       'The scanner runs heuristic inspections across SSL encryption, suspicious TLDs, domain age, canonical structure, and known blocklists.',
-      'Outputs a 0-100 Trust Score with clean breakdown: 🟢 Clean / Verified, 🟡 Moderate Risk, or 🔴 Critical Threat.'
+      'Outputs a 0-100 Trust Score with clean breakdown: Clean / Verified (90-100), Moderate Risk (60-89), or Critical Threat (<60).'
     ],
     proTip: 'Protect your brand reputation by verifying shortened links created by external team members before sharing them in public campaigns.',
     example: {
@@ -166,7 +166,7 @@ const MANUAL_SECTIONS = [
     badge: 'Creator Suite',
     summary: 'Build customized link-in-bio landing pages with blocks, avatars, social icons, and newsletter capture.',
     howItWorks: [
-      'Click Tools ➔ Bio Link Tree Studio to launch the visual studio.',
+      'Click Tools > Bio Link Tree Studio to launch the visual studio.',
       'Choose a unique handle (e.g., kiss.url/bio/alex).',
       'Add multi-format blocks: clickable buttons, text highlights, social media icons, and email subscription forms.',
       'Choose between sleek Dark, Minimalist, Glassmorphism, and Cyber Neon themes.'
@@ -424,7 +424,7 @@ export default function UserManualModal({ isOpen, onClose, onOpenCreateModal, on
 
             {/* Pro Tip Alert */}
             <div style={{ padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', border: '1px solid rgba(99, 102, 241, 0.3)', backgroundColor: 'rgba(99, 102, 241, 0.05)', fontSize: '0.8rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'flex-start', gap: '0.65rem', lineHeight: 1.5 }}>
-              <span style={{ fontSize: '1rem', lineHeight: 1 }}>💡</span>
+              <Sparkles size={16} style={{ color: 'var(--primary-bg)', flexShrink: 0, marginTop: '2px' }} />
               <div>
                 <strong style={{ color: 'var(--primary-bg)' }}>Pro Tip: </strong>
                 {currentSection.proTip}
@@ -515,8 +515,9 @@ export default function UserManualModal({ isOpen, onClose, onOpenCreateModal, on
 
         {/* Footer */}
         <div className="modal-footer" style={{ justifyContent: 'space-between' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            📖 Press <kbd style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', backgroundColor: 'var(--bg-subtle)', padding: '1px 5px', borderRadius: 'var(--radius-xs)', border: '1px solid var(--border-default)' }}>ESC</kbd> to exit manual
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <BookOpen size={13} style={{ color: 'var(--text-muted)' }} />
+            <span>Press <kbd style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', backgroundColor: 'var(--bg-subtle)', padding: '1px 5px', borderRadius: 'var(--radius-xs)', border: '1px solid var(--border-default)' }}>ESC</kbd> to exit manual</span>
           </div>
           <button
             type="button"

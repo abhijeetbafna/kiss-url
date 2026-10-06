@@ -140,15 +140,15 @@ export default function ProductDemos({ onOpenCreateModal }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem', fontSize: '0.85rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span className="badge">iPhone</span>
-                <span>➔ Opens Apple App Store</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}><ArrowRight size={12} style={{ color: 'var(--text-muted)' }} /> Opens Apple App Store</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span className="badge">Android</span>
-                <span>➔ Opens Google Play Store</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}><ArrowRight size={12} style={{ color: 'var(--text-muted)' }} /> Opens Google Play Store</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span className="badge">Desktop</span>
-                <span>➔ Opens your web homepage</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}><ArrowRight size={12} style={{ color: 'var(--text-muted)' }} /> Opens your web homepage</span>
               </div>
             </div>
 

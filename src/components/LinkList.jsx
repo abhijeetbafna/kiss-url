@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { 
   Copy, Check, QrCode, BarChart3, Play, Trash2, 
-  Search, Shield, Clock, Smartphone, Sparkles, Inbox
+  Search, Shield, Clock, Smartphone, Sparkles, Inbox,
+  Shuffle, Globe
 } from 'lucide-react';
 import { buildShortUrl } from '../services/storageService';
 
@@ -153,12 +154,12 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
                     )}
                     {link.splitTesting?.enabled && (
                       <span className="badge" style={{ borderColor: 'rgba(168, 85, 247, 0.4)', color: '#c084fc' }} title="A/B Split Testing Active">
-                        🔀 Split A/B
+                        <Shuffle size={10} /> Split A/B
                       </span>
                     )}
                     {link.geoRouting?.enabled && (
                       <span className="badge" style={{ borderColor: 'rgba(59, 130, 246, 0.4)', color: '#60a5fa' }} title="Geo-Location Targeted">
-                        🌍 Geo Rules
+                        <Globe size={10} /> Geo Rules
                       </span>
                     )}
                     {isProtected && (

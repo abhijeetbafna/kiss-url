@@ -8,10 +8,8 @@ const PRESET_BGS = ['#ffffff', '#f4f4f5', '#eff6ff', '#09090b'];
 
 const CENTER_ICONS = [
   { id: 'none', label: 'None' },
-  { id: 'zap', label: '⚡ Zap' },
-  { id: 'github', label: 'GitHub' },
-  { id: 'twitter', label: 'Twitter / X' },
-  { id: 'globe', label: '🌐 Web' }
+  { id: 'zap', label: 'Zap' },
+  { id: 'globe', label: 'Web' }
 ];
 
 export default function QRCodeModal({ link, onClose }) {
@@ -83,9 +81,8 @@ export default function QRCodeModal({ link, onClose }) {
         const ctx = canvas.getContext('2d');
         const size = canvas.width;
         const centerSize = size * 0.22;
-        const centerPos = (size - centerSize) / 2;
 
-        // Draw clean white background badge for center icon
+        // Draw clean background badge for center icon
         ctx.fillStyle = bgColor === '#09090b' ? '#09090b' : '#ffffff';
         ctx.beginPath();
         ctx.arc(size / 2, size / 2, centerSize / 2 + 4, 0, Math.PI * 2);
@@ -95,20 +92,16 @@ export default function QRCodeModal({ link, onClose }) {
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Draw center icon
+        // Draw center icon shape
         ctx.fillStyle = fgColor;
-        ctx.font = `bold ${centerSize * 0.55}px -apple-system, sans-serif`;
+        ctx.font = `bold ${centerSize * 0.5}px monospace`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
         if (centerIcon === 'zap') {
           ctx.fillText('⚡', size / 2, size / 2);
-        } else if (centerIcon === 'github') {
-          ctx.fillText('🐙', size / 2, size / 2);
-        } else if (centerIcon === 'twitter') {
-          ctx.fillText('𝕏', size / 2, size / 2);
         } else if (centerIcon === 'globe') {
-          ctx.fillText('🌐', size / 2, size / 2);
+          ctx.fillText('✦', size / 2, size / 2);
         }
 
         setQrDataUrl(canvas.toDataURL('image/png'));

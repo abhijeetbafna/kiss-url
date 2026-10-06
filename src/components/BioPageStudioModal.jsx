@@ -74,8 +74,8 @@ export default function BioPageStudioModal({ isOpen, onClose, onOpenLiveBio }) {
     setWebsite('');
     setEmail('');
     setLinks([
-      { id: 'l1', type: 'link', title: '🚀 My Primary Project / Store', subtitle: 'Check out our latest release', url: 'https://github.com', highlight: true },
-      { id: 'l2', type: 'newsletter', title: '📰 Weekly Newsletter', subtitle: 'Subscribe for free insights straight to your inbox', url: '', highlight: false }
+      { id: 'l1', type: 'link', title: 'My Primary Project / Store', subtitle: 'Check out our latest release', url: 'https://example.com', highlight: true },
+      { id: 'l2', type: 'newsletter', title: 'Weekly Newsletter', subtitle: 'Subscribe for free insights straight to your inbox', url: '', highlight: false }
     ]);
     setLeads([]);
   };

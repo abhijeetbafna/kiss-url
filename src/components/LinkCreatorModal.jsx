@@ -19,7 +19,9 @@ import {
   Activity,
   CheckCircle2,
   Play,
-  RotateCcw
+  RotateCcw,
+  Laptop,
+  Dice5
 } from 'lucide-react';
 import SocialCardPreview from './SocialCardPreview';
 import confetti from 'canvas-confetti';
@@ -474,9 +476,9 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                     <button
                       type="button"
                       onClick={generateRandomSlug}
-                      className="text-[11px] text-primary hover:underline"
+                      className="text-[11px] text-primary hover:underline flex items-center gap-1"
                     >
-                      🎲 Randomize
+                      <Dice5 size={12} /> Randomize
                     </button>
                   </div>
                   <div className="relative">
@@ -719,7 +721,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                 <div className="space-y-3">
                   <div>
                     <label className="text-xs font-medium text-foreground flex items-center gap-1.5 mb-1">
-                      🍏 iOS / iPhone / iPad Destination URL
+                      <Smartphone size={13} className="text-primary" /> iOS / iPhone / iPad Destination URL
                     </label>
                     <input
                       type="url"
@@ -731,7 +733,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   </div>
                   <div>
                     <label className="text-xs font-medium text-foreground flex items-center gap-1.5 mb-1">
-                      🤖 Android Destination URL
+                      <Smartphone size={13} className="text-emerald-500" /> Android Destination URL
                     </label>
                     <input
                       type="url"
@@ -743,7 +745,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                   </div>
                   <div>
                     <label className="text-xs font-medium text-foreground flex items-center gap-1.5 mb-1">
-                      💻 Desktop / Mac / Windows Web Fallback URL
+                      <Laptop size={13} className="text-muted-foreground" /> Desktop / Web Fallback URL
                     </label>
                     <input
                       type="url"
@@ -987,8 +989,8 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
                 ))}
               </select>
 
-              <div className="text-xs font-mono flex items-center text-muted-foreground">
-                🎲 Random Roll Ready
+              <div className="text-xs font-mono flex items-center gap-1 text-muted-foreground">
+                <Dice5 size={12} /> Random Roll Ready
               </div>
             </div>
 

@@ -66,7 +66,7 @@ const FALLBACK_DEMO_USER = {
       id: 'ws_personal',
       name: 'Personal Space',
       slug: 'personal',
-      icon: '👤',
+      icon: 'user',
       color: '#6366f1',
       description: 'Default personal projects and short links'
     },
@@ -74,7 +74,7 @@ const FALLBACK_DEMO_USER = {
       id: 'ws_marketing',
       name: 'Growth & Marketing',
       slug: 'marketing',
-      icon: '🚀',
+      icon: 'rocket',
       color: '#10b981',
       description: 'Campaign, social media, and ad tracking links'
     }
@@ -129,7 +129,7 @@ export const apiRegister = async (email, password, name) => {
       const fallback = {
         user: { id: 'usr_' + Date.now(), email, name: name || email.split('@')[0] },
         token: 'local_reg_token_' + Date.now(),
-        workspaces: [{ id: defaultWsId, name: 'Personal Space', icon: '👤', color: '#6366f1' }],
+        workspaces: [{ id: defaultWsId, name: 'Personal Space', icon: 'user', color: '#6366f1' }],
         activeWorkspaceId: defaultWsId
       };
       setAuthToken(fallback.token);
@@ -363,7 +363,7 @@ export const apiTestWorkspaceWebhook = async (workspaceId, webhookId) => {
       simulated: true,
       payload: {
         event: 'test.ping',
-        message: '⚡ Webhook simulated delivery test OK',
+        message: 'Webhook simulated delivery test OK (200)',
         timestamp: new Date().toISOString()
       }
     };

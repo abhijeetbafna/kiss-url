@@ -38,7 +38,7 @@ const INITIAL_WORKSPACES = [
     id: 'ws_personal',
     name: 'Personal Space',
     slug: 'personal',
-    icon: '👤',
+    icon: 'user',
     color: '#6366f1',
     description: 'Default workspace for personal projects and links',
     createdAt: new Date().toISOString(),
@@ -51,8 +51,8 @@ const INITIAL_SAMPLE_LINKS = [
     workspaceId: 'ws_personal',
     slug: 'launch',
     domain: 'kiss.url',
-    targetUrl: 'https://github.com/topics/modern-web',
-    title: 'Modern Web Dev Topics',
+    targetUrl: 'https://developer.mozilla.org/en-US/docs/Web',
+    title: 'Web Standards & Documentation',
     createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     clicks: 1420,
     tags: ['Launch', 'Dev'],
@@ -211,7 +211,7 @@ export const getActiveWorkspace = () => {
   return workspaces.find(w => w.id === activeId) || workspaces[0] || INITIAL_WORKSPACES[0];
 };
 
-export const createWorkspace = async ({ name, icon = '📁', color = '#3b82f6', description = '' }) => {
+export const createWorkspace = async ({ name, icon = 'folder', color = '#3b82f6', description = '' }) => {
   if (getAuthToken()) {
     try {
       const created = await apiCreateWorkspace({ name, icon, color, description });
@@ -546,7 +546,7 @@ const DEFAULT_ERROR_BRANDING = {
   customMessage: 'The link you are looking for has been moved, deleted, or is temporarily offline.',
   brandName: 'KissURL',
   logoEmoji: '⚡',
-  supportUrl: 'https://github.com/abhijeetbafna/kiss-url',
+  supportUrl: '',
   showHomeButton: true,
   themeColor: '#000000',
 };

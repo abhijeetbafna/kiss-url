@@ -18,23 +18,24 @@ import {
   Download,
   FileText,
   Tag,
-  Printer
+  Printer,
+  Check
 } from 'lucide-react';
 import { buildShortUrl, getAggregatedWorkspaceAnalytics } from '../services/storageService';
 
-const COUNTRY_FLAGS = {
-  US: { name: 'United States', flag: '🇺🇸' },
-  GB: { name: 'United Kingdom', flag: '🇬🇧' },
-  DE: { name: 'Germany', flag: '🇩🇪' },
-  IN: { name: 'India', flag: '🇮🇳' },
-  CA: { name: 'Canada', flag: '🇨🇦' },
-  FR: { name: 'France', flag: '🇫🇷' },
-  JP: { name: 'Japan', flag: '🇯🇵' },
-  AU: { name: 'Australia', flag: '🇦🇺' },
-  BR: { name: 'Brazil', flag: '🇧🇷' },
-  SG: { name: 'Singapore', flag: '🇸🇬' },
-  NL: { name: 'Netherlands', flag: '🇳🇱' },
-  ES: { name: 'Spain', flag: '🇪🇸' }
+const COUNTRY_NAMES = {
+  US: 'United States',
+  GB: 'United Kingdom',
+  DE: 'Germany',
+  IN: 'India',
+  CA: 'Canada',
+  FR: 'France',
+  JP: 'Japan',
+  AU: 'Australia',
+  BR: 'Brazil',
+  SG: 'Singapore',
+  NL: 'Netherlands',
+  ES: 'Spain'
 };
 
 const DEVICE_COLORS = {
@@ -371,9 +372,9 @@ export default function AnalyticsModal({ link, onClose, onRefreshData, isWorkspa
 
             <div style={{ backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-default)', borderRadius: 'var(--radius-md)', padding: '0.75rem 0.9rem' }}>
               <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', fontWeight: '500' }}>Top Location</div>
-              <div style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-primary)', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <span>{COUNTRY_FLAGS[countries[0]?.[0]]?.flag || '🌐'}</span>
-                <span>{countries[0] ? countries[0][0] : 'US'}</span>
+              <div style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-primary)', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <Globe size={14} style={{ color: 'var(--primary-bg)' }} />
+                <span>{countries[0] ? `${COUNTRY_NAMES[countries[0][0]] || countries[0][0]} (${countries[0][0]})` : 'United States (US)'}</span>
               </div>
             </div>
           </div>
@@ -461,7 +462,7 @@ export default function AnalyticsModal({ link, onClose, onRefreshData, isWorkspa
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <span>{COUNTRY_FLAGS[c.country]?.flag || '🌐'}</span>
+                          <span className="badge" style={{ fontSize: '0.65rem', padding: '1px 5px', fontFamily: 'var(--font-mono)' }}>{c.country || 'US'}</span>
                           <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{c.referrer}</span>
                           <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>({c.device})</span>
                         </div>
@@ -477,8 +478,9 @@ export default function AnalyticsModal({ link, onClose, onRefreshData, isWorkspa
           {/* 3. TAB CONTENT: 24-HOUR PEAK HEATMAP */}
           {activeTab === 'heatmap' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ padding: '0.75rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.785rem', color: 'var(--text-secondary)' }}>
-                🔥 <strong>Audience Peak Engagement Heatmap</strong>: Analyzes 168 hourly time slots across the week. Darker squares indicate high-density engagement windows.
+              <div style={{ padding: '0.75rem 1rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.785rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <Activity size={14} style={{ color: 'var(--primary-bg)', flexShrink: 0 }} />
+                <span><strong>Audience Peak Engagement Heatmap:</strong> Analyzes 168 hourly time slots across the week. Darker squares indicate high-density engagement windows.</span>
               </div>
 
               <div style={{
@@ -557,14 +559,14 @@ export default function AnalyticsModal({ link, onClose, onRefreshData, isWorkspa
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                     {countries.map(([code, count]) => {
-                      const meta = COUNTRY_FLAGS[code] || { name: code, flag: '🌐' };
+                      const name = COUNTRY_NAMES[code] || code;
                       const pct = Math.round((count / (totalClicks || 1)) * 100);
                       return (
                         <div key={code}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', marginBottom: '3px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                              <span>{meta.flag}</span>
-                              <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{meta.name} ({code})</span>
+                              <span className="badge" style={{ fontSize: '0.65rem', padding: '1px 5px', fontFamily: 'var(--font-mono)' }}>{code}</span>
+                              <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{name}</span>
                             </div>
                             <span className="tabular-nums" style={{ fontWeight: '600', color: 'var(--text-secondary)' }}>
                               {count.toLocaleString()} ({pct}%)
@@ -585,10 +587,11 @@ export default function AnalyticsModal({ link, onClose, onRefreshData, isWorkspa
                     Geo-Targeting Recommendation
                   </div>
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '1rem' }}>
-                    Your primary audience is located in <strong>{COUNTRY_FLAGS[countries[0]?.[0]]?.name || 'United States'}</strong> ({Math.round(((countries[0]?.[1] || 0) / (totalClicks || 1)) * 100)}% of traffic).
+                    Your primary audience is located in <strong>{COUNTRY_NAMES[countries[0]?.[0]] || 'United States'}</strong> ({Math.round(((countries[0]?.[1] || 0) / (totalClicks || 1)) * 100)}% of traffic).
                   </p>
-                  <div style={{ padding: '0.75rem', backgroundColor: 'var(--bg-surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    💡 <strong>Pro Tip</strong>: You can configure custom Country Redirect rules in the Link Editor under the <strong>Geo</strong> tab to send international visitors to dedicated localized landing pages!
+                  <div style={{ padding: '0.75rem 0.85rem', backgroundColor: 'var(--bg-surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'flex-start', gap: '0.45rem' }}>
+                    <Sparkles size={14} style={{ color: 'var(--primary-bg)', flexShrink: 0, marginTop: '1px' }} />
+                    <div><strong>Pro Tip:</strong> You can configure custom Country Redirect rules in the Link Editor under the <strong>Geo</strong> tab to send international visitors to dedicated localized landing pages!</div>
                   </div>
                 </div>
               </div>
@@ -734,8 +737,8 @@ export default function AnalyticsModal({ link, onClose, onRefreshData, isWorkspa
 
         {/* Footer */}
         <div className="modal-footer" style={{ justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '0.775rem', color: 'var(--text-muted)' }}>
-            ✓ Real-time GDPR-compliant heuristic analytics
+          <span style={{ fontSize: '0.775rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <Check size={13} style={{ color: '#10b981' }} /> Real-time GDPR-compliant heuristic analytics
           </span>
           <div style={{ display: 'flex', gap: '0.45rem' }}>
             {onRefreshData && (

@@ -16,9 +16,7 @@ import {
   Zap, 
   Compass,
   ArrowRight,
-  Shield,
-  Sliders,
-  CheckCircle2
+  Sparkles
 } from 'lucide-react';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
 
@@ -106,13 +104,13 @@ export default function Navbar({
               height: '26px',
               borderRadius: '6px',
               backgroundColor: 'var(--primary-bg)',
-              color: '#ffffff',
+              color: 'var(--primary-fg)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+              boxShadow: '0 2px 6px rgba(0,0,0,0.08)'
             }}>
-              <Zap size={14} style={{ fill: '#ffffff' }} />
+              <Zap size={14} style={{ fill: 'currentColor' }} />
             </div>
             <span style={{ 
               fontSize: '1rem', 
@@ -133,8 +131,8 @@ export default function Navbar({
           />
         </div>
 
-        {/* Center: Sleek, Uncluttered Navigation */}
-        <nav style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+        {/* Center: Sleek Navigation */}
+        <nav style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
           <button 
             onClick={() => scrollToSection('hub-section')} 
             className="btn btn-ghost" 
@@ -156,7 +154,7 @@ export default function Navbar({
             <span>Analytics</span>
           </button>
 
-          {/* Features 2-Column Compact Mega Menu */}
+          {/* Features 2-Column Mega Menu */}
           <div style={{ position: 'relative' }} ref={dropdownRef}>
             <button 
               onClick={() => setIsFeaturesOpen(!isFeaturesOpen)} 
@@ -169,160 +167,138 @@ export default function Navbar({
             </button>
 
             {isFeaturesOpen && (
-              <div 
-                style={{ 
-                  position: 'absolute', 
-                  top: 'calc(100% + 8px)', 
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: '460px', 
-                  backgroundColor: 'var(--bg-surface)', 
-                  border: '1px solid var(--border-default)', 
-                  borderRadius: 'var(--radius-lg)', 
-                  boxShadow: 'var(--shadow-lg)', 
-                  padding: '0.65rem', 
-                  zIndex: 100,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.4rem'
-                }}
-              >
+              <div className="menu-popover">
                 {/* 2-Column Grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.35rem' }}>
+                <div className="menu-grid">
                   {/* Item 1: Retargeting Pixels */}
-                  <button
+                  <div
                     onClick={() => {
                       setIsFeaturesOpen(false);
                       onOpenPixelModal();
                     }}
-                    className="btn-ghost"
-                    style={{ justifyContent: 'flex-start', padding: '0.5rem 0.6rem', borderRadius: 'var(--radius-md)', gap: '0.55rem', textAlign: 'left' }}
+                    className="menu-item"
                   >
-                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6', flexShrink: 0 }}>
-                      <Target size={14} />
+                    <div className="menu-item-icon" style={{ color: '#3b82f6' }}>
+                      <Target size={15} />
                     </div>
-                    <div>
-                      <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem', lineHeight: 1.2 }}>Retargeting Pixels</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>Meta, GA4 & TikTok tags</div>
+                    <div className="menu-item-content">
+                      <div className="menu-item-title">Retargeting Pixels</div>
+                      <div className="menu-item-desc">Meta, GA4 & TikTok tags</div>
                     </div>
-                  </button>
+                  </div>
 
-                  {/* Item 2: Webhooks */}
-                  <button
+                  {/* Item 2: Webhooks Hub */}
+                  <div
                     onClick={() => {
                       setIsFeaturesOpen(false);
                       onOpenWebhookModal();
                     }}
-                    className="btn-ghost"
-                    style={{ justifyContent: 'flex-start', padding: '0.5rem 0.6rem', borderRadius: 'var(--radius-md)', gap: '0.55rem', textAlign: 'left' }}
+                    className="menu-item"
                   >
-                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a855f7', flexShrink: 0 }}>
-                      <Webhook size={14} />
+                    <div className="menu-item-icon" style={{ color: '#a855f7' }}>
+                      <Webhook size={15} />
                     </div>
-                    <div>
-                      <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem', lineHeight: 1.2 }}>Webhooks Hub</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>Slack & Discord alerts</div>
+                    <div className="menu-item-content">
+                      <div className="menu-item-title">Webhooks Hub</div>
+                      <div className="menu-item-desc">Slack & Discord alerts</div>
                     </div>
-                  </button>
+                  </div>
 
-                  {/* Item 3: Bio Page Studio */}
-                  <button
+                  {/* Item 3: Bio Link Studio */}
+                  <div
                     onClick={() => {
                       setIsFeaturesOpen(false);
                       onOpenBioStudio();
                     }}
-                    className="btn-ghost"
-                    style={{ justifyContent: 'flex-start', padding: '0.5rem 0.6rem', borderRadius: 'var(--radius-md)', gap: '0.55rem', textAlign: 'left' }}
+                    className="menu-item"
                   >
-                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', flexShrink: 0 }}>
-                      <User size={14} />
+                    <div className="menu-item-icon" style={{ color: '#10b981' }}>
+                      <User size={15} />
                     </div>
-                    <div>
-                      <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem', lineHeight: 1.2 }}>Bio Link Studio</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>Creator pages & leads</div>
+                    <div className="menu-item-content">
+                      <div className="menu-item-title">Bio Link Studio</div>
+                      <div className="menu-item-desc">Creator pages & leads</div>
                     </div>
-                  </button>
+                  </div>
 
                   {/* Item 4: Custom Domains */}
-                  <button
+                  <div
                     onClick={() => {
                       setIsFeaturesOpen(false);
                       onOpenDomainModal();
                     }}
-                    className="btn-ghost"
-                    style={{ justifyContent: 'flex-start', padding: '0.5rem 0.6rem', borderRadius: 'var(--radius-md)', gap: '0.55rem', textAlign: 'left' }}
+                    className="menu-item"
                   >
-                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f59e0b', flexShrink: 0 }}>
-                      <Globe size={14} />
+                    <div className="menu-item-icon" style={{ color: '#f59e0b' }}>
+                      <Globe size={15} />
                     </div>
-                    <div>
-                      <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem', lineHeight: 1.2 }}>Custom Domains</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>Branded CNAME setups</div>
+                    <div className="menu-item-content">
+                      <div className="menu-item-title">Custom Domains</div>
+                      <div className="menu-item-desc">Branded CNAME setups</div>
                     </div>
-                  </button>
+                  </div>
 
                   {/* Item 5: Bulk Shortener */}
-                  <button
+                  <div
                     onClick={() => {
                       setIsFeaturesOpen(false);
                       onOpenBulkModal();
                     }}
-                    className="btn-ghost"
-                    style={{ justifyContent: 'flex-start', padding: '0.5rem 0.6rem', borderRadius: 'var(--radius-md)', gap: '0.55rem', textAlign: 'left' }}
+                    className="menu-item"
                   >
-                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#06b6d4', flexShrink: 0 }}>
-                      <Layers size={14} />
+                    <div className="menu-item-icon" style={{ color: '#06b6d4' }}>
+                      <Layers size={15} />
                     </div>
-                    <div>
-                      <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem', lineHeight: 1.2 }}>Bulk CSV Engine</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>Batch shortlink processor</div>
+                    <div className="menu-item-content">
+                      <div className="menu-item-title">Bulk CSV Engine</div>
+                      <div className="menu-item-desc">Batch shortlink processor</div>
                     </div>
-                  </button>
+                  </div>
 
                   {/* Item 6: Safety Auditor */}
-                  <button
+                  <div
                     onClick={() => {
                       setIsFeaturesOpen(false);
                       onOpenSafetyModal();
                     }}
-                    className="btn-ghost"
-                    style={{ justifyContent: 'flex-start', padding: '0.5rem 0.6rem', borderRadius: 'var(--radius-md)', gap: '0.55rem', textAlign: 'left' }}
+                    className="menu-item"
                   >
-                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ec4899', flexShrink: 0 }}>
-                      <ShieldCheck size={14} />
+                    <div className="menu-item-icon" style={{ color: '#ec4899' }}>
+                      <ShieldCheck size={15} />
                     </div>
-                    <div>
-                      <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.8rem', lineHeight: 1.2 }}>Safety Auditor</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>Malware & phishing scan</div>
+                    <div className="menu-item-content">
+                      <div className="menu-item-title">Safety Auditor</div>
+                      <div className="menu-item-desc">Malware & phishing scan</div>
                     </div>
-                  </button>
+                  </div>
                 </div>
 
                 {/* Bottom Strip: User Manual Link */}
-                <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '0.45rem', marginTop: '0.15rem' }}>
-                  <button
+                <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '0.5rem', marginTop: '0.15rem' }}>
+                  <div
                     onClick={() => {
                       setIsFeaturesOpen(false);
                       if (onOpenUserManual) onOpenUserManual();
                     }}
-                    className="btn-ghost"
                     style={{
-                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
                       justifyContent: 'space-between',
-                      padding: '0.45rem 0.65rem',
+                      padding: '0.55rem 0.75rem',
                       borderRadius: 'var(--radius-sm)',
                       backgroundColor: 'var(--bg-subtle)',
-                      fontSize: '0.775rem',
-                      fontWeight: '600',
-                      color: 'var(--primary-bg)'
+                      cursor: 'pointer',
+                      transition: 'background-color var(--duration-fast) var(--ease-out)'
                     }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-hover)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-subtle)'}
                   >
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <BookOpen size={13} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.785rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+                      <BookOpen size={14} style={{ color: 'var(--text-muted)' }} />
                       <span>Interactive User Manual & Working Examples</span>
-                    </span>
-                    <ArrowRight size={12} />
-                  </button>
+                    </div>
+                    <ArrowRight size={13} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                  </div>
                 </div>
               </div>
             )}
@@ -371,7 +347,7 @@ export default function Navbar({
                   height: '16px', 
                   borderRadius: '50%', 
                   backgroundColor: 'var(--primary-bg)', 
-                  color: '#fff', 
+                  color: 'var(--primary-fg)', 
                   fontSize: '0.65rem', 
                   fontWeight: '700', 
                   display: 'flex', 

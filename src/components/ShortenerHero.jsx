@@ -371,9 +371,9 @@ export default function ShortenerHero({ onLinkCreated, onOpenQR, onOpenCustomize
 
         {/* Quiet Trust Bar */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1.25rem', fontSize: '0.775rem', color: 'var(--text-muted)', flexWrap: 'wrap' }}>
-          <span>✓ Sub-15ms edge redirects</span>
-          <span>✓ Zero tracking cookies</span>
-          <span>✓ 100% Free forever</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}><Check size={12} style={{ color: '#10b981' }} /> Sub-15ms edge redirects</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}><Check size={12} style={{ color: '#10b981' }} /> Zero tracking cookies</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}><Check size={12} style={{ color: '#10b981' }} /> 100% Free forever</span>
         </div>
       </div>
     </section>
