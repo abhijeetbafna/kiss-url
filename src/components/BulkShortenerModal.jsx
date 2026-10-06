@@ -96,13 +96,7 @@ export default function BulkShortenerModal({ isOpen, onClose, onLinksCreated }) 
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ 
-          padding: '1.25rem 1.5rem', 
-          borderBottom: '1px solid var(--border-subtle)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
+        <div className="modal-header">
           <div>
             <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <Layers size={18} /> Bulk Shortener & CSV Batch Engine
@@ -118,7 +112,7 @@ export default function BulkShortenerModal({ isOpen, onClose, onLinksCreated }) 
 
         {/* Navigation Tabs */}
         {createdResults.length === 0 && (
-          <div style={{ display: 'flex', borderBottom: '1px solid var(--border-subtle)', padding: '0 1.5rem', backgroundColor: 'var(--bg-subtle)' }}>
+          <div style={{ display: 'flex', borderBottom: '1px solid var(--border-subtle)', padding: '0 1.5rem', backgroundColor: 'var(--bg-subtle)', flexShrink: 0 }}>
             <button
               onClick={() => setActiveTab('paste')}
               className="tab-btn"
@@ -149,7 +143,7 @@ export default function BulkShortenerModal({ isOpen, onClose, onLinksCreated }) 
         )}
 
         {/* Main Content Area */}
-        <div style={{ padding: '1.5rem' }}>
+        <div className="modal-body">
           {createdResults.length === 0 ? (
             <>
               {activeTab === 'paste' && (

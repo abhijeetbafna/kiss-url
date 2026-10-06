@@ -31,14 +31,6 @@
       "name": "Bob Tester",
       "createdAt": "2026-10-06T08:38:10.817Z",
       "updatedAt": "2026-10-06T08:38:10.817Z"
-    },
-    {
-      "id": "usr_1791276601695_snfc9",
-      "email": "demo@kissurl.dev",
-      "passwordHash": "$2b$10$5LwsdPXrkgL8AEHIRm0UFOfkkImeOTdJOfj.EFmY25k5ncmCdLpIW",
-      "name": "Alex Rivera",
-      "createdAt": "2026-10-06T08:50:01.696Z",
-      "updatedAt": "2026-10-06T08:50:01.697Z"
     }
   ],
   "workspaces": [
@@ -85,28 +77,6 @@
       "ownerId": "usr_1791275890817_tuuh7",
       "createdAt": "2026-10-06T08:38:10.822Z",
       "updatedAt": "2026-10-06T08:38:10.822Z"
-    },
-    {
-      "id": "ws_1791276601702_1f323",
-      "name": "Personal Space",
-      "slug": "personal-space",
-      "icon": "👤",
-      "color": "#6366f1",
-      "description": "Default personal projects and short links",
-      "ownerId": "usr_1791276601695_snfc9",
-      "createdAt": "2026-10-06T08:50:01.702Z",
-      "updatedAt": "2026-10-06T08:50:01.702Z"
-    },
-    {
-      "id": "ws_1791276601703_67gk8",
-      "name": "Growth & Marketing",
-      "slug": "growth---marketing",
-      "icon": "🚀",
-      "color": "#10b981",
-      "description": "Campaign, social media, and ad tracking links",
-      "ownerId": "usr_1791276601695_snfc9",
-      "createdAt": "2026-10-06T08:50:01.703Z",
-      "updatedAt": "2026-10-06T08:50:01.703Z"
     }
   ],
   "workspace_members": [
@@ -137,91 +107,9 @@
       "userId": "usr_1791275890817_tuuh7",
       "role": "owner",
       "createdAt": "2026-10-06T08:38:10.822Z"
-    },
-    {
-      "id": "mem_1791276601702",
-      "workspaceId": "ws_1791276601702_1f323",
-      "userId": "usr_1791276601695_snfc9",
-      "role": "owner",
-      "createdAt": "2026-10-06T08:50:01.702Z"
-    },
-    {
-      "id": "mem_1791276601703",
-      "workspaceId": "ws_1791276601703_67gk8",
-      "userId": "usr_1791276601695_snfc9",
-      "role": "owner",
-      "createdAt": "2026-10-06T08:50:01.703Z"
     }
   ],
   "links": [
-    {
-      "id": "lp_1791276601704_lx8pf",
-      "workspaceId": "ws_1791276601703_67gk8",
-      "creatorId": "usr_1791276601695_snfc9",
-      "targetUrl": "https://kissurl.dev",
-      "slug": "promo-2026",
-      "domain": "kiss.url",
-      "title": "Summer Launch Campaign",
-      "tags": [
-        "Marketing",
-        "Promo"
-      ],
-      "clicks": 0,
-      "socialOg": {
-        "enabled": false
-      },
-      "routing": {
-        "enabled": false
-      },
-      "protection": {
-        "isPasswordProtected": false
-      },
-      "splitTesting": {
-        "enabled": false,
-        "variants": []
-      },
-      "geoRouting": {
-        "enabled": false,
-        "rules": []
-      },
-      "pixels": {},
-      "createdAt": "2026-10-06T08:50:01.704Z",
-      "updatedAt": "2026-10-06T08:50:01.704Z"
-    },
-    {
-      "id": "lp_1791276601704_f1btq",
-      "workspaceId": "ws_1791276601702_1f323",
-      "creatorId": "usr_1791276601695_snfc9",
-      "targetUrl": "https://github.com/topics/modern-web",
-      "slug": "launch",
-      "domain": "kiss.url",
-      "title": "Modern Web Dev Topics",
-      "tags": [
-        "Launch",
-        "Dev"
-      ],
-      "clicks": 0,
-      "socialOg": {
-        "enabled": false
-      },
-      "routing": {
-        "enabled": false
-      },
-      "protection": {
-        "isPasswordProtected": false
-      },
-      "splitTesting": {
-        "enabled": false,
-        "variants": []
-      },
-      "geoRouting": {
-        "enabled": false,
-        "rules": []
-      },
-      "pixels": {},
-      "createdAt": "2026-10-06T08:50:01.704Z",
-      "updatedAt": "2026-10-06T08:50:01.704Z"
-    },
     {
       "id": "lp_1791275890824_xfjfn",
       "workspaceId": "ws_1791275890822_j2jen",
@@ -348,45 +236,7 @@
     }
   ],
   "clicks": [],
-  "bio_pages": [
-    {
-      "workspaceId": "ws_1791276601702_1f323",
-      "handle": "alexdev",
-      "name": "Alex Rivera",
-      "tagline": "Staff Product Engineer & Design Architect",
-      "bio": "Building developer tools, open-source software, and minimal design systems.",
-      "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
-      "theme": "minimal",
-      "socials": {
-        "twitter": "alexrivera_dev",
-        "github": "alexrivera",
-        "linkedin": "alexrivera",
-        "website": "https://alexrivera.dev",
-        "email": "alex@example.com"
-      },
-      "links": [
-        {
-          "id": "bl_1",
-          "type": "link",
-          "title": "⭐ GitHub Open Source Projects",
-          "subtitle": "Star my latest tools & libraries",
-          "url": "https://github.com",
-          "highlight": true
-        },
-        {
-          "id": "bl_2",
-          "type": "newsletter",
-          "title": "🎙️ Weekly Design Engineering Newsletter",
-          "subtitle": "Read by 12,000+ front-end developers",
-          "url": ""
-        }
-      ],
-      "updatedAt": "2026-10-06T08:50:01.706Z",
-      "id": "bio_1791276601706",
-      "views": 0,
-      "createdAt": "2026-10-06T08:50:01.706Z"
-    }
-  ],
+  "bio_pages": [],
   "bio_leads": [],
   "custom_domains": [],
   "error_branding": []

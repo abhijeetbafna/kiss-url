@@ -40,14 +40,8 @@ export default function SafetyAuditModal({ isOpen, onClose, initialUrl = '' }) {
         style={{ maxWidth: '600px' }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div style={{ 
-          padding: '1.25rem 1.5rem', 
-          borderBottom: '1px solid var(--border-subtle)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
+        {/* Header (Pinned) */}
+        <div className="modal-header">
           <div>
             <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <ShieldCheck size={18} /> Link Safety & Malware Auditor
@@ -62,7 +56,7 @@ export default function SafetyAuditModal({ isOpen, onClose, initialUrl = '' }) {
         </div>
 
         {/* Audit Search Bar */}
-        <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-subtle)' }}>
+        <div style={{ padding: '1rem 1.4rem', borderBottom: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-subtle)', flexShrink: 0 }}>
           <form onSubmit={handleRunAudit} style={{ display: 'flex', gap: '0.5rem' }}>
             <div style={{ position: 'relative', flex: 1 }}>
               <input
@@ -80,8 +74,8 @@ export default function SafetyAuditModal({ isOpen, onClose, initialUrl = '' }) {
           </form>
         </div>
 
-        {/* Audit Report Content */}
-        <div style={{ padding: '1.5rem' }}>
+        {/* Audit Report Content (Scrollable) */}
+        <div className="modal-body">
           {/* Main Score Card */}
           <div style={{
             display: 'flex',
@@ -180,14 +174,8 @@ export default function SafetyAuditModal({ isOpen, onClose, initialUrl = '' }) {
           </div>
         </div>
 
-        {/* Footer */}
-        <div style={{ 
-          padding: '0.85rem 1.5rem', 
-          borderTop: '1px solid var(--border-subtle)', 
-          backgroundColor: 'var(--bg-subtle)', 
-          display: 'flex', 
-          justifyContent: 'flex-end' 
-        }}>
+        {/* Footer (Pinned) */}
+        <div className="modal-footer">
           <button onClick={onClose} className="btn btn-secondary" style={{ fontSize: '0.825rem' }}>
             Close Scanner
           </button>

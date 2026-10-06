@@ -363,31 +363,65 @@ body {
 }
 
 /* ==========================================================================
-   Modals & Overlays
+   Modals & Overlays (Flawless Viewport Positioning & Scroll Constraints)
    ========================================================================== */
 
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 100;
-  background-color: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
   animation: fadeIn var(--duration-base) var(--ease-out);
 }
 
 .modal-panel {
   width: 100%;
+  max-height: min(90vh, 840px);
+  display: flex;
+  flex-direction: column;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-overlay);
   overflow: hidden;
+  margin: auto;
+  position: relative;
   animation: scaleUp var(--duration-base) var(--ease-out);
+}
+
+.modal-header {
+  padding: 1.15rem 1.4rem;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  background-color: var(--bg-surface);
+}
+
+.modal-body {
+  padding: 1.4rem;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.modal-footer {
+  padding: 0.85rem 1.4rem;
+  border-top: 1px solid var(--border-subtle);
+  background-color: var(--bg-subtle);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 @keyframes fadeIn {

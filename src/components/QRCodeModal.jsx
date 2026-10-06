@@ -160,13 +160,7 @@ export default function QRCodeModal({ link, onClose }) {
         <canvas ref={canvasRef} style={{ display: 'none' }} />
 
         {/* Header */}
-        <div style={{ 
-          padding: '1.25rem 1.5rem', 
-          borderBottom: '1px solid var(--border-subtle)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
+        <div className="modal-header">
           <div>
             <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
               QR Code Studio
@@ -191,7 +185,7 @@ export default function QRCodeModal({ link, onClose }) {
         </div>
 
         {/* Content Body */}
-        <div style={{ padding: '1.5rem' }}>
+        <div className="modal-body">
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: '190px minmax(0, 1fr)', 
@@ -380,15 +374,7 @@ export default function QRCodeModal({ link, onClose }) {
         </div>
 
         {/* Footer actions */}
-        <div style={{ 
-          padding: '1rem 1.5rem', 
-          borderTop: '1px solid var(--border-subtle)',
-          backgroundColor: 'var(--bg-subtle)',
-          display: 'flex',
-          gap: '0.5rem',
-          justifyContent: 'flex-end',
-          flexWrap: 'wrap'
-        }}>
+        <div className="modal-footer">
           <button onClick={handleDownloadPNG} className="btn btn-secondary" style={{ fontSize: '0.85rem' }}>
             <Download size={14} /> Download PNG
           </button>

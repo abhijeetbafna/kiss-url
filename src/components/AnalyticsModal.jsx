@@ -34,13 +34,7 @@ export default function AnalyticsModal({ link, onClose, onRefreshData }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ 
-          padding: '1.25rem 1.5rem', 
-          borderBottom: '1px solid var(--border-subtle)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
+        <div className="modal-header">
           <div>
             <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)' }}>
               {link.title || link.slug}
@@ -61,7 +55,7 @@ export default function AnalyticsModal({ link, onClose, onRefreshData }) {
         </div>
 
         {/* Analytics Body */}
-        <div style={{ padding: '1.5rem', maxHeight: '75vh', overflowY: 'auto' }}>
+        <div className="modal-body">
           {/* Key Metrics Row */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
             <div style={{ backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border-default)', borderRadius: 'var(--radius-md)', padding: '0.85rem 1rem' }}>

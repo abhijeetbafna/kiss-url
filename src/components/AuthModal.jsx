@@ -71,13 +71,7 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ 
-          padding: '1.25rem 1.5rem', 
-          borderBottom: '1px solid var(--border-subtle)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
+        <div className="modal-header">
           <div>
             <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <User size={18} /> {user ? 'Account Profile' : (mode === 'login' ? 'Sign In to KissURL' : 'Create an Account')}
@@ -92,7 +86,7 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
         </div>
 
         {/* Body */}
-        <div style={{ padding: '1.5rem' }}>
+        <div className="modal-body">
           {user ? (
             /* Logged-in State */
             <div style={{ textAlign: 'center' }}>

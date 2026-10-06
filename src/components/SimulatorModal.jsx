@@ -50,13 +50,7 @@ export default function SimulatorModal({ link, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ 
-          padding: '1.25rem 1.5rem', 
-          borderBottom: '1px solid var(--border-subtle)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
+        <div className="modal-header">
           <div>
             <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)' }}>
               Test Destination & Device Routing
@@ -71,7 +65,7 @@ export default function SimulatorModal({ link, onClose }) {
         </div>
 
         {/* Content */}
-        <div style={{ padding: '1.5rem' }}>
+        <div className="modal-body">
           {/* Device Switcher */}
           <div style={{ 
             display: 'flex', 

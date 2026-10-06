@@ -49,13 +49,7 @@ export default function CustomDomainModal({ isOpen, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ 
-          padding: '1.25rem 1.5rem', 
-          borderBottom: '1px solid var(--border-subtle)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
+        <div className="modal-header">
           <div>
             <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
               Custom Domains & CNAME
@@ -70,7 +64,7 @@ export default function CustomDomainModal({ isOpen, onClose }) {
         </div>
 
         {/* Content */}
-        <div style={{ padding: '1.5rem' }}>
+        <div className="modal-body">
           {/* Add Domain Input */}
           <form onSubmit={handleAddDomain} style={{ marginBottom: '1.5rem' }}>
             <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>
@@ -182,14 +176,7 @@ export default function CustomDomainModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div style={{ 
-          padding: '1rem 1.5rem', 
-          borderTop: '1px solid var(--border-subtle)',
-          backgroundColor: 'var(--bg-subtle)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
+        <div className="modal-footer" style={{ justifyContent: 'space-between' }}>
           <button onClick={handleVerifyDns} className="btn btn-secondary" style={{ fontSize: '0.8rem' }} disabled={isVerifying}>
             <RefreshCw size={13} className={isVerifying ? 'pulse-indicator' : ''} />
             {isVerifying ? 'Checking DNS...' : 'Verify DNS Propagation'}

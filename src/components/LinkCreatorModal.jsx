@@ -195,13 +195,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ 
-          padding: '1.25rem 1.5rem', 
-          borderBottom: '1px solid var(--border-subtle)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
+        <div className="modal-header">
           <div>
             <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)' }}>
               {initialData ? 'Edit Short Link' : 'Create Custom Short Link'}
@@ -291,8 +285,8 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
         </div>
 
         {/* Modal Form Body */}
-        <form onSubmit={handleSubmit}>
-          <div style={{ padding: '1.5rem', maxHeight: '60vh', overflowY: 'auto' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+          <div className="modal-body">
             {/* GENERAL TAB */}
             {activeTab === 'general' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -877,14 +871,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
           </div>
 
           {/* Footer Action Bar */}
-          <div style={{ 
-            padding: '1rem 1.5rem', 
-            borderTop: '1px solid var(--border-subtle)',
-            backgroundColor: 'var(--bg-subtle)',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: '0.5rem'
-          }}>
+          <div className="modal-footer">
             <button type="button" onClick={onClose} className="btn btn-secondary">
               Cancel
             </button>
