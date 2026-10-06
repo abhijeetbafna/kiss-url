@@ -13,7 +13,6 @@ import AnalyticsModal from './components/AnalyticsModal';
 import SimulatorModal from './components/SimulatorModal';
 
 import { getStoredLinks, createLink, deleteLink } from './services/storageService';
-import { Layers } from 'lucide-react';
 
 export default function App() {
   const [links, setLinks] = useState([]);
@@ -23,7 +22,7 @@ export default function App() {
     return localStorage.getItem('kissurl_theme') || 'light';
   });
 
-  // Modal states for deep specialized tools
+  // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [createInitialData, setCreateInitialData] = useState(null);
   const [activeQRLink, setActiveQRLink] = useState(null);
@@ -57,15 +56,15 @@ export default function App() {
   };
 
   const handleDelete = (id) => {
-    if (window.confirm('Delete this short link from your repository?')) {
+    if (window.confirm('Delete this short link?')) {
       deleteLink(id);
       loadData();
     }
   };
 
   return (
-    <div style={{ maxWidth: '1160px', margin: '0 auto', padding: '1rem 1.25rem 4rem' }}>
-      {/* 1. Global Navigation Bar with feature jumps & theme toggle */}
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', color: 'var(--text-primary)' }}>
+      {/* 1. Global Navigation Bar */}
       <Navbar
         theme={theme}
         onToggleTheme={toggleTheme}
@@ -76,68 +75,71 @@ export default function App() {
         totalLinks={links.length}
       />
 
-      {/* 2. Primary Hero Shortener: Input -> Validate -> Shorten -> Prominent Result Card */}
-      <LandingHero
-        onLinkCreated={handleLinkCreated}
-        onOpenQR={(link) => setActiveQRLink(link)}
-        onOpenSimulator={(link) => setActiveSimulatorLink(link)}
-        onOpenStudioModal={(link) => {
-          setCreateInitialData(link);
-          setIsCreateModalOpen(true);
-        }}
-      />
-
-      {/* 3. Live Capabilities & Interactive Demos (Social Card, Device Routing, Vector QR, Speed & Privacy) */}
-      <ProductDemos
-        onOpenCreateModal={() => {
-          setCreateInitialData(null);
-          setIsCreateModalOpen(true);
-        }}
-      />
-
-      {/* 4. Complete End-to-End Workflow Section */}
-      <WorkflowSection
-        onOpenCreateModal={() => {
-          setCreateInitialData(null);
-          setIsCreateModalOpen(true);
-        }}
-      />
-
-      {/* 5. Full Link Management Hub (Search, Filters, Tags, Tabular Clicks, QR, Analytics, Device Preview) */}
-      <main id="hub-section" style={{ marginBottom: '2.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-          <div>
-            <h2 style={{ fontSize: '1.35rem', fontWeight: '800', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Layers size={20} color="var(--accent-primary)" /> Link Management Hub
-            </h2>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-              Manage, search, filter, analyze, and test your active short links.
-            </p>
-          </div>
-          <span className="tabular-nums" style={{ fontSize: '0.825rem', color: 'var(--text-muted)', fontWeight: '700' }}>
-            {links.length} Links Active • {totalClicks.toLocaleString()} Total Clicks
-          </span>
-        </div>
-
-        <LinkList
-          links={links}
-          onDelete={handleDelete}
+      {/* Main Content Area */}
+      <div style={{ maxWidth: '1020px', margin: '0 auto', padding: '0 1.25rem' }}>
+        {/* 2. Primary Hero Shortener */}
+        <LandingHero
+          onLinkCreated={handleLinkCreated}
           onOpenQR={(link) => setActiveQRLink(link)}
-          onOpenAnalytics={(link) => setActiveAnalyticsLink(link)}
           onOpenSimulator={(link) => setActiveSimulatorLink(link)}
+          onOpenStudioModal={(link) => {
+            setCreateInitialData(link);
+            setIsCreateModalOpen(true);
+          }}
         />
-      </main>
 
-      {/* 6. Authentic Value & Privacy Pillars */}
-      <TrustFeatures />
+        {/* 3. Link Management Hub */}
+        <main id="hub-section" style={{ margin: '0 auto 4rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '3rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.25rem' }}>
+            <div>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: '700', letterSpacing: '-0.03em', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
+                Your short links
+              </h2>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                Manage, search, and analyze your active links.
+              </p>
+            </div>
+            <div className="tabular-nums" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              {links.length} links • {totalClicks.toLocaleString()} total clicks
+            </div>
+          </div>
 
-      {/* 7. Comprehensive Footer with System Status & Data Portability */}
+          <LinkList
+            links={links}
+            onDelete={handleDelete}
+            onOpenQR={(link) => setActiveQRLink(link)}
+            onOpenAnalytics={(link) => setActiveAnalyticsLink(link)}
+            onOpenSimulator={(link) => setActiveSimulatorLink(link)}
+          />
+        </main>
+
+        {/* 4. Interactive Capabilities Demos */}
+        <ProductDemos
+          onOpenCreateModal={() => {
+            setCreateInitialData(null);
+            setIsCreateModalOpen(true);
+          }}
+        />
+
+        {/* 5. How It Works */}
+        <WorkflowSection
+          onOpenCreateModal={() => {
+            setCreateInitialData(null);
+            setIsCreateModalOpen(true);
+          }}
+        />
+
+        {/* 6. Core Pillars */}
+        <TrustFeatures />
+      </div>
+
+      {/* 7. Footer */}
       <Footer
         totalLinks={links.length}
         totalClicks={totalClicks}
       />
 
-      {/* 8. Specialized Studio Modals */}
+      {/* 8. Specialized Modals */}
       <LinkCreatorModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}

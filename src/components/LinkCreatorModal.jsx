@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Sparkles, Smartphone, Shield, Link as LinkIcon, Wand2, BarChart2 } from 'lucide-react';
 import SocialCardPreview from './SocialCardPreview';
 import confetti from 'canvas-confetti';
 
-const SAMPLE_SLUGS = ['boost', 'vip-pass', 'summer-drop', 'dev-beta', 'growth', 'special-offer'];
+const SAMPLE_SLUGS = ['launch', 'special', 'early-access', 'promo', 'newsletter', 'event'];
 
 export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initialData }) {
   const [activeTab, setActiveTab] = useState('general'); // general | social | routing | protection | utm
@@ -38,6 +38,14 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
   const [utmMedium, setUtmMedium] = useState('');
   const [utmCampaign, setUtmCampaign] = useState('');
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const generateRandomSlug = () => {
@@ -56,7 +64,7 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
       setTargetUrl(parsed.toString());
       setActiveTab('general');
     } catch (e) {
-      alert('Please enter a valid URL in General settings first.');
+      alert('Please enter a valid URL in General tab first.');
     }
   };
 
@@ -96,11 +104,10 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
     };
 
     onLinkCreated(newLinkData);
-    
-    // Celebration confetti
+
     confetti({
-      particleCount: 80,
-      spread: 70,
+      particleCount: 40,
+      spread: 45,
       origin: { y: 0.6 }
     });
 
@@ -108,446 +115,424 @@ export default function LinkCreatorModal({ isOpen, onClose, onLinkCreated, initi
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-backdrop" onClick={onClose}>
       <div 
-        className="modal-content" 
-        style={{ width: '100%', maxWidth: '780px', padding: '1.75rem', position: 'relative' }}
+        className="modal-panel" 
+        style={{ maxWidth: '680px', position: 'relative' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={onClose}
-          className="btn-icon"
-          style={{ position: 'absolute', top: '1.25rem', right: '1.25rem' }}
-          aria-label="Close modal"
-        >
-          <X size={18} />
-        </button>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.25rem' }}>
-          <span className="badge badge-indigo">
-            <Sparkles size={12} /> Studio Link Creator
-          </span>
+        {/* Header */}
+        <div style={{ 
+          padding: '1.25rem 1.5rem', 
+          borderBottom: '1px solid var(--border-subtle)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <div>
+            <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)' }}>
+              {initialData ? 'Edit Short Link' : 'Create Custom Short Link'}
+            </h2>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              Configure destination, custom social previews, and routing rules.
+            </p>
+          </div>
+          <button onClick={onClose} className="btn-icon" aria-label="Close modal">
+            <X size={16} />
+          </button>
         </div>
-        <h2 style={{ fontSize: '1.45rem', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '1rem' }}>
-          Create Next-Gen Smart Link
-        </h2>
 
         {/* Tab Navigation */}
-        <div style={{ display: 'flex', gap: '0.35rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.65rem', marginBottom: '1.25rem', overflowX: 'auto' }}>
+        <div style={{ 
+          display: 'flex', 
+          gap: '0.25rem', 
+          padding: '0.5rem 1.5rem', 
+          borderBottom: '1px solid var(--border-subtle)',
+          backgroundColor: 'var(--bg-subtle)',
+          overflowX: 'auto'
+        }}>
           <button
             type="button"
             onClick={() => setActiveTab('general')}
-            className={`btn-ghost ${activeTab === 'general' ? 'badge-indigo' : ''}`}
-            style={{ borderRadius: 'var(--radius-sm)', fontSize: '0.85rem' }}
+            className={`btn ${activeTab === 'general' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
           >
-            <LinkIcon size={14} /> General Link
+            <LinkIcon size={13} /> General
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('social')}
-            className={`btn-ghost ${activeTab === 'social' ? 'badge-purple' : ''}`}
-            style={{ borderRadius: 'var(--radius-sm)', fontSize: '0.85rem' }}
+            className={`btn ${activeTab === 'social' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
           >
-            <Sparkles size={14} /> Social Card Studio {ogEnabled && '●'}
+            <Sparkles size={13} /> Social Preview
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('routing')}
-            className={`btn-ghost ${activeTab === 'routing' ? 'badge-emerald' : ''}`}
-            style={{ borderRadius: 'var(--radius-sm)', fontSize: '0.85rem' }}
+            className={`btn ${activeTab === 'routing' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
           >
-            <Smartphone size={14} /> Device Routing {routingEnabled && '●'}
+            <Smartphone size={13} /> Device Routing
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('protection')}
-            className={`btn-ghost ${activeTab === 'protection' ? 'badge-amber' : ''}`}
-            style={{ borderRadius: 'var(--radius-sm)', fontSize: '0.85rem' }}
+            className={`btn ${activeTab === 'protection' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
           >
-            <Shield size={14} /> Security & Expiry {(isPasswordProtected || expiresAt || maxClicks > 0) && '●'}
+            <Shield size={13} /> Protection
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('utm')}
-            className={`btn-ghost ${activeTab === 'utm' ? 'badge-indigo' : ''}`}
-            style={{ borderRadius: 'var(--radius-sm)', fontSize: '0.85rem' }}
+            className={`btn ${activeTab === 'utm' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
           >
-            <BarChart2 size={14} /> UTM Builder
+            <BarChart2 size={13} /> UTM Builder
           </button>
         </div>
 
+        {/* Modal Form Body */}
         <form onSubmit={handleSubmit}>
-          {/* TAB 1: GENERAL */}
-          {activeTab === 'general' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.15rem' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.35rem', color: 'var(--text-secondary)' }}>
-                  Destination URL <span style={{ color: 'var(--badge-rose-text)' }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="https://example.com/your-campaign"
-                  value={targetUrl}
-                  onChange={(e) => setTargetUrl(e.target.value)}
-                  className="input-field"
-                  autoFocus
-                />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.5fr)', gap: '1rem' }}>
+          <div style={{ padding: '1.5rem', maxHeight: '60vh', overflowY: 'auto' }}>
+            {/* GENERAL TAB */}
+            {activeTab === 'general' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.35rem', color: 'var(--text-secondary)' }}>
-                    Branded Domain
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                    Destination URL *
                   </label>
-                  <select
-                    value={domain}
-                    onChange={(e) => setDomain(e.target.value)}
-                    className="input-field"
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <option value="kiss.url">kiss.url (Default)</option>
-                    <option value="go.bio">go.bio (Creator bio)</option>
-                    <option value="click.to">click.to (Speed shortener)</option>
-                    <option value="app.custom.io">app.custom.io (Custom CNAME)</option>
-                  </select>
+                  <input
+                    type="text"
+                    required
+                    placeholder="https://yourbrand.com/special-page"
+                    value={targetUrl}
+                    onChange={(e) => setTargetUrl(e.target.value)}
+                    className="input"
+                  />
                 </div>
 
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-secondary)' }}>
-                      Custom Alias (Slug)
-                    </label>
-                    <button
-                      type="button"
-                      onClick={generateRandomSlug}
-                      className="btn-ghost"
-                      style={{ padding: '0 4px', fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: '600' }}
-                    >
-                      <Wand2 size={12} /> Auto-generate
-                    </button>
-                  </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.4fr)', gap: '0.75rem' }}>
                   <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                      Domain
+                    </label>
+                    <select
+                      value={domain}
+                      onChange={(e) => setDomain(e.target.value)}
+                      className="input"
+                    >
+                      <option value="kiss.url">kiss.url</option>
+                      <option value="go.bio">go.bio</option>
+                      <option value="click.to">click.to</option>
+                      <option value="link.page">link.page</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+                      <label style={{ fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)' }}>
+                        Custom Alias
+                      </label>
+                      <button
+                        type="button"
+                        onClick={generateRandomSlug}
+                        className="btn-ghost"
+                        style={{ padding: '0 4px', fontSize: '0.75rem', color: 'var(--text-muted)' }}
+                      >
+                        <Wand2 size={11} /> Auto-slug
+                      </button>
+                    </div>
                     <input
                       type="text"
-                      placeholder="e.g. secret-beta"
+                      placeholder="e.g. vip-2026"
                       value={slug}
                       onChange={(e) => setSlug(e.target.value)}
-                      className="input-field"
-                      style={{ fontFamily: 'var(--font-mono)' }}
+                      className="input input-mono"
                     />
                   </div>
                 </div>
-              </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.35rem', color: 'var(--text-secondary)' }}>
-                    Internal Title (Optional)
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                    Title / Note (Optional)
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Product Hunt Launch Q3"
+                    placeholder="e.g. Q4 Marketing Campaign Link"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="input-field"
+                    className="input"
                   />
                 </div>
+
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.35rem', color: 'var(--text-secondary)' }}>
-                    Tags (Comma separated)
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                    Tags (Comma-separated)
                   </label>
                   <input
                     type="text"
-                    placeholder="Launch, Marketing, Mobile"
+                    placeholder="marketing, twitter, promo"
                     value={tags}
                     onChange={(e) => setTags(e.target.value)}
-                    className="input-field"
+                    className="input"
                   />
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* TAB 2: SOCIAL CARD STUDIO */}
-          {activeTab === 'social' && (
-            <div>
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'space-between', 
-                marginBottom: '1rem', 
-                backgroundColor: 'var(--badge-purple-bg)', 
-                padding: '0.75rem 1rem', 
-                borderRadius: 'var(--radius-md)', 
-                border: '1px solid var(--badge-purple-border)' 
-              }}>
-                <div>
-                  <div style={{ fontWeight: '700', fontSize: '0.875rem', color: 'var(--badge-purple-text)' }}>Enable Custom Social Preview (OG Tags)</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Control how Twitter, LinkedIn, WhatsApp & Slack display this link.</div>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={ogEnabled}
-                  onChange={(e) => setOgEnabled(e.target.checked)}
-                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
-                />
-              </div>
-
-              {ogEnabled && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
-                        Social Card Title
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Exclusive 50% Off Early Access"
-                        value={ogTitle}
-                        onChange={(e) => setOgTitle(e.target.value)}
-                        className="input-field"
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
-                        Social Image URL (1200x630 recommended)
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="https://images.unsplash.com/..."
-                        value={ogImage}
-                        onChange={(e) => setOgImage(e.target.value)}
-                        className="input-field"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
-                      Social Description
-                    </label>
-                    <textarea
-                      rows={2}
-                      placeholder="Catchy teaser to boost click-through rate when shared on social channels."
-                      value={ogDesc}
-                      onChange={(e) => setOgDesc(e.target.value)}
-                      className="input-field"
-                      style={{ resize: 'vertical' }}
-                    />
-                  </div>
-
-                  {/* Live Multi-Platform Card Preview */}
-                  <SocialCardPreview
-                    title={ogTitle || title}
-                    description={ogDesc}
-                    imageUrl={ogImage}
-                    destinationUrl={targetUrl}
-                    slug={slug}
-                    domain={domain}
-                  />
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* TAB 3: SMART ROUTING */}
-          {activeTab === 'routing' && (
-            <div>
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'space-between', 
-                marginBottom: '1.25rem', 
-                backgroundColor: 'var(--badge-emerald-bg)', 
-                padding: '0.75rem 1rem', 
-                borderRadius: 'var(--radius-md)', 
-                border: '1px solid var(--badge-emerald-border)' 
-              }}>
-                <div>
-                  <div style={{ fontWeight: '700', fontSize: '0.875rem', color: 'var(--badge-emerald-text)' }}>Smart Device Deep-Linking</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Route mobile visitors straight to their native App Store or deep link.</div>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={routingEnabled}
-                  onChange={(e) => setRoutingEnabled(e.target.checked)}
-                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
-                />
-              </div>
-
-              {routingEnabled && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
-                      🍎 iOS Destination (Apple App Store / TestFlight URL)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="https://apps.apple.com/app/your-app/id123456789"
-                      value={iosUrl}
-                      onChange={(e) => setIosUrl(e.target.value)}
-                      className="input-field"
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
-                      🤖 Android Destination (Google Play Store URL)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="https://play.google.com/store/apps/details?id=com.yourapp"
-                      value={androidUrl}
-                      onChange={(e) => setAndroidUrl(e.target.value)}
-                      className="input-field"
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
-                      💻 Desktop & Fallback URL
-                    </label>
-                    <input
-                      type="text"
-                      placeholder={targetUrl || 'https://yourwebsite.com/download'}
-                      value={desktopUrl}
-                      onChange={(e) => setDesktopUrl(e.target.value)}
-                      className="input-field"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* TAB 4: SECURITY & EXPIRATION */}
-          {activeTab === 'protection' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              {/* Password Protection */}
-              <div style={{ backgroundColor: 'var(--bg-surface-muted)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                  <div>
-                    <div style={{ fontWeight: '700', fontSize: '0.875rem', color: 'var(--text-primary)' }}>🔒 Password Protection Gate</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Visitors must enter a passcode to access the destination.</div>
-                  </div>
+            {/* SOCIAL TAB */}
+            {activeTab === 'social' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', fontWeight: '500', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
-                    checked={isPasswordProtected}
-                    onChange={(e) => setIsPasswordProtected(e.target.checked)}
-                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                    checked={ogEnabled}
+                    onChange={(e) => setOgEnabled(e.target.checked)}
                   />
-                </div>
-                {isPasswordProtected && (
-                  <input
-                    type="text"
-                    placeholder="Enter secret passcode..."
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="input-field"
-                    style={{ fontFamily: 'var(--font-mono)' }}
-                  />
+                  <span>Enable Custom Social Preview (OpenGraph)</span>
+                </label>
+
+                {ogEnabled && (
+                  <>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                        Preview Card Title
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Exclusive Early Access"
+                        value={ogTitle}
+                        onChange={(e) => setOgTitle(e.target.value)}
+                        className="input"
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                        Preview Card Description
+                      </label>
+                      <textarea
+                        rows={2}
+                        placeholder="e.g. Join the waitlist and get direct access."
+                        value={ogDesc}
+                        onChange={(e) => setOgDesc(e.target.value)}
+                        className="input"
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                        Preview Image URL
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="https://yourbrand.com/banner.png"
+                        value={ogImage}
+                        onChange={(e) => setOgImage(e.target.value)}
+                        className="input"
+                      />
+                    </div>
+
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <div style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
+                        Live Card Preview
+                      </div>
+                      <SocialCardPreview
+                        title={ogTitle || 'Your Title'}
+                        description={ogDesc || 'Your Description'}
+                        imageUrl={ogImage || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80'}
+                        destinationUrl={targetUrl || 'https://yourbrand.com'}
+                        slug={slug || 'link'}
+                        domain={domain}
+                      />
+                    </div>
+                  </>
                 )}
               </div>
+            )}
 
-              {/* Expiration Controls */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div style={{ backgroundColor: 'var(--bg-surface-muted)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-                  <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-primary)' }}>
-                    ⏳ Expire by Date & Time
+            {/* ROUTING TAB */}
+            {activeTab === 'routing' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', fontWeight: '500', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={routingEnabled}
+                    onChange={(e) => setRoutingEnabled(e.target.checked)}
+                  />
+                  <span>Enable Smart Device Routing</span>
+                </label>
+
+                {routingEnabled && (
+                  <>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                        Apple iPhone (iOS) App Store URL
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="https://apps.apple.com/app/id12345"
+                        value={iosUrl}
+                        onChange={(e) => setIosUrl(e.target.value)}
+                        className="input"
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                        Android Google Play Store URL
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="https://play.google.com/store/apps/details?id=com.app"
+                        value={androidUrl}
+                        onChange={(e) => setAndroidUrl(e.target.value)}
+                        className="input"
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                        Desktop Web Fallback URL (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Leave empty to use main Destination URL"
+                        value={desktopUrl}
+                        onChange={(e) => setDesktopUrl(e.target.value)}
+                        className="input"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* PROTECTION TAB */}
+            {activeTab === 'protection' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', fontWeight: '500', cursor: 'pointer', marginBottom: '0.3rem' }}>
+                    <input
+                      type="checkbox"
+                      checked={isPasswordProtected}
+                      onChange={(e) => setIsPasswordProtected(e.target.checked)}
+                    />
+                    <span>Passcode Gate</span>
                   </label>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Link self-destructs after deadline.</p>
+                  {isPasswordProtected && (
+                    <input
+                      type="text"
+                      placeholder="Enter secret passcode..."
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="input input-mono"
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                    Expiration Date & Time (Optional)
+                  </label>
                   <input
                     type="datetime-local"
                     value={expiresAt}
                     onChange={(e) => setExpiresAt(e.target.value)}
-                    className="input-field"
+                    className="input"
                   />
                 </div>
 
-                <div style={{ backgroundColor: 'var(--bg-surface-muted)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-                  <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-primary)' }}>
-                    🔥 Burn-After-Clicks Limit
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                    Maximum Click Limit (Burn after N clicks)
                   </label>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Expire after N visits (0 = unlimited).</p>
                   <input
                     type="number"
                     min="0"
-                    placeholder="e.g. 100"
+                    placeholder="0 for unlimited"
                     value={maxClicks || ''}
                     onChange={(e) => setMaxClicks(e.target.value)}
-                    className="input-field"
+                    className="input tabular-nums"
                   />
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* TAB 5: UTM BUILDER */}
-          {activeTab === 'utm' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                Attach standard UTM tags to track marketing campaigns in Google Analytics, Mixpanel, and PostHog.
-              </p>
+            {/* UTM TAB */}
+            {activeTab === 'utm' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  Attach UTM marketing tags to your destination URL.
+                </p>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
-                    UTM Source (e.g. twitter, newsletter)
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                    Campaign Source (utm_source)
                   </label>
                   <input
                     type="text"
-                    placeholder="twitter"
+                    placeholder="e.g. twitter, newsletter, linkedin"
                     value={utmSource}
                     onChange={(e) => setUtmSource(e.target.value)}
-                    className="input-field"
+                    className="input"
                   />
                 </div>
+
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
-                    UTM Medium (e.g. social, email, cpc)
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                    Campaign Medium (utm_medium)
                   </label>
                   <input
                     type="text"
-                    placeholder="social"
+                    placeholder="e.g. social, email, banner"
                     value={utmMedium}
                     onChange={(e) => setUtmMedium(e.target.value)}
-                    className="input-field"
+                    className="input"
                   />
                 </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                    Campaign Name (utm_campaign)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. summer_launch_2026"
+                    value={utmCampaign}
+                    onChange={(e) => setUtmCampaign(e.target.value)}
+                    className="input"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleApplyUTM}
+                  className="btn btn-secondary"
+                  style={{ alignSelf: 'flex-start' }}
+                >
+                  Apply to Destination URL
+                </button>
               </div>
+            )}
+          </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
-                  UTM Campaign Name (e.g. launch_promo)
-                </label>
-                <input
-                  type="text"
-                  placeholder="launch_promo"
-                  value={utmCampaign}
-                  onChange={(e) => setUtmCampaign(e.target.value)}
-                  className="input-field"
-                />
-              </div>
-
-              <button
-                type="button"
-                onClick={handleApplyUTM}
-                className="btn-secondary"
-                style={{ alignSelf: 'flex-start', marginTop: '0.4rem' }}
-              >
-                Apply UTM Parameters to Target URL
-              </button>
-            </div>
-          )}
-
-          {/* Footer Submit */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.75rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '1.25rem' }}>
-            <button type="button" onClick={onClose} className="btn-secondary">
+          {/* Footer Action Bar */}
+          <div style={{ 
+            padding: '1rem 1.5rem', 
+            borderTop: '1px solid var(--border-subtle)',
+            backgroundColor: 'var(--bg-subtle)',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: '0.5rem'
+          }}>
+            <button type="button" onClick={onClose} className="btn btn-secondary">
               Cancel
             </button>
-            <button type="submit" className="btn-primary">
-              <Sparkles size={15} /> Create Smart Link
+            <button type="submit" className="btn btn-primary">
+              {initialData ? 'Save Changes' : 'Create Short Link'}
             </button>
           </div>
         </form>

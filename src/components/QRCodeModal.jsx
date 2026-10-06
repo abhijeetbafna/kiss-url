@@ -1,15 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
-import { X, Download, Copy, Check, Sparkles } from 'lucide-react';
+import { X, Download, Copy, Check } from 'lucide-react';
 
 export default function QRCodeModal({ link, onClose }) {
   const canvasRef = useRef(null);
-  const [fgColor, setFgColor] = useState('#0f172a');
+  const [fgColor, setFgColor] = useState('#09090b');
   const [bgColor, setBgColor] = useState('#ffffff');
   const [errorCorrection, setErrorCorrection] = useState('H');
   const [copied, setCopied] = useState(false);
 
   const fullUrl = `https://${link.domain}/${link.slug}`;
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -18,7 +26,7 @@ export default function QRCodeModal({ link, onClose }) {
       canvasRef.current,
       fullUrl,
       {
-        width: 320,
+        width: 280,
         margin: 2,
         color: {
           dark: fgColor,
@@ -67,128 +75,126 @@ export default function QRCodeModal({ link, onClose }) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-backdrop" onClick={onClose}>
       <div 
-        className="modal-content" 
-        style={{ width: '100%', maxWidth: '580px', padding: '1.75rem', position: 'relative' }}
+        className="modal-panel" 
+        style={{ maxWidth: '540px', position: 'relative' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={onClose}
-          className="btn-icon"
-          style={{ position: 'absolute', top: '1.25rem', right: '1.25rem' }}
-          aria-label="Close Modal"
-        >
-          <X size={18} />
-        </button>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem' }}>
-          <span className="badge badge-purple">
-            <Sparkles size={12} /> Studio QR Generator
-          </span>
-        </div>
-        <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
-          {link.title || link.slug}
-        </h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-          <code style={{ backgroundColor: 'var(--accent-subtle)', color: 'var(--accent-primary)', padding: '2px 8px', borderRadius: '4px', border: '1px solid var(--accent-border)', fontFamily: 'var(--font-mono)' }}>
-            {fullUrl}
-          </code>
-          <button onClick={handleCopyLink} className="btn-ghost" style={{ padding: '2px 8px', fontSize: '0.75rem' }}>
-            {copied ? <><Check size={13} color="#059669" /> Copied</> : <><Copy size={13} /> Copy</>}
+        {/* Header */}
+        <div style={{ 
+          padding: '1.25rem 1.5rem', 
+          borderBottom: '1px solid var(--border-subtle)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <div>
+            <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)' }}>
+              QR Code Generator
+            </h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.2rem' }}>
+              <code style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>
+                {fullUrl}
+              </code>
+              <button onClick={handleCopyLink} className="btn-ghost" style={{ padding: '0 4px', fontSize: '0.75rem' }}>
+                {copied ? <Check size={12} color="#15803d" /> : <Copy size={12} />}
+              </button>
+            </div>
+          </div>
+          <button onClick={onClose} className="btn-icon" aria-label="Close modal">
+            <X size={16} />
           </button>
         </div>
 
-        {/* Studio View Layout */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.2fr)', gap: '1.5rem', alignItems: 'center' }}>
-          {/* Canvas Preview */}
-          <div style={{ 
-            backgroundColor: bgColor, 
-            padding: '1.25rem', 
-            borderRadius: 'var(--radius-lg)', 
-            border: '2px solid var(--border-subtle)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: 'var(--shadow-md)'
-          }}>
-            <canvas ref={canvasRef} style={{ width: '100%', maxWidth: '210px', height: 'auto', borderRadius: '6px' }} />
-          </div>
+        {/* Content */}
+        <div style={{ padding: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.2fr)', gap: '1.5rem', alignItems: 'center' }}>
+            {/* Canvas Preview */}
+            <div style={{ 
+              backgroundColor: bgColor, 
+              padding: '1rem', 
+              borderRadius: 'var(--radius-md)', 
+              border: '1px solid var(--border-default)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: 'var(--shadow-subtle)'
+            }}>
+              <canvas ref={canvasRef} style={{ width: '100%', maxWidth: '180px', height: 'auto', display: 'block' }} />
+            </div>
 
-          {/* Controls */}
-          <div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+            {/* Customization Options */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
-                <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  Brand QR Color
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
+                  QR Color
                 </label>
-                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.4rem', alignItems: 'center' }}>
-                  {['#0f172a', '#2563eb', '#059669', '#d97706', '#db2777', '#7c3aed'].map(color => (
+                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                  {['#09090b', '#0070f3', '#15803d', '#b45309', '#7c3aed'].map(color => (
                     <button
                       key={color}
                       type="button"
                       onClick={() => setFgColor(color)}
                       style={{
-                        width: '26px',
-                        height: '26px',
+                        width: '22px',
+                        height: '22px',
                         borderRadius: '50%',
                         backgroundColor: color,
-                        border: fgColor === color ? '3px solid var(--accent-primary)' : '1px solid var(--border-strong)',
-                        cursor: 'pointer',
-                        transform: fgColor === color ? 'scale(1.15)' : 'scale(1)',
-                        transition: 'transform 0.15s ease'
+                        border: fgColor === color ? '2px solid var(--text-primary)' : '1px solid var(--border-default)',
+                        cursor: 'pointer'
                       }}
-                      aria-label={`Select color ${color}`}
+                      aria-label={`Color ${color}`}
                     />
                   ))}
                   <input
                     type="color"
                     value={fgColor}
                     onChange={(e) => setFgColor(e.target.value)}
-                    style={{ width: '26px', height: '26px', border: 'none', background: 'transparent', cursor: 'pointer' }}
+                    style={{ width: '22px', height: '22px', border: 'none', background: 'transparent', cursor: 'pointer' }}
                     aria-label="Custom color picker"
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
                   Background
                 </label>
-                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.4rem' }}>
-                  {['#ffffff', '#f8fafc', '#eff6ff', '#0f172a'].map(color => (
+                <div style={{ display: 'flex', gap: '0.4rem' }}>
+                  {['#ffffff', '#f4f4f5', '#f0f7ff', '#09090b'].map(color => (
                     <button
                       key={color}
                       type="button"
                       onClick={() => setBgColor(color)}
                       style={{
-                        width: '26px',
-                        height: '26px',
-                        borderRadius: '6px',
+                        width: '22px',
+                        height: '22px',
+                        borderRadius: 'var(--radius-xs)',
                         backgroundColor: color,
-                        border: bgColor === color ? '2px solid var(--accent-primary)' : '1px solid var(--border-strong)',
+                        border: bgColor === color ? '2px solid var(--text-primary)' : '1px solid var(--border-default)',
                         cursor: 'pointer'
                       }}
-                      aria-label={`Select background ${color}`}
+                      aria-label={`Background ${color}`}
                     />
                   ))}
                 </div>
               </div>
 
               <div>
-                <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
                   Error Correction Level
                 </label>
-                <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.4rem' }}>
+                <div style={{ display: 'flex', gap: '0.25rem' }}>
                   {['L', 'M', 'Q', 'H'].map(lvl => (
                     <button
                       key={lvl}
                       type="button"
                       onClick={() => setErrorCorrection(lvl)}
-                      className={`btn-ghost ${errorCorrection === lvl ? 'badge-indigo' : ''}`}
-                      style={{ padding: '0.25rem 0.55rem', fontSize: '0.8rem' }}
+                      className={`btn ${errorCorrection === lvl ? 'btn-primary' : 'btn-secondary'}`}
+                      style={{ padding: '0.2rem 0.45rem', fontSize: '0.75rem' }}
                     >
-                      {lvl === 'H' ? 'High (30%)' : lvl === 'Q' ? 'Quartile (25%)' : lvl === 'M' ? 'Medium' : 'Low'}
+                      {lvl === 'H' ? 'High' : lvl === 'Q' ? 'Quarter' : lvl === 'M' ? 'Medium' : 'Low'}
                     </button>
                   ))}
                 </div>
@@ -197,13 +203,20 @@ export default function QRCodeModal({ link, onClose }) {
           </div>
         </div>
 
-        {/* Download Buttons */}
-        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.75rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '1.25rem' }}>
-          <button onClick={handleDownloadPNG} className="btn-primary" style={{ flex: 1 }}>
-            <Download size={15} /> Download High-Res PNG
+        {/* Footer actions */}
+        <div style={{ 
+          padding: '1rem 1.5rem', 
+          borderTop: '1px solid var(--border-subtle)',
+          backgroundColor: 'var(--bg-subtle)',
+          display: 'flex',
+          gap: '0.5rem',
+          justifyContent: 'flex-end'
+        }}>
+          <button onClick={handleDownloadPNG} className="btn btn-secondary">
+            <Download size={14} /> Download PNG
           </button>
-          <button onClick={handleDownloadSVG} className="btn-secondary" style={{ flex: 1 }}>
-            <Download size={15} /> Download Vector SVG
+          <button onClick={handleDownloadSVG} className="btn btn-primary">
+            <Download size={14} /> Download Vector SVG
           </button>
         </div>
       </div>

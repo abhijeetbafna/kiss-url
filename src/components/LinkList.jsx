@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Copy, Check, QrCode, BarChart3, Play, Trash2, 
-  Smartphone, Sparkles, Shield, Clock, Search, AlertCircle 
+  Search, Shield, Clock, Smartphone, Sparkles, Inbox
 } from 'lucide-react';
 
 export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, onOpenSimulator }) {
@@ -32,78 +32,87 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
   });
 
   return (
-    <div>
-      {/* Search & Filter Toolbar */}
+    <div style={{ width: '100%' }}>
+      {/* Search & Filter Bar */}
       <div 
-        className="card-surface" 
         style={{ 
-          padding: '0.875rem 1.25rem', 
-          marginBottom: '1rem', 
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center', 
           flexWrap: 'wrap', 
-          gap: '0.75rem' 
+          gap: '0.75rem',
+          marginBottom: '1rem'
         }}
       >
-        {/* Search Input */}
-        <div style={{ position: 'relative', flex: '1 1 280px', maxWidth: '420px' }}>
-          <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+        {/* Search */}
+        <div style={{ position: 'relative', flex: '1 1 260px', maxWidth: '380px' }}>
+          <Search size={14} color="var(--text-muted)" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
-            placeholder="Search links by alias, title, url, or tag..."
+            placeholder="Search links by name, alias, or URL..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="input-field"
-            style={{ paddingLeft: '2.25rem', fontSize: '0.875rem' }}
+            className="input"
+            style={{ paddingLeft: '2rem', fontSize: '0.85rem' }}
           />
         </div>
 
-        {/* Filter Badges with Real Counts */}
-        <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+        {/* Filters */}
+        <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
           <button
             onClick={() => setActiveFilter('all')}
-            className={`btn-ghost ${activeFilter === 'all' ? 'badge-indigo' : ''}`}
-            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-sm)' }}
+            className={`btn ${activeFilter === 'all' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.775rem', padding: '0.3rem 0.65rem' }}
           >
-            All <span className="tabular-nums" style={{ fontWeight: '700', marginLeft: '2px' }}>({links.length})</span>
+            All <span className="tabular-nums">({links.length})</span>
           </button>
           <button
             onClick={() => setActiveFilter('social')}
-            className={`btn-ghost ${activeFilter === 'social' ? 'badge-purple' : ''}`}
-            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-sm)' }}
+            className={`btn ${activeFilter === 'social' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.775rem', padding: '0.3rem 0.65rem' }}
           >
-            <Sparkles size={12} /> Social Cards <span className="tabular-nums" style={{ fontWeight: '700', marginLeft: '2px' }}>({links.filter(l => l.socialOg?.enabled).length})</span>
+            Social Cards ({links.filter(l => l.socialOg?.enabled).length})
           </button>
           <button
             onClick={() => setActiveFilter('routing')}
-            className={`btn-ghost ${activeFilter === 'routing' ? 'badge-emerald' : ''}`}
-            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-sm)' }}
+            className={`btn ${activeFilter === 'routing' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.775rem', padding: '0.3rem 0.65rem' }}
           >
-            <Smartphone size={12} /> Smart Routed <span className="tabular-nums" style={{ fontWeight: '700', marginLeft: '2px' }}>({links.filter(l => l.routing?.enabled).length})</span>
+            Device Routed ({links.filter(l => l.routing?.enabled).length})
           </button>
           <button
             onClick={() => setActiveFilter('protected')}
-            className={`btn-ghost ${activeFilter === 'protected' ? 'badge-amber' : ''}`}
-            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-sm)' }}
+            className={`btn ${activeFilter === 'protected' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.775rem', padding: '0.3rem 0.65rem' }}
           >
-            <Shield size={12} /> Protected <span className="tabular-nums" style={{ fontWeight: '700', marginLeft: '2px' }}>({links.filter(l => l.protection?.isPasswordProtected || l.protection?.expiresAt || l.protection?.maxClicks > 0).length})</span>
+            Protected ({links.filter(l => l.protection?.isPasswordProtected || l.protection?.expiresAt || l.protection?.maxClicks > 0).length})
           </button>
         </div>
       </div>
 
-      {/* Links List */}
+      {/* Links List / Table */}
       {filteredLinks.length === 0 ? (
-        <div className="card-surface" style={{ padding: '3.5rem 1.5rem', textAlign: 'center' }}>
-          <AlertCircle size={36} color="var(--text-muted)" style={{ margin: '0 auto 0.75rem' }} />
-          <h3 style={{ fontSize: '1.05rem', fontWeight: '700', color: 'var(--text-primary)' }}>No links match your criteria</h3>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-            Adjust your search filter or create a new smart link.
+        <div style={{ 
+          padding: '3rem 1.5rem', 
+          textAlign: 'center', 
+          backgroundColor: 'var(--bg-subtle)', 
+          borderRadius: 'var(--radius-md)', 
+          border: '1px solid var(--border-default)' 
+        }}>
+          <Inbox size={28} color="var(--text-muted)" style={{ margin: '0 auto 0.5rem' }} />
+          <div style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-primary)' }}>No links found</div>
+          <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+            Try adjusting your search query or create a new short link above.
           </p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {filteredLinks.map((link) => {
+        <div style={{ 
+          backgroundColor: 'var(--bg-surface)', 
+          border: '1px solid var(--border-default)', 
+          borderRadius: 'var(--radius-md)',
+          overflow: 'hidden'
+        }}>
+          {filteredLinks.map((link, idx) => {
             const isProtected = link.protection?.isPasswordProtected;
             const hasExpiry = Boolean(link.protection?.expiresAt);
             const isSmartRouted = link.routing?.enabled;
@@ -112,64 +121,63 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
 
             return (
               <div 
-                key={link.id} 
-                className="card-interactive"
+                key={link.id}
                 style={{ 
-                  padding: '1.15rem 1.35rem', 
+                  padding: '0.85rem 1.15rem', 
                   display: 'flex', 
                   justifyContent: 'space-between', 
                   alignItems: 'center', 
                   flexWrap: 'wrap', 
-                  gap: '1rem' 
+                  gap: '0.85rem',
+                  borderBottom: idx < filteredLinks.length - 1 ? '1px solid var(--border-subtle)' : 'none',
+                  transition: 'background-color var(--duration-fast) var(--ease-out)'
                 }}
               >
-                {/* Left Meta & URL Details */}
-                <div style={{ flex: '1 1 360px', minWidth: '0' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.3rem' }}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-primary)' }}>
+                {/* Left: Link Details */}
+                <div style={{ flex: '1 1 340px', minWidth: '0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap', marginBottom: '0.2rem' }}>
+                    <span style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--text-primary)' }}>
                       {link.title || link.slug}
-                    </h3>
+                    </span>
 
-                    {/* Semantic Badges */}
                     {hasSocialOg && (
-                      <span className="badge badge-purple" title="Custom OpenGraph Social Preview">
-                        <Sparkles size={10} /> Social Card
+                      <span className="badge" title="Custom Social Preview">
+                        <Sparkles size={10} /> Social
                       </span>
                     )}
                     {isSmartRouted && (
-                      <span className="badge badge-emerald" title="iOS & Android Smart Device Routing">
-                        <Smartphone size={10} /> Smart Routed
+                      <span className="badge" title="Smart Device Routing">
+                        <Smartphone size={10} /> iOS/Android
                       </span>
                     )}
                     {isProtected && (
-                      <span className="badge badge-amber" title="Passcode Protected">
+                      <span className="badge" title="Password Protected">
                         <Shield size={10} /> Password
                       </span>
                     )}
                     {hasExpiry && (
-                      <span className="badge badge-rose" title={`Expires on ${link.protection.expiresAt}`}>
+                      <span className="badge" title={`Expires: ${link.protection.expiresAt}`}>
                         <Clock size={10} /> Expiring
                       </span>
                     )}
                   </div>
 
-                  {/* Short Link & Target */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', fontSize: '0.85rem' }}>
+                  {/* URLs */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap', fontSize: '0.825rem' }}>
                     <code style={{ 
-                      color: 'var(--accent-primary)', 
-                      fontWeight: '700', 
-                      backgroundColor: 'var(--accent-subtle)', 
-                      padding: '2px 8px', 
-                      borderRadius: 'var(--radius-xs)',
-                      border: '1px solid var(--accent-border)',
-                      fontFamily: 'var(--font-mono)'
+                      color: 'var(--text-primary)', 
+                      fontWeight: '600', 
+                      fontFamily: 'var(--font-mono)',
+                      backgroundColor: 'var(--bg-muted)',
+                      padding: '1px 5px',
+                      borderRadius: 'var(--radius-xs)'
                     }}>
                       {fullShortUrl}
                     </code>
-                    <span style={{ color: 'var(--text-muted)' }}>➔</span>
+                    <span style={{ color: 'var(--text-dim)' }}>➔</span>
                     <span style={{ 
                       color: 'var(--text-secondary)', 
-                      maxWidth: '320px', 
+                      maxWidth: '300px', 
                       overflow: 'hidden', 
                       textOverflow: 'ellipsis', 
                       whiteSpace: 'nowrap' 
@@ -177,86 +185,67 @@ export default function LinkList({ links, onDelete, onOpenQR, onOpenAnalytics, o
                       {link.targetUrl}
                     </span>
                   </div>
-
-                  {/* Tag Pills */}
-                  {link.tags && link.tags.length > 0 && (
-                    <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.45rem', flexWrap: 'wrap' }}>
-                      {link.tags.map((tag, i) => (
-                        <span key={i} style={{ 
-                          fontSize: '0.7rem', 
-                          fontWeight: '500',
-                          color: 'var(--text-muted)', 
-                          backgroundColor: 'var(--bg-surface-muted)', 
-                          padding: '1px 6px', 
-                          borderRadius: 'var(--radius-xs)' 
-                        }}>
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
 
-                {/* Right Action Tools & Tabular Clicks */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  {/* Click Badge with Tabular Numeral */}
+                {/* Right: Clicks & Action Buttons */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {/* Click Badge Button */}
                   <button
                     onClick={() => onOpenAnalytics(link)}
-                    className="btn-ghost"
+                    className="btn btn-ghost"
                     style={{ 
-                      backgroundColor: 'var(--accent-subtle)', 
-                      border: '1px solid var(--accent-border)',
-                      padding: '0.35rem 0.75rem',
-                      borderRadius: 'var(--radius-md)',
-                      textAlign: 'left'
+                      padding: '0.3rem 0.6rem',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: '0.8rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem'
                     }}
-                    title="View Deep Analytics"
+                    title="View Analytics"
                   >
-                    <div style={{ fontSize: '0.65rem', color: 'var(--accent-primary)', textTransform: 'uppercase', fontWeight: '700' }}>Clicks</div>
-                    <div className="tabular-nums" style={{ fontSize: '1.05rem', fontWeight: '800', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                      <BarChart3 size={14} color="var(--accent-primary)" /> {(link.clicks || 0).toLocaleString()}
-                    </div>
+                    <BarChart3 size={13} color="var(--text-muted)" />
+                    <span className="tabular-nums" style={{ fontWeight: '600', color: 'var(--text-primary)' }}>
+                      {(link.clicks || 0).toLocaleString()}
+                    </span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>clicks</span>
                   </button>
 
-                  {/* Action Buttons */}
-                  <div style={{ display: 'flex', gap: '0.35rem' }}>
-                    <button
-                      onClick={() => handleCopy(link)}
-                      className="btn-secondary"
-                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}
-                      title="Copy Short URL"
-                    >
-                      {copiedId === link.id ? <><Check size={14} color="#059669" /> Copied</> : <><Copy size={14} /> Copy</>}
-                    </button>
+                  {/* Actions */}
+                  <button
+                    onClick={() => handleCopy(link)}
+                    className="btn btn-secondary"
+                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.775rem' }}
+                    title="Copy Short URL"
+                  >
+                    {copiedId === link.id ? <><Check size={12} color="#15803d" /> Copied</> : <><Copy size={12} /> Copy</>}
+                  </button>
 
-                    <button
-                      onClick={() => onOpenQR(link)}
-                      className="btn-icon"
-                      title="Generate Studio QR Code"
-                      aria-label="Generate QR Code"
-                    >
-                      <QrCode size={16} />
-                    </button>
+                  <button
+                    onClick={() => onOpenQR(link)}
+                    className="btn-icon"
+                    title="QR Code"
+                    aria-label="QR Code"
+                  >
+                    <QrCode size={14} />
+                  </button>
 
-                    <button
-                      onClick={() => onOpenSimulator(link)}
-                      className="btn-icon"
-                      title="Preview Link & Device Routing"
-                      aria-label="Preview Routing"
-                    >
-                      <Play size={16} color="var(--accent-primary)" />
-                    </button>
+                  <button
+                    onClick={() => onOpenSimulator(link)}
+                    className="btn-icon"
+                    title="Preview Destination"
+                    aria-label="Preview Destination"
+                  >
+                    <Play size={14} />
+                  </button>
 
-                    <button
-                      onClick={() => onDelete(link.id)}
-                      className="btn-icon"
-                      style={{ color: 'var(--badge-rose-text)' }}
-                      title="Delete Link"
-                      aria-label="Delete Link"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => onDelete(link.id)}
+                    className="btn-icon"
+                    title="Delete Link"
+                    aria-label="Delete Link"
+                  >
+                    <Trash2 size={14} />
+                  </button>
                 </div>
               </div>
             );
